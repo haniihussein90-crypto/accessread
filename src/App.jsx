@@ -40,22 +40,14 @@ const AccessRead = () => {
     consultedDoctor: false,
     notPregnant: false
   });
+  const [productClassification, setProductClassification] = useState(null);
 
   const cameraRef = useRef(null);
   const fileInputRef = useRef(null);
-  const synth = window.speechSynthesis;
+  const audioRef = useRef(null);
   const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  // Initialize voices
-  useEffect(() => {
-    const updateVoices = () => {
-      const voices = synth.getVoices();
-      setCurrentVoices(voices);
-    };
-    
-    synth.onvoiceschanged = updateVoices;
-    updateVoices();
-  }, []);
+
 
   // Load Tesseract.js
   useEffect(() => {
@@ -183,6 +175,7 @@ const AccessRead = () => {
   // OCR Processing
   const processImage = async (imageData) => {
     setIsProcessing(true);
+    setProductClassification(null);
     
     if (!window.Tesseract) {
       alert('OCR library loading. Please try again.');
@@ -194,6 +187,13 @@ const AccessRead = () => {
       const result = await window.Tesseract.recognize(imageData, 'eng');
       let text = result.data.text.trim();
       
+      // Check if text was actually detected
+      if (!text || text.length < 5) {
+        alert('❌ No text detected. Please try:\n• Better lighting\n• Straight angle\n• Clearer image\n• Flat surface (not curved)');
+        setIsProcessing(false);
+        return;
+      }
+      
       if (scanType === 'medicine') {
         text = parseMedicineLabel(text);
       } else if (scanType === 'food') {
@@ -203,6 +203,12 @@ const AccessRead = () => {
       }
       
       setExtractedText(text);
+      
+      // Classify the product with Claude AI
+      const classification = await classifyProduct(text);
+      if (classification) {
+        setProductClassification(classification);
+      }
       
       if (!isPremium && scanCount >= 50) {
         alert('Free limit reached (50 scans/month). Upgrade to Premium for unlimited scans.');
@@ -225,11 +231,9 @@ const AccessRead = () => {
 
       setScreen('results');
       
-      if (currentVoices.length > 0) {
-        await getSmartContext(text);
-      }
     } catch (error) {
-      alert('OCR processing failed. Please try again with better lighting.');
+      alert('❌ OCR processing failed. Please try again with better lighting or a clearer image.');
+      console.error('OCR error:', error);
     }
     
     setIsProcessing(false);
@@ -253,29 +257,102 @@ const AccessRead = () => {
     return '💵 Currency detected:\n' + text;
   };
 
-  // Text-to-Speech
-  const readAloud = () => {
+  // Text-to-Speech (Using ElevenLabs API)
+  const readAloud = async () => {
     triggerHaptic();
+    
     if (isReading) {
-      synth.cancel();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
       setIsReading(false);
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(extractedText);
-    utterance.rate = speechRate;
-    utterance.voice = currentVoices[selectedVoice] || null;
+    setIsReading(true);
+    
+    try {
+      const response = await fetch('/api/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: extractedText })
+      });
 
-    utterance.onstart = () => setIsReading(true);
-    utterance.onend = () => setIsReading(false);
+      if (!response.ok) {
+        throw new Error('Failed to generate speech');
+      }
 
-    synth.speak(utterance);
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        setIsReading(false);
+        audioRef.current = null;
+      };
+      
+      audio.play().catch(err => {
+        console.error('Playback error:', err);
+        setIsReading(false);
+      });
+    } catch (error) {
+      console.error('Speech generation error:', error);
+      alert('Failed to generate speech');
+      setIsReading(false);
+    }
   };
 
   const stopReading = () => {
     triggerHaptic();
-    synth.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
     setIsReading(false);
+  };
+
+  // Classify Product with Claude AI
+  const classifyProduct = async (text) => {
+    const prompt = `Analyze this product label text and classify it. Return ONLY a JSON object (no other text):
+{
+  "productType": "food|medication|cosmetic|perfume|supplement|other",
+  "brandName": "extracted brand name or 'Unknown'",
+  "productName": "what is this product called",
+  "keyInfo": "1-2 key details (ingredients, active component, or main benefit)"
+}
+
+Label text:
+"${text}"`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.REACT_APP_CLAUDE_API_KEY || 'YOUR_API_KEY_HERE',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 200,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const responseText = data.content[0].text;
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          return JSON.parse(jsonMatch[0]);
+        }
+      }
+    } catch (error) {
+      console.log('Product classification skipped');
+    }
+    return null;
   };
 
   // AI Features
@@ -924,6 +1001,30 @@ Answer briefly (1-2 sentences max).`;
 
         {scannedImage && (
           <img src={scannedImage} alt="Scanned" style={{ maxWidth: '100%', borderRadius: '8px', maxHeight: '200px', objectFit: 'contain' }} />
+        )}
+
+        {productClassification && (
+          <div style={{
+            backgroundColor: 'transparent',
+            padding: '15px',
+            borderRadius: '8px',
+            border: `2px solid ${accentColor}`,
+            marginBottom: '15px'
+          }}>
+            <h3 style={{ fontSize: `${fontSize}px`, color: accentColor, margin: '0 0 10px 0' }}>🏷️ Product Classification</h3>
+            <p style={{ fontSize: `${fontSize - 2}px`, margin: '5px 0', color: textColor }}>
+              <strong>Type:</strong> {productClassification.productType?.toUpperCase() || 'Unknown'}
+            </p>
+            <p style={{ fontSize: `${fontSize - 2}px`, margin: '5px 0', color: textColor }}>
+              <strong>Brand:</strong> {productClassification.brandName || 'Not identified'}
+            </p>
+            <p style={{ fontSize: `${fontSize - 2}px`, margin: '5px 0', color: textColor }}>
+              <strong>Product:</strong> {productClassification.productName || 'N/A'}
+            </p>
+            <p style={{ fontSize: `${fontSize - 2}px`, margin: '5px 0', color: textColor }}>
+              <strong>Key Info:</strong> {productClassification.keyInfo || 'No details available'}
+            </p>
+          </div>
         )}
 
         <div style={{
