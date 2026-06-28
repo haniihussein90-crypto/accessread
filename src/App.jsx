@@ -88,8 +88,6 @@ export default function App() {
   const [scannedImage, setScannedImage] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [productInfo, setProductInfo] = useState(null);
-  const [medicineChecklistDone, setMedicineChecklistDone] = useState(false);
   const [showMedicineModal, setShowMedicineModal] = useState(false);
   const [medicineChecks, setMedicineChecks] = useState({ label: false, allergies: false, interactions: false, doctor: false, pregnancy: false });
 
@@ -111,7 +109,6 @@ export default function App() {
   // Settings
   const [fontSize, setFontSize] = useState(() => store.get('ar_fontSize', 16));
   const [haptic, setHaptic] = useState(() => store.get('ar_haptic', true));
-  const [darkMode] = useState(true);
 
   // Emergency contacts
   const [countrySearch, setCountrySearch] = useState('');
@@ -226,7 +223,6 @@ export default function App() {
     }
     setIsProcessing(true);
     setExtractedText('');
-    setProductInfo(null);
     setScreen('results');
     try {
       if (!window.Tesseract) throw new Error('OCR not loaded');
@@ -292,7 +288,6 @@ export default function App() {
   const allMedicineChecked = Object.values(medicineChecks).every(Boolean);
   const confirmMedicineChecklist = () => {
     if (!allMedicineChecked) return;
-    setMedicineChecklistDone(true);
     setShowMedicineModal(false);
     runOCR(scannedImage);
   };
