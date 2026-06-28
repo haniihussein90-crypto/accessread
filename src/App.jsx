@@ -148,7 +148,13 @@ export default function App() {
 
   // Premium
   const [isPremium, setIsPremium] = useState(ls.get('isPremium', false));
-  const [scanCount, setScanCount] = useState(ls.get('scanCount', 0));
+  const todayStr = () => new Date().toISOString().slice(0, 10);
+  const initScanCount = () => {
+    const stored = ls.get('scanData', { count: 0, date: todayStr() });
+    if (stored.date !== todayStr()) { ls.set('scanData', { count: 0, date: todayStr() }); return 0; }
+    return stored.count;
+  };
+  const [scanCount, setScanCount] = useState(initScanCount);
   const [selPlan, setSelPlan] = useState('monthly');
   const [selPay, setSelPay] = useState('card');
   const [premProcessing, setPremProcessing] = useState(false);
@@ -250,7 +256,7 @@ export default function App() {
       const cleaned = text.trim();
       setOcrText(cleaned);
       const newCount = scanCount + 1;
-      setScanCount(newCount); ls.set('scanCount', newCount);
+      setScanCount(newCount); ls.set('scanData', { count: newCount, date: todayStr() });
       const entry = { id: Date.now(), type: scanType, text: cleaned, date: new Date().toLocaleString(), img: imgData };
       const newHist = [entry, ...history].slice(0, 10);
       setHistory(newHist); ls.set('history', newHist);
@@ -912,7 +918,7 @@ export default function App() {
         <div style={{ background: C.card2, borderRadius: 16, padding: 16 }}>
           <h2 style={h2s}>Data</h2>
           <button style={btn(darkMode ? C.card : '#e8e8e8', { border: `1px solid ${C.border}`, color: C.text })}
-            onClick={() => { setHistory([]); ls.set('history', []); setScanCount(0); ls.set('scanCount', 0); setBookmarks([]); ls.set('bookmarks', []); alert('Cleared.'); }}>
+            onClick={() => { setHistory([]); ls.set('history', []); setScanCount(0); ls.set('scanData', { count: 0, date: todayStr() }); setBookmarks([]); ls.set('bookmarks', []); alert('Cleared.'); }}>
             🗑 Clear All History & Bookmarks
           </button>
           <button style={btn(C.red)} onClick={() => { localStorage.clear(); setScreen('legal'); }}>
