@@ -126,6 +126,7 @@ export default function App() {
   const [chatLoading, setChatLoading] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [aiClassify, setAiClassify] = useState(null);
+  const [aiError, setAiError] = useState(null);
   const [cookingResult, setCookingResult] = useState(null);
   const [cookingLoading, setCookingLoading] = useState(false);
   const [flightResult, setFlightResult] = useState(null);
@@ -247,7 +248,7 @@ export default function App() {
 
   const runOCR = useCallback(async (imgData) => {
     if (!window.Tesseract) { alert('OCR library not loaded. Check internet connection.'); return; }
-    setProcessing(true); setOcrText(''); setAiClassify(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
+    setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
     try {
       if (scanType === 'color' && isPremium) { detectColors(imgData); setProcessing(false); setTab('results'); return; }
       const { data: { text } } = await window.Tesseract.recognize(imgData, 'eng', { logger: () => {} });
@@ -264,7 +265,9 @@ export default function App() {
       try {
         const r = await callClaude(`In 1 sentence, classify and describe this scanned text: "${cleaned.slice(0,300)}"`, 'You are a concise product classifier.');
         setAiClassify(r);
-      } catch {}
+      } catch {
+        setAiError('AI analysis unavailable. Please try again.');
+      }
     } catch (e) {
       alert('OCR failed: ' + e.message);
     } finally {
@@ -703,6 +706,11 @@ export default function App() {
               <div style={{ background: C.card2, borderRadius: 16, padding: 18, marginBottom: 14, borderLeft: `3px solid ${C.purple}` }}>
                 <h2 style={h2s}>🤖 AI Classification</h2>
                 <p style={{ ...ps, margin: 0 }}>{aiClassify}</p>
+              </div>
+            )}
+            {aiError && !aiClassify && (
+              <div style={{ background: C.card2, borderRadius: 16, padding: 14, marginBottom: 14, borderLeft: `3px solid ${C.yellow}` }}>
+                <p style={{ ...ps, color: C.yellow, margin: 0 }}>⚠️ {aiError}</p>
               </div>
             )}
 
