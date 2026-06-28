@@ -71,7 +71,6 @@ export default function App() {
     padding: '12px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer',
     width: '100%', marginBottom: 10, transition: 'opacity 0.15s', ...extra,
   });
-  const card = { background: C.card2, borderRadius: 16, padding: 18, marginBottom: 14 };
   const inp = {
     background: darkMode ? '#111' : '#f0f0f0', border: `1px solid ${C.border}`,
     borderRadius: 10, color: C.text, padding: '10px 14px', fontSize: 15,
@@ -81,7 +80,6 @@ export default function App() {
   const h1s = { fontSize: 22, fontWeight: 800, color: C.text, margin: '0 0 6px' };
   const h2s = { fontSize: 17, fontWeight: 700, color: C.text, margin: '0 0 10px' };
   const ps = { fontSize: 14, color: C.muted, lineHeight: 1.5, margin: '0 0 10px' };
-  const rows = { display: 'flex', alignItems: 'center', gap: 10 };
   const tag = (bg) => ({
     background: bg, color: '#fff', borderRadius: 8, padding: '3px 10px',
     fontSize: 12, fontWeight: 600, display: 'inline-block',
@@ -103,7 +101,7 @@ export default function App() {
   const [scannedImg, setScannedImg] = useState(null);
   const [ocrText, setOcrText] = useState('');
   const [processing, setProcessing] = useState(false);
-  const [parsedData, setParsedData] = useState(null);
+
 
   // Camera
   const videoRef = useRef(null);
@@ -250,7 +248,7 @@ export default function App() {
 
   const runOCR = useCallback(async (imgData) => {
     if (!window.Tesseract) { alert('OCR library not loaded. Check internet connection.'); return; }
-    setProcessing(true); setOcrText(''); setParsedData(null); setAiClassify(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
+    setProcessing(true); setOcrText(''); setAiClassify(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
     try {
       if (scanType === 'color' && isPremium) { detectColors(imgData); setProcessing(false); setTab('results'); return; }
       const { data: { text } } = await window.Tesseract.recognize(imgData, 'eng', { logger: () => {} });
