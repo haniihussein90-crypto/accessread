@@ -260,7 +260,7 @@ export default function App() {
       const entry = { id: Date.now(), type: scanType, text: cleaned, date: new Date().toLocaleString(), img: imgData };
       const newHist = [entry, ...history].slice(0, 10);
       setHistory(newHist); ls.set('history', newHist);
-      if (scanType === 'medicine') { setMedModal(true); }
+      if (scanType === 'medicine') { setMedChecks({ allergic: false, dosage: false, expiry: false, interactions: false }); setMedModal(true); }
       setTab('results');
       // AI classify
       try {
