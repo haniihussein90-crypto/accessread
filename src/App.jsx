@@ -201,16 +201,11 @@ export default function App() {
   const speak = isPremium ? speakElevenLabs : speakBrowser;
   const stopSpeak = () => { window.speechSynthesis.cancel(); setReading(false); };
 
-  // ── Claude API ──
+  // ── Claude API (proxied through /api/claude — key never leaves server) ──
   const callClaude = useCallback(async (prompt, systemMsg = '') => {
-    const key = process.env.REACT_APP_CLAUDE_API_KEY;
-    if (!key) throw new Error('REACT_APP_CLAUDE_API_KEY not set');
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/claude', {
       method: 'POST',
-      headers: {
-        'x-api-key': key, 'anthropic-version': '2023-06-01',
-        'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true',
-      },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001', max_tokens: 500,
         system: systemMsg || 'You are a helpful accessibility assistant.',
@@ -218,7 +213,7 @@ export default function App() {
       }),
     });
     const d = await res.json();
-    if (d.error) throw new Error(d.error.message);
+    if (d.error) throw new Error(d.error);
     return d.content?.[0]?.text || '';
   }, []);
 
@@ -280,11 +275,9 @@ export default function App() {
     setChatMsgs(msgs); setChatInput(''); setChatLoading(true);
     try {
       const system = ocrText ? `The user scanned text:\n${ocrText.slice(0,500)}\nAnswer questions about it helpfully.` : 'You are a helpful accessibility assistant.';
-      const key = process.env.REACT_APP_CLAUDE_API_KEY;
-      if (!key) throw new Error('REACT_APP_CLAUDE_API_KEY not set');
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/claude', {
         method: 'POST',
-        headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
+        headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 400, system, messages: msgs }),
       });
       const d = await res.json();
