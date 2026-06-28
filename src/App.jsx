@@ -185,21 +185,19 @@ export default function App() {
   }, [voices, voiceIdx, ttsRate]);
 
   const speakElevenLabs = useCallback(async (text) => {
-    const key = process.env.REACT_APP_ELEVENLABS_API_KEY;
-    if (!key) { speakBrowser(text); return; }
-    const VOICE_IDS = { Rachel: '21m00Tcm4TlvDq8ikWAM', Domi: 'AZnzlk1XvdvUeBnXmlld', Bella: 'EXAVITQu4vr4xnSDxMaL' };
-    const vid = VOICE_IDS[elevenLabsVoice] || VOICE_IDS.Rachel;
     setReading(true);
     try {
-      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${vid}`, {
+      const res = await fetch('/api/speak', {
         method: 'POST',
-        headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text.slice(0, 500), model_id: 'eleven_monolingual_v1', voice_settings: { stability: 0.5, similarity_boost: 0.75 } }),
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ text, voice: elevenLabsVoice }),
       });
+      if (!res.ok) { speakBrowser(text); return; }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audio.onended = () => { setReading(false); URL.revokeObjectURL(url); };
+      audio.onerror = () => { setReading(false); URL.revokeObjectURL(url); };
       audio.play();
     } catch { speakBrowser(text); }
   }, [elevenLabsVoice, speakBrowser]);
