@@ -67,6 +67,7 @@ const SCAN_TYPES = [
 const COMING_SOON = ['💵 Currency', '🔲 Barcode', '✈️ Flight Scanner'];
 
 const FREE_DAILY = 50; // free-tier daily scan limit
+const APP_VERSION = '07c87a7'; // bump on each release — visible in Settings to confirm the live build
 
 const LANGUAGES = [
   { code: 'English', label: 'English', native: 'English', flag: '🇬🇧' },
@@ -1194,6 +1195,10 @@ export default function App() {
             ⚠️ Reset App
           </button>
         </div>
+
+        <p style={{ ...ps, textAlign: 'center', fontSize: 11, marginTop: 8 }}>
+          AccessRead · build {APP_VERSION}
+        </p>
       </div>
     </div>
   );
