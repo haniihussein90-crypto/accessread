@@ -149,7 +149,7 @@ export default function App() {
   // TTS
   const [reading, setReading] = useState(false);
   const [voices, setVoices] = useState([]);
-  const [voiceIdx, setVoiceIdx] = useState(0);
+  const [voiceIdx] = useState(0);
   const [ttsRate, setTtsRate] = useState(1);
   const [elevenLabsVoice, setElevenLabsVoice] = useState('Rachel');
 
@@ -247,7 +247,9 @@ export default function App() {
     } catch { speakBrowser(text); }
   }, [elevenLabsVoice, speakBrowser]);
 
-  const speak = isPremium ? speakElevenLabs : speakBrowser;
+  // ElevenLabs multilingual voices are free for everyone; falls back to the
+  // browser's robot voice automatically if the API is unavailable.
+  const speak = speakElevenLabs;
   const stopSpeak = () => { window.speechSynthesis.cancel(); if (resumeTimer.current) clearInterval(resumeTimer.current); setReading(false); };
 
   // ── Claude API (proxied through /api/claude — key never leaves server) ──
@@ -838,25 +840,15 @@ export default function App() {
             </div>
 
             <div style={{ background: C.card2, borderRadius: 16, padding: 18, marginBottom: 14 }}>
-              <h2 style={h2s}>🔊 TTS Controls</h2>
-              {isPremium ? (
-                <div style={{ marginBottom: 10 }}>
-                  <label style={lbl}>ElevenLabs Voice</label>
-                  <select value={elevenLabsVoice} onChange={e => setElevenLabsVoice(e.target.value)} style={inp}>
-                    {['Rachel','Domi','Bella'].map(v => <option key={v}>{v}</option>)}
-                  </select>
-                </div>
-              ) : (
-                <div style={{ marginBottom: 10 }}>
-                  <label style={lbl}>Browser Voice</label>
-                  <select value={voiceIdx} onChange={e => setVoiceIdx(+e.target.value)} style={inp}>
-                    {voices.map((v, i) => <option key={i} value={i}>{v.name} ({v.lang})</option>)}
-                  </select>
-                </div>
-              )}
+              <h2 style={h2s}>🔊 Voice (free · 12 languages)</h2>
+              <div style={{ marginBottom: 10 }}>
+                <label style={lbl}>Premium AI Voice</label>
+                <select value={elevenLabsVoice} onChange={e => setElevenLabsVoice(e.target.value)} style={inp}>
+                  {['Rachel','Domi','Bella'].map(v => <option key={v}>{v}</option>)}
+                </select>
+              </div>
               <label style={lbl}>Speed: {ttsRate.toFixed(1)}x</label>
               <input type="range" min="0.5" max="2" step="0.1" value={ttsRate} onChange={e => setTtsRate(+e.target.value)} style={{ width: '100%' }} />
-              {!isPremium && <button style={btn(C.purple, { marginTop: 8 })} onClick={() => setShowPremModal(true)}>🔓 Upgrade for ElevenLabs Voices</button>}
             </div>
 
             {aiClassify && (

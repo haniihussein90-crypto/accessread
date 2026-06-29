@@ -26,7 +26,9 @@ export default async function handler(req, res) {
       headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text: text.slice(0, 500),
-        model_id: 'eleven_monolingual_v1',
+        // multilingual_v2 covers all 12 supported languages (EN, ES, ZH, HI,
+        // AR, PT, RU, JA, PA, FR, NL, VI) and auto-detects from the text.
+        model_id: 'eleven_multilingual_v2',
         voice_settings: { stability: 0.5, similarity_boost: 0.75 },
       }),
     });
