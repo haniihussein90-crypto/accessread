@@ -689,7 +689,7 @@ export default function App() {
                 <button style={btn(canScan ? C.blue : C.muted, { flex: 1, margin: 0 })} onClick={() => canScan ? startCam() : setShowPremModal(true)}>
                   📷 Camera
                 </button>
-                <label style={{ ...btn(C.purple, { flex: 1, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }), cursor: 'pointer' }}>
+                <label style={{ ...btn('#1e3a8a', { flex: 1, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }), cursor: 'pointer' }}>
                   📁 Upload
                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files[0]; if (f && canScan) { const u = URL.createObjectURL(f); setScannedImg(u); runOCR(u); } else if (!canScan) setShowPremModal(true); }} />
                 </label>
