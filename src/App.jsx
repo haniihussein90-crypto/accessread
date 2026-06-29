@@ -515,7 +515,7 @@ export default function App() {
         <div style={{ fontSize: 44, marginBottom: 12 }}>💊</div>
         <h2 style={h2s}>Medicine Scan</h2>
         <p style={ps}>Medicine information may include adult dosages and prescriptions. Are you 18+ or do you have parental guidance?</p>
-        <button style={btn(C.blue)} onClick={() => { setAgeCheckDone(true); ls.set('ageCheckDone', true); setShowAgeCheck(false); }}>
+        <button style={btn(C.blue)} onClick={() => { console.log('Age check confirmed — closing popup, camera/upload UI should remain visible'); setAgeCheckDone(true); ls.set('ageCheckDone', true); setShowAgeCheck(false); }}>
           Yes, I'm 18+ / Have guidance
         </button>
         <button style={btn(C.card, { border: `1px solid ${C.border}`, color: C.muted })} onClick={() => { setShowAgeCheck(false); setScanType('general'); }}>
@@ -661,9 +661,11 @@ export default function App() {
               const locked = st.id === 'color' && !isPremium;
               return (
                 <button key={st.id} onClick={() => {
+                  console.log('Scan type selected:', st.id, '| locked:', locked, '| ageCheckDone:', ageCheckDone);
                   if (locked) { setShowPremModal(true); return; }
-                  if (st.id === 'medicine' && !ageCheckDone) { setScanType(st.id); setShowAgeCheck(true); return; }
+                  if (st.id === 'medicine' && !ageCheckDone) { setScanType(st.id); setShowAgeCheck(true); console.log('Medicine: opening age check popup'); return; }
                   setScanType(st.id);
+                  console.log('Should show camera/upload UI now. scanType=', st.id, '| camActive=', camActive, '| processing=', processing);
                 }} style={{
                   background: scanType === st.id ? C.blue : (darkMode ? '#111' : '#e8e8e8'),
                   border: `2px solid ${scanType === st.id ? C.blue : C.border}`,
@@ -679,6 +681,7 @@ export default function App() {
         </div>
 
         <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14, textAlign: 'center' }}>
+          {console.log('Rendering camera/upload card. camActive=', camActive, '| scanType=', scanType, '| processing=', processing)}
           <video ref={videoRef} autoPlay playsInline style={{ width: '100%', borderRadius: 10, display: camActive ? 'block' : 'none', maxHeight: 240, objectFit: 'cover' }} />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           {scannedImg && !camActive && <img src={scannedImg} alt="scan" style={{ width: '100%', borderRadius: 10, maxHeight: 200, objectFit: 'cover', marginBottom: 10 }} />}
