@@ -360,12 +360,27 @@ export default function App() {
 
   // ── Camera ──
   const startCam = async () => {
+    setCamActive(true); // mount the <video> element first so the ref exists
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
       streamRef.current = s;
-      if (videoRef.current) videoRef.current.srcObject = s;
-      setCamActive(true);
-    } catch { alert('Camera permission denied.'); }
+      const v = videoRef.current;
+      if (v) {
+        v.srcObject = s;
+        v.setAttribute('playsinline', 'true');
+        v.muted = true; // iOS Safari requires muted to autoplay the stream
+        try {
+          await v.play();
+          console.log('Video stream started:', v.videoWidth, v.videoHeight, '| readyState:', v.readyState);
+        } catch (playErr) {
+          console.error('video.play() failed:', playErr?.name, playErr?.message);
+        }
+      }
+    } catch (err) {
+      console.error('getUserMedia failed:', err?.name, err?.message);
+      setCamActive(false);
+      alert('Camera unavailable: ' + (err?.name || 'permission denied'));
+    }
   };
 
   const stopCam = () => { streamRef.current?.getTracks().forEach(t => t.stop()); setCamActive(false); };
@@ -373,9 +388,16 @@ export default function App() {
   const capture = () => {
     const v = videoRef.current, c = canvasRef.current;
     if (!v || !c) return;
+    console.log('Capture: videoWidth/Height =', v.videoWidth, v.videoHeight, '| readyState:', v.readyState);
+    if (!v.videoWidth || !v.videoHeight) {
+      console.error('Capture aborted: video has no dimensions yet (stream not ready).');
+      alert('Camera still starting — please wait a moment and try again.');
+      return;
+    }
     c.width = v.videoWidth; c.height = v.videoHeight;
-    c.getContext('2d').drawImage(v, 0, 0);
-    const data = c.toDataURL('image/jpeg');
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    const data = c.toDataURL('image/jpeg', 0.9);
+    console.log('Canvas drawn. ImageData:', data.substring(0, 50), '| total length:', data.length);
     setScannedImg(data); stopCam(); runOCR(data);
     if (haptic && navigator.vibrate) navigator.vibrate(50);
   };
