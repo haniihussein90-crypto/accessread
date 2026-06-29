@@ -639,7 +639,6 @@ export default function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <VoiceWaves size={40} />
           <h1 style={{ ...h1s, flex: 1, margin: 0 }}>AccessRead</h1>
-          {isPremium && <span style={tag(C.green)}>PRO</span>}
           <button aria-label="Toggle theme" onClick={() => { setDarkMode(!darkMode); ls.set('darkMode', !darkMode); }}
             style={{ background: 'none', border: `1px solid ${C.border}`, borderRadius: 8, color: C.muted, padding: '4px 10px', cursor: 'pointer', fontSize: 16 }}>
             {darkMode ? '☀️' : '🌙'}
