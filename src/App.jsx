@@ -190,8 +190,6 @@ export default function App() {
     return stored.count;
   };
   const [scanCount, setScanCount] = useState(initScanCount);
-  const [selPlan, setSelPlan] = useState('monthly');
-  const [selPay, setSelPay] = useState('card');
   const [premProcessing, setPremProcessing] = useState(false);
   const [showPremModal, setShowPremModal] = useState(false);
   const [premSuccess, setPremSuccess] = useState(false);
@@ -205,6 +203,25 @@ export default function App() {
     const load = () => setVoices(synth.getVoices());
     synth.onvoiceschanged = load;
     load();
+  }, []);
+
+  // Handle return from Stripe Checkout: verify the session server-side, then
+  // unlock premium and clean the query string out of the URL.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'success' && params.get('session_id')) {
+      (async () => {
+        try {
+          const res = await fetch(`/api/stripe-verify?session_id=${encodeURIComponent(params.get('session_id'))}`);
+          const data = await res.json();
+          if (data.premium) { setIsPremium(true); ls.set('isPremium', true); setPremSuccess(true); }
+          else alert('Payment not confirmed. If you were charged, contact support.');
+        } catch { alert('Could not verify payment. Please reopen the app.'); }
+        window.history.replaceState({}, '', window.location.pathname);
+      })();
+    } else if (params.get('checkout') === 'cancel') {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, []);
 
   // ── TTS ──
@@ -440,11 +457,24 @@ export default function App() {
   };
 
   // ── Premium ──
+  // Start a real Stripe Checkout session and redirect. On return, the
+  // ?checkout=success&session_id=... handler (useEffect below) verifies the
+  // payment server-side via /api/stripe-verify and unlocks premium.
   const activatePremium = async () => {
     setPremProcessing(true);
-    await new Promise(r => setTimeout(r, 2000));
-    setIsPremium(true); ls.set('isPremium', true);
-    setPremProcessing(false); setShowPremModal(false); setPremSuccess(true);
+    try {
+      const res = await fetch('/api/stripe-checkout', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ userId: ls.get('deviceId', null) }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout unavailable');
+      window.location.href = data.url; // redirect to Stripe Checkout
+    } catch (e) {
+      setPremProcessing(false);
+      alert('Payment could not start: ' + e.message);
+    }
   };
 
   const toggleBookmark = (entry) => {
@@ -622,18 +652,10 @@ export default function App() {
           <p style={ps}>Unlock everything. No limits.</p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-          {[['monthly','$4.99','/month','Most Flexible'],['yearly','$39.99','/year','Save 33%']].map(([plan,price,per,badge]) => (
-            <div key={plan} onClick={() => setSelPlan(plan)} style={{
-              flex: 1, background: selPlan === plan ? (darkMode ? '#1a2f4a' : '#dbeafe') : C.card2,
-              border: `2px solid ${selPlan === plan ? C.blue : C.border}`, borderRadius: 16,
-              padding: 16, cursor: 'pointer', textAlign: 'center',
-            }}>
-              <span style={tag(selPlan === plan ? C.blue : C.muted)}>{badge}</span>
-              <div style={{ fontSize: 28, fontWeight: 900, color: C.text, margin: '8px 0 2px' }}>{price}</div>
-              <div style={{ fontSize: 13, color: C.muted }}>{per}</div>
-            </div>
-          ))}
+        <div style={{ background: darkMode ? '#1a2f4a' : '#dbeafe', border: `2px solid ${C.blue}`, borderRadius: 16, padding: 20, marginBottom: 20, textAlign: 'center' }}>
+          <span style={tag(C.blue)}>Monthly</span>
+          <div style={{ fontSize: 34, fontWeight: 900, color: C.text, margin: '8px 0 2px' }}>$2.99</div>
+          <div style={{ fontSize: 13, color: C.muted }}>per month · cancel anytime</div>
         </div>
 
         <div style={{ background: C.card2, borderRadius: 14, padding: 16, marginBottom: 16 }}>
@@ -649,31 +671,13 @@ export default function App() {
           ))}
         </div>
 
-        <div style={{ background: C.card2, borderRadius: 14, padding: 16, marginBottom: 16 }}>
-          <h2 style={h2s}>Payment Method</h2>
-          {[['card','💳 Credit / Debit Card'],['paypal','🅿️ PayPal'],['apple','🍎 Apple Pay'],['google','🟢 Google Pay']].map(([m,lbl]) => (
-            <div key={m} onClick={() => setSelPay(m)} style={{
-              display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', marginBottom: 8,
-              borderRadius: 10, border: `2px solid ${selPay === m ? C.blue : C.border}`,
-              background: selPay === m ? (darkMode ? '#1a2f4a' : '#dbeafe') : (darkMode ? '#111' : '#f0f0f0'),
-              cursor: 'pointer',
-            }}>
-              <span style={{ flex: 1, color: C.text, fontSize: 14 }}>{lbl}</span>
-              {selPay === m && <span style={{ color: C.blue, fontWeight: 700 }}>✓</span>}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ background: darkMode ? '#3a2e10' : '#fff7e0', border: `1px solid ${C.yellow}`, borderRadius: 10, padding: 10, marginBottom: 12 }}>
-          <p style={{ ...ps, margin: 0, color: C.yellow, fontSize: 12, textAlign: 'center' }}>
-            🧪 Demo mode — no real payment is processed. Tapping below unlocks premium locally for testing.
-          </p>
-        </div>
         <button style={btn(C.green, { fontSize: 17, padding: '16px 20px', opacity: premProcessing ? 0.7 : 1 })}
           disabled={premProcessing} onClick={activatePremium}>
-          {premProcessing ? '⏳ Processing…' : `Unlock Premium (Demo) — ${selPlan === 'monthly' ? '$4.99/mo' : '$39.99/yr'} →`}
+          {premProcessing ? '⏳ Redirecting to checkout…' : 'Subscribe — $2.99/mo →'}
         </button>
-        <p style={{ ...ps, textAlign: 'center', fontSize: 11, marginTop: 6 }}>Real billing via Stripe coming soon · Cancel anytime</p>
+        <p style={{ ...ps, textAlign: 'center', fontSize: 11, marginTop: 6 }}>
+          🔒 Secure payment by Stripe · Card, Apple Pay & Google Pay · Cancel anytime
+        </p>
       </div>
     </div>
   );
