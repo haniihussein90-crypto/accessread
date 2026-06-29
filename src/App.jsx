@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { supabase, supabaseEnabled } from './lib/supabase';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const DARK = {
@@ -168,6 +169,7 @@ export default function App() {
 
   // History & bookmarks
   const [history, setHistory] = useState(ls.get('history', []));
+  const [cloudHistory, setCloudHistory] = useState([]);
   const [bookmarks, setBookmarks] = useState(ls.get('bookmarks', []));
 
   // Settings
@@ -193,6 +195,11 @@ export default function App() {
   const [premProcessing, setPremProcessing] = useState(false);
   const [showPremModal, setShowPremModal] = useState(false);
   const [premSuccess, setPremSuccess] = useState(false);
+
+  // Auth (Supabase). When signed in, premium + history come from the DB.
+  const [user, setUser] = useState(null);
+  const [authEmail, setAuthEmail] = useState('');
+  const [authSent, setAuthSent] = useState(false);
 
   // Pinch zoom
   const [zoom, setZoom] = useState(1);
@@ -223,6 +230,64 @@ export default function App() {
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
+
+  // Refresh premium status from the database (source of truth when signed in).
+  const refreshPremium = useCallback(async (u) => {
+    if (!supabaseEnabled || !u) return;
+    const { data } = await supabase.from('users').select('isPremium, premiumExpiry').eq('id', u.id).maybeSingle();
+    const active = data?.isPremium && (!data.premiumExpiry || new Date(data.premiumExpiry) > new Date());
+    setIsPremium(!!active); ls.set('isPremium', !!active);
+  }, []);
+
+  // Pull the signed-in user's cloud history (synced across devices).
+  const loadCloudHistory = useCallback(async (u) => {
+    if (!supabaseEnabled || !u) { setCloudHistory([]); return; }
+    const { data, error } = await supabase
+      .from('history').select('id, scanType, extractedText, created_at')
+      .eq('userId', u.id).order('created_at', { ascending: false }).limit(50);
+    if (!error && data) setCloudHistory(data);
+  }, []);
+
+  const syncAccount = useCallback((u) => {
+    fetch('/api/auth-callback', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ userId: u.id, email: u.email }),
+    }).catch(() => {});
+    refreshPremium(u);
+    loadCloudHistory(u);
+  }, [refreshPremium, loadCloudHistory]);
+
+  // Supabase auth bootstrap + subscription.
+  useEffect(() => {
+    if (!supabaseEnabled) return;
+    supabase.auth.getSession().then(({ data }) => {
+      const u = data?.session?.user || null;
+      setUser(u);
+      if (u) syncAccount(u);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      const u = session?.user || null;
+      setUser(u);
+      if (u) syncAccount(u);
+    });
+    return () => sub?.subscription?.unsubscribe();
+  }, [syncAccount]);
+
+  const signInWithEmail = async () => {
+    if (!supabaseEnabled) { alert('Sign-in is not configured.'); return; }
+    if (!authEmail.includes('@')) { alert('Enter a valid email.'); return; }
+    const { error } = await supabase.auth.signInWithOtp({
+      email: authEmail.trim(),
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) alert('Sign-in error: ' + error.message);
+    else setAuthSent(true);
+  };
+
+  const signOut = async () => {
+    if (supabaseEnabled) await supabase.auth.signOut();
+    setUser(null); setIsPremium(false); ls.set('isPremium', false);
+  };
 
   // ── TTS ──
   const uttRef = useRef(null);        // keep a ref so the utterance is not GC'd mid-speech
@@ -362,6 +427,12 @@ export default function App() {
       const entry = { id: Date.now(), type: scanType, text: cleaned, date: new Date().toLocaleString(), img: imgData };
       const newHist = [entry, ...history].slice(0, 10);
       setHistory(newHist); ls.set('history', newHist);
+      // Cloud history sync — persist to Supabase when signed in (across devices).
+      if (supabaseEnabled && user) {
+        supabase.from('history').insert({ userId: user.id, scanType, extractedText: cleaned }).then(({ error }) => {
+          if (error) console.error('history sync error:', error.message);
+        });
+      }
       if (scanType === 'medicine') { setMedChecks({ allergic: false, dosage: false, expiry: false, interactions: false }); setMedModal(true); }
       setTab('results');
       // AI classify
@@ -378,7 +449,7 @@ export default function App() {
     } finally {
       setProcessing(false);
     }
-  }, [scanType, history, scanCount, callClaude, detectColors, isPremium, extractText]);
+  }, [scanType, history, scanCount, callClaude, detectColors, isPremium, extractText, user]);
 
   const sendChat = async () => {
     if (!chatInput.trim() || chatLoading) return;
@@ -461,12 +532,19 @@ export default function App() {
   // ?checkout=success&session_id=... handler (useEffect below) verifies the
   // payment server-side via /api/stripe-verify and unlocks premium.
   const activatePremium = async () => {
+    // Premium is DB-backed, so the buyer must be signed in for the webhook to
+    // attribute the subscription to their account.
+    if (supabaseEnabled && !user) {
+      alert('Please sign in (Settings → Account) before subscribing, so your premium syncs across devices.');
+      setShowPremModal(false); setTab('settings');
+      return;
+    }
     setPremProcessing(true);
     try {
       const res = await fetch('/api/stripe-checkout', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ userId: ls.get('deviceId', null) }),
+        body: JSON.stringify({ userId: user?.id || null, email: user?.email || null }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error || 'Checkout unavailable');
@@ -940,8 +1018,25 @@ export default function App() {
             ))}
           </div>
         )}
+        {user && cloudHistory.length > 0 && (
+          <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14 }}>
+            <h2 style={h2s}>☁️ Cloud History <span style={{ ...tag(C.green), fontSize: 10 }}>synced</span></h2>
+            {cloudHistory.map(e => (
+              <div key={e.id} style={{ borderBottom: `1px solid ${C.border}`, paddingBottom: 10, marginBottom: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ ...tag(C.green), marginRight: 8 }}>{e.scanType}</span>
+                  <span style={{ fontSize: 11, color: C.muted }}>{new Date(e.created_at).toLocaleString()}</span>
+                </div>
+                <p style={{ ...ps, color: C.text, margin: 0, fontSize: 13 }}>{e.extractedText?.slice(0, 120)}{e.extractedText?.length > 120 ? '…' : ''}</p>
+                <button onClick={() => { setOcrText(e.extractedText); setScanType(e.scanType); setTab('results'); }} style={{ background: 'none', border: `1px solid ${C.border}`, borderRadius: 8, color: C.blue, padding: '3px 10px', cursor: 'pointer', fontSize: 12, marginTop: 6 }}>
+                  View →
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <div style={{ background: C.card2, borderRadius: 16, padding: 16 }}>
-          <h2 style={h2s}>Recent Scans (last 10)</h2>
+          <h2 style={h2s}>{user ? 'This Device (last 10)' : 'Recent Scans (last 10)'}</h2>
           {history.length === 0 && <p style={ps}>No scans yet.</p>}
           {history.map(e => (
             <div key={e.id} style={{ borderBottom: `1px solid ${C.border}`, paddingBottom: 10, marginBottom: 10 }}>
@@ -1066,12 +1161,27 @@ export default function App() {
 
         <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14 }}>
           <h2 style={h2s}>Account</h2>
+          {supabaseEnabled && !user && (
+            <>
+              <p style={ps}>Sign in to sync premium &amp; history across your devices.</p>
+              {authSent
+                ? <p style={{ ...ps, color: C.green }}>✓ Check your email for a sign-in link.</p>
+                : <>
+                    <input style={inp} type="email" placeholder="you@example.com" value={authEmail} onChange={e => setAuthEmail(e.target.value)} />
+                    <button style={btn(C.blue)} onClick={signInWithEmail}>✉️ Sign in with Email</button>
+                  </>
+              }
+            </>
+          )}
+          {user && (
+            <p style={{ ...ps, color: C.text }}>Signed in as <strong>{user.email}</strong></p>
+          )}
           {isPremium
-            ? <><span style={tag(C.green)}>⭐ Premium Active</span><p style={{ ...ps, marginTop: 10 }}>All features unlocked. Thank you!</p>
-                <button style={btn(C.red)} onClick={() => { setIsPremium(false); ls.set('isPremium', false); }}>Cancel Subscription</button></>
+            ? <><span style={tag(C.green)}>⭐ Premium Active</span><p style={{ ...ps, marginTop: 10 }}>All features unlocked. Thank you!</p></>
             : <><p style={ps}>{Math.max(0, FREE_DAILY - scanCount)} free scans remaining today.</p>
                 <button style={btn(C.green)} onClick={() => setShowPremModal(true)}>⭐ Upgrade to Premium</button></>
           }
+          {user && <button style={btn(darkMode ? C.card : '#e8e8e8', { border: `1px solid ${C.border}`, color: C.text })} onClick={signOut}>Sign Out</button>}
         </div>
 
         <div style={{ background: C.card2, borderRadius: 16, padding: 16 }}>
