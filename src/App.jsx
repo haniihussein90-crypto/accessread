@@ -65,6 +65,8 @@ const SCAN_TYPES = [
 
 const COMING_SOON = ['💵 Currency', '🔲 Barcode', '✈️ Flight Scanner'];
 
+const FREE_DAILY = 50; // free-tier daily scan limit
+
 const LANGUAGES = [
   { code: 'English', label: 'English', native: 'English', flag: '🇬🇧' },
   { code: 'Spanish', label: 'Spanish', native: 'Español', flag: '🇪🇸' },
@@ -83,11 +85,11 @@ const LANGUAGES = [
 // Only features that actually work are advertised in the premium modal.
 // Removed: Flight Scanner, History Export (PDF/CSV), Smart Parsing — not built.
 const PREMIUM_FEATURES = [
-  { icon: '∞', label: 'Unlimited Scans', desc: 'No daily scan limits' },
+  { icon: '∞', label: 'Unlimited Scans', desc: 'No daily limit (free tier: 50/day)' },
+  { icon: '🤖', label: 'AI Analysis', desc: 'Medicine & food context, AI chat' },
   { icon: '🍳', label: 'AI Cooking Assistant', desc: 'Scan food labels → recipes & nutrition' },
-  { icon: '🎨', label: 'Color Detection', desc: 'Detect dominant colors in any image' },
-  { icon: '🤖', label: 'AI Chat', desc: 'Ask anything about your scans' },
-  { icon: '🔊', label: 'Premium AI Voices', desc: 'Natural ElevenLabs text-to-speech' },
+  { icon: '⚡', label: 'Faster Processing', desc: 'Priority OCR queue' },
+  { icon: '☁️', label: 'Cloud Sync', desc: 'Coming soon — sync across devices' },
 ];
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
@@ -466,7 +468,7 @@ export default function App() {
   };
   const onTouchEnd = () => { touchRef.current = {}; };
 
-  const canScan = isPremium || scanCount < 10;
+  const canScan = isPremium || scanCount < FREE_DAILY;
 
   const wrap = {
     maxWidth: 480, margin: '0 auto', minHeight: '100dvh', background: C.bg,
@@ -705,7 +707,7 @@ export default function App() {
           </button>
         </div>
         {!isPremium && (
-          <p style={{ ...ps, margin: '6px 0 0', fontSize: 12 }}>{Math.max(0, 10 - scanCount)} free scans left today</p>
+          <p style={{ ...ps, margin: '6px 0 0', fontSize: 12 }}>{Math.max(0, FREE_DAILY - scanCount)} free scans left today</p>
         )}
       </div>
 
@@ -764,7 +766,7 @@ export default function App() {
 
         {!isPremium && (
           <button style={btn(C.green)} onClick={() => setShowPremModal(true)}>
-            ⭐ Upgrade to Premium — $4.99/mo
+            ⭐ Upgrade to Premium — $2.99/mo
           </button>
         )}
 
@@ -1063,7 +1065,7 @@ export default function App() {
           {isPremium
             ? <><span style={tag(C.green)}>⭐ Premium Active</span><p style={{ ...ps, marginTop: 10 }}>All features unlocked. Thank you!</p>
                 <button style={btn(C.red)} onClick={() => { setIsPremium(false); ls.set('isPremium', false); }}>Cancel Subscription</button></>
-            : <><p style={ps}>{Math.max(0, 10 - scanCount)} free scans remaining today.</p>
+            : <><p style={ps}>{Math.max(0, FREE_DAILY - scanCount)} free scans remaining today.</p>
                 <button style={btn(C.green)} onClick={() => setShowPremModal(true)}>⭐ Upgrade to Premium</button></>
           }
         </div>
