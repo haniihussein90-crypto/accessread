@@ -247,21 +247,34 @@ export default function App() {
   }, []);
 
   const runOCR = useCallback(async (imgData) => {
-    if (!window.Tesseract) {
-      console.error('OCR Error: Tesseract not found on window object. CDN script may not have loaded.');
-      alert('OCR library not loaded. Check internet connection.');
-      return;
-    }
-    console.log('Tesseract loaded:', typeof window.Tesseract, '| scan type:', scanType, '| imgData type:', typeof imgData, '| imgData length:', imgData?.length ?? 'n/a');
     setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
     try {
+      // Color detection is a pure client-side canvas operation — no OCR needed.
       if (scanType === 'color' && isPremium) { detectColors(imgData); setProcessing(false); setTab('results'); return; }
-      console.log('Starting Tesseract.recognize...');
-      const result = await window.Tesseract.recognize(imgData, 'eng', { logger: () => {} });
-      console.log('Tesseract raw result:', result);
-      const { data: { text } } = result;
-      const cleaned = text.trim();
-      console.log('OCR text extracted, length:', cleaned.length);
+
+      // OCR runs server-side via Claude vision (/api/ocr) — reliable on iOS Safari
+      // where Tesseract.js fails with "Error attempting to read image".
+      console.log('Sending image to /api/ocr, scanType:', scanType, '| length:', imgData?.length ?? 'n/a');
+      const res = await fetch('/api/ocr', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ image: imgData, scanType }),
+      });
+      const data = await res.json();
+      console.log('OCR response:', data);
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || `Server returned ${res.status}`);
+      }
+
+      const cleaned = (data.text || '').trim();
+      if (!cleaned) {
+        setOcrText('');
+        setAiError('No readable text found in the image. Try again with better lighting.');
+        setTab('results');
+        return;
+      }
+
       setOcrText(cleaned);
       const newCount = scanCount + 1;
       setScanCount(newCount); ls.set('scanData', { count: newCount, date: todayStr() });
@@ -280,10 +293,8 @@ export default function App() {
       }
     } catch (e) {
       console.error('OCR Error (full object):', e);
-      console.error('OCR Error name:', e?.name);
       console.error('OCR Error message:', e?.message);
-      console.error('OCR Error stack:', e?.stack);
-      alert('OCR failed: ' + (e?.message || e?.name || JSON.stringify(e) || 'Unknown error'));
+      alert('OCR failed: ' + (e?.message || 'Could not read image. Please try again.'));
     } finally {
       setProcessing(false);
     }
