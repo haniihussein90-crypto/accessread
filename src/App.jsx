@@ -13,6 +13,19 @@ const LIGHT = {
   red: '#dc2626', yellow: '#d97706', purple: '#7c3aed', orange: '#ea580c',
 };
 
+// Voice Waves logo — blue main bars, green accent. Works on dark & light bg.
+const VoiceWaves = ({ size = 44 }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="AccessRead logo" role="img">
+    <rect x="3"  y="19" width="4" height="10" rx="2" fill="#1e40af" />
+    <rect x="10" y="13" width="4" height="22" rx="2" fill="#1e40af" />
+    <rect x="17" y="6"  width="4" height="36" rx="2" fill="#10b981" />
+    <rect x="24" y="11" width="4" height="26" rx="2" fill="#1e40af" />
+    <rect x="31" y="6"  width="4" height="36" rx="2" fill="#10b981" />
+    <rect x="38" y="13" width="4" height="22" rx="2" fill="#1e40af" />
+    <rect x="45" y="19" width="3" height="10" rx="1.5" fill="#1e40af" />
+  </svg>
+);
+
 const ls = {
   get: (k, d = null) => { try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : d; } catch { return d; } },
   set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
@@ -623,14 +636,22 @@ export default function App() {
   const HomeTab = () => (
     <div style={{ flex: 1, overflowY: 'auto' }}>
       <div style={hdr}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h1 style={{ ...h1s, flex: 1 }}>👁️ AccessRead</h1>
-          <button onClick={() => { setDarkMode(!darkMode); ls.set('darkMode', !darkMode); }}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <VoiceWaves size={40} />
+          <h1 style={{ ...h1s, flex: 1, margin: 0 }}>AccessRead</h1>
+          {isPremium && <span style={tag(C.green)}>PRO</span>}
+          <button aria-label="Toggle theme" onClick={() => { setDarkMode(!darkMode); ls.set('darkMode', !darkMode); }}
             style={{ background: 'none', border: `1px solid ${C.border}`, borderRadius: 8, color: C.muted, padding: '4px 10px', cursor: 'pointer', fontSize: 16 }}>
             {darkMode ? '☀️' : '🌙'}
           </button>
-          {isPremium ? <span style={tag(C.green)}>PRO</span> : <span style={tag(C.muted)}>{Math.max(0, 10 - scanCount)} left</span>}
+          <button aria-label="Settings" onClick={() => setTab('settings')}
+            style={{ background: 'none', border: `1px solid ${C.border}`, borderRadius: 8, color: C.muted, padding: '4px 10px', cursor: 'pointer', fontSize: 16 }}>
+            ⚙️
+          </button>
         </div>
+        {!isPremium && (
+          <p style={{ ...ps, margin: '6px 0 0', fontSize: 12 }}>{Math.max(0, 10 - scanCount)} free scans left today</p>
+        )}
       </div>
 
       <div style={{ padding: 16 }}>
