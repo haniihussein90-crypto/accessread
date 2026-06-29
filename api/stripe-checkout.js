@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   if (!secret) return res.status(500).json({ error: 'STRIPE_SECRET_KEY not configured on server' });
 
   const stripe = new Stripe(secret);
-  const { priceId, userId } = req.body || {};
+  const { priceId, userId, email } = req.body || {};
   const price = priceId || process.env.STRIPE_PRICE_ID;
   if (!price) return res.status(400).json({ error: 'No priceId provided and STRIPE_PRICE_ID not set' });
 
@@ -26,6 +26,9 @@ export default async function handler(req, res) {
       mode: 'subscription',
       line_items: [{ price, quantity: 1 }],
       client_reference_id: userId || undefined,
+      customer_email: email || undefined,
+      metadata: { userId: userId || '', email: email || '' },
+      subscription_data: { metadata: { userId: userId || '', email: email || '' } },
       success_url: `${origin}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?checkout=cancel`,
       allow_promotion_codes: true,
