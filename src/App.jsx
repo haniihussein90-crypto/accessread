@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const DARK = {
+  // muted bumped #888→#b0b0b0 for WCAG AA contrast on #252525 cards (low-vision)
   bg: '#0f0f0f', card: '#1a1a1a', card2: '#252525', border: '#2e2e2e',
-  text: '#ffffff', muted: '#888888', blue: '#1E88E5', green: '#22c55e',
-  red: '#ef4444', yellow: '#f59e0b', purple: '#a855f7', orange: '#f97316',
+  text: '#ffffff', muted: '#b0b0b0', blue: '#1E88E5', green: '#22c55e',
+  red: '#ef4444', yellow: '#fbbf24', purple: '#a855f7', orange: '#f97316',
 };
 const LIGHT = {
   bg: '#f5f5f5', card: '#ffffff', card2: '#e8e8e8', border: '#d0d0d0',
@@ -40,24 +41,25 @@ const COUNTRIES = [
   { name: 'Zimbabwe', e: '999' },
 ];
 
+// MVP scan types. Currency / Barcode / Flight are deferred to Phase 2 —
+// see COMING_SOON below for what's surfaced as "Coming Soon".
 const SCAN_TYPES = [
   { id: 'general', label: 'General', icon: '📄' },
   { id: 'medicine', label: 'Medicine', icon: '💊' },
   { id: 'food', label: 'Food Label', icon: '🥫' },
-  { id: 'currency', label: 'Currency', icon: '💵' },
-  { id: 'barcode', label: 'Barcode', icon: '🔲' },
   { id: 'color', label: 'Color ID', icon: '🎨' },
 ];
 
+const COMING_SOON = ['💵 Currency', '🔲 Barcode', '✈️ Flight Scanner'];
+
+// Only features that actually work are advertised in the premium modal.
+// Removed: Flight Scanner, History Export (PDF/CSV), Smart Parsing — not built.
 const PREMIUM_FEATURES = [
-  { icon: '🍳', label: 'AI Cooking Assistant', desc: 'Scan food labels → recipes & nutrition' },
-  { icon: '✈️', label: 'Flight Scanner', desc: 'Scan boarding passes → flight info' },
-  { icon: '🎨', label: 'Color Detection', desc: 'Detect dominant colors in any image' },
   { icon: '∞', label: 'Unlimited Scans', desc: 'No daily scan limits' },
+  { icon: '🍳', label: 'AI Cooking Assistant', desc: 'Scan food labels → recipes & nutrition' },
+  { icon: '🎨', label: 'Color Detection', desc: 'Detect dominant colors in any image' },
   { icon: '🤖', label: 'AI Chat', desc: 'Ask anything about your scans' },
-  { icon: '📤', label: 'History Export', desc: 'Export scan history as PDF/CSV' },
-  { icon: '🔊', label: 'ElevenLabs TTS', desc: 'Premium AI voices' },
-  { icon: '💬', label: 'Smart Parsing', desc: 'Structured data extraction' },
+  { icon: '🔊', label: 'Premium AI Voices', desc: 'Natural ElevenLabs text-to-speech' },
 ];
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
@@ -129,7 +131,6 @@ export default function App() {
   const [aiError, setAiError] = useState(null);
   const [cookingResult, setCookingResult] = useState(null);
   const [cookingLoading, setCookingLoading] = useState(false);
-  const [flightResult, setFlightResult] = useState(null);
   const [colorResult, setColorResult] = useState(null);
 
   // History & bookmarks
@@ -174,15 +175,27 @@ export default function App() {
   }, []);
 
   // ── TTS ──
+  const uttRef = useRef(null);        // keep a ref so the utterance is not GC'd mid-speech
+  const resumeTimer = useRef(null);   // works around the Chrome/Safari ~15s auto-pause bug
+
   const speakBrowser = useCallback((text) => {
-    window.speechSynthesis.cancel();
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    if (resumeTimer.current) clearInterval(resumeTimer.current);
+
     const utt = new SpeechSynthesisUtterance(text);
     utt.voice = voices[voiceIdx] || null;
     utt.rate = ttsRate;
-    utt.onend = () => setReading(false);
-    utt.onerror = () => setReading(false);
+    utt.onend = () => { setReading(false); if (resumeTimer.current) clearInterval(resumeTimer.current); };
+    utt.onerror = (e) => { console.error('TTS error:', e?.error); setReading(false); if (resumeTimer.current) clearInterval(resumeTimer.current); };
+    uttRef.current = utt; // prevent garbage collection that cuts speech off after ~1 word
     setReading(true);
-    window.speechSynthesis.speak(utt);
+    synth.speak(utt);
+    // Long text pauses itself in Chrome/Safari; nudge it to keep going.
+    resumeTimer.current = setInterval(() => {
+      if (!synth.speaking) { clearInterval(resumeTimer.current); return; }
+      synth.pause(); synth.resume();
+    }, 10000);
   }, [voices, voiceIdx, ttsRate]);
 
   const speakElevenLabs = useCallback(async (text) => {
@@ -204,7 +217,7 @@ export default function App() {
   }, [elevenLabsVoice, speakBrowser]);
 
   const speak = isPremium ? speakElevenLabs : speakBrowser;
-  const stopSpeak = () => { window.speechSynthesis.cancel(); setReading(false); };
+  const stopSpeak = () => { window.speechSynthesis.cancel(); if (resumeTimer.current) clearInterval(resumeTimer.current); setReading(false); };
 
   // ── Claude API (proxied through /api/claude — key never leaves server) ──
   const callClaude = useCallback(async (prompt, systemMsg = '') => {
@@ -278,7 +291,7 @@ export default function App() {
   }, [scanType]);
 
   const runOCR = useCallback(async (imgData) => {
-    setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
+    setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setColorResult(null);
     try {
       // Color detection is a pure client-side canvas operation — no OCR needed.
       if (scanType === 'color' && isPremium) { detectColors(imgData); setProcessing(false); setTab('results'); return; }
@@ -345,17 +358,6 @@ export default function App() {
       setCookingResult(r);
     } catch (e) { setCookingResult('Error: ' + e.message); }
     finally { setCookingLoading(false); }
-  };
-
-  const runFlightScan = async () => {
-    if (!ocrText) return;
-    try {
-      const r = await callClaude(
-        `Extract flight info from this boarding pass scan:\n${ocrText.slice(0,500)}\nReturn: Flight number, Origin, Destination, Departure time, Gate, Seat. Use plain text.`,
-        'You are a travel assistant extracting boarding pass data.'
-      );
-      setFlightResult(r);
-    } catch (e) { setFlightResult('Error: ' + e.message); }
   };
 
   // ── Camera ──
@@ -591,11 +593,16 @@ export default function App() {
           ))}
         </div>
 
+        <div style={{ background: darkMode ? '#3a2e10' : '#fff7e0', border: `1px solid ${C.yellow}`, borderRadius: 10, padding: 10, marginBottom: 12 }}>
+          <p style={{ ...ps, margin: 0, color: C.yellow, fontSize: 12, textAlign: 'center' }}>
+            🧪 Demo mode — no real payment is processed. Tapping below unlocks premium locally for testing.
+          </p>
+        </div>
         <button style={btn(C.green, { fontSize: 17, padding: '16px 20px', opacity: premProcessing ? 0.7 : 1 })}
           disabled={premProcessing} onClick={activatePremium}>
-          {premProcessing ? '⏳ Processing payment...' : `Subscribe — ${selPlan === 'monthly' ? '$4.99/mo' : '$39.99/yr'} →`}
+          {premProcessing ? '⏳ Processing…' : `Unlock Premium (Demo) — ${selPlan === 'monthly' ? '$4.99/mo' : '$39.99/yr'} →`}
         </button>
-        <p style={{ ...ps, textAlign: 'center', fontSize: 11, marginTop: 6 }}>Cancel anytime · Secure payment · No hidden fees</p>
+        <p style={{ ...ps, textAlign: 'center', fontSize: 11, marginTop: 6 }}>Real billing via Stripe coming soon · Cancel anytime</p>
       </div>
     </div>
   );
@@ -606,7 +613,7 @@ export default function App() {
       <div style={{ textAlign: 'center', maxWidth: 340 }}>
         <div style={{ fontSize: 72, marginBottom: 16 }}>🎉</div>
         <h1 style={h1s}>Welcome to Premium!</h1>
-        <p style={ps}>Unlimited scans, AI Cooking Assistant, Flight Scanner, Color Detection, and ElevenLabs voices — all unlocked.</p>
+        <p style={ps}>Unlimited scans, AI Cooking Assistant, Color Detection, AI Chat, and premium voices — all unlocked.</p>
         <button style={btn(C.green, { fontSize: 17 })} onClick={() => setPremSuccess(false)}>Start Scanning →</button>
       </div>
     </div>
@@ -672,6 +679,9 @@ export default function App() {
                 <button style={btn(C.red, { flex: 1, margin: 0 })} onClick={stopCam}>✕ Cancel</button>
               </div>
           }
+          <p style={{ ...ps, fontSize: 12, margin: '10px 0 0', textAlign: 'center' }}>
+            💡 Tip: scan flat surfaces in good light. Curved labels (jars, bottles) read best photographed straight-on.
+          </p>
         </div>
 
         {!isPremium && (
@@ -679,6 +689,15 @@ export default function App() {
             ⭐ Upgrade to Premium — $4.99/mo
           </button>
         )}
+
+        <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14 }}>
+          <h2 style={h2s}>🔜 Coming Soon</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {COMING_SOON.map(item => (
+              <span key={item} style={{ ...tag(darkMode ? '#111' : '#e8e8e8'), color: C.muted, border: `1px solid ${C.border}` }}>{item}</span>
+            ))}
+          </div>
+        </div>
 
         <div style={{ background: C.card2, borderRadius: 16, padding: 16 }}>
           <h2 style={h2s}>🚨 Quick SOS</h2>
@@ -784,16 +803,6 @@ export default function App() {
                   : <button style={btn(C.orange, { marginBottom: 0 })} onClick={runCooking} disabled={cookingLoading}>
                       {cookingLoading ? '⏳ Analyzing…' : '🍳 Get Recipe & Nutrition Tips'}
                     </button>
-                }
-              </div>
-            )}
-
-            {isPremium && (scanType === 'general' || scanType === 'barcode') && (
-              <div style={{ background: C.card2, borderRadius: 16, padding: 18, marginBottom: 14 }}>
-                <h2 style={h2s}>✈️ Flight Scanner</h2>
-                {flightResult
-                  ? <p style={{ ...ps, color: C.text, whiteSpace: 'pre-wrap' }}>{flightResult}</p>
-                  : <button style={btn(C.blue, { marginBottom: 0 })} onClick={runFlightScan}>✈️ Extract Flight Info</button>
                 }
               </div>
             )}
