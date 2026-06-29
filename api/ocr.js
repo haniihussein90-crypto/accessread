@@ -1,11 +1,18 @@
 const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages';
 
+// Supported languages: English, Spanish, Mandarin Chinese, Hindi, Arabic,
+// Portuguese, Russian, Japanese, Punjabi, French, Dutch, Vietnamese.
+const LANG_INSTRUCTION =
+  ' The text may be in any of these languages: English, Spanish, Mandarin Chinese, ' +
+  'Hindi, Arabic, Portuguese, Russian, Japanese, Punjabi, French, Dutch, or Vietnamese. ' +
+  'Transcribe the text in its ORIGINAL language and script exactly as written — do not translate.';
+
 const PROMPTS = {
-  general: 'Extract ALL text visible in this image exactly as it appears. Return only the extracted text, no commentary. If there is no readable text, respond with exactly "NO_TEXT_FOUND".',
-  medicine: 'This is a photo of medicine or a medication label. Extract ALL text exactly as it appears — drug name, strength, dosage instructions, warnings, expiry date. Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
-  food: 'This is a photo of a food product or nutrition label. Extract ALL text exactly as it appears — product name, ingredients, nutrition facts, allergens. Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
-  currency: 'Extract any text, numbers, and denomination visible on this currency/banknote. Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
-  barcode: 'Extract any text, numbers, and barcode digits visible in this image. Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
+  general: 'Extract ALL text visible in this image exactly as it appears.' + LANG_INSTRUCTION + ' Return only the extracted text, no commentary. If there is no readable text, respond with exactly "NO_TEXT_FOUND".',
+  medicine: 'This is a photo of medicine or a medication label. Extract ALL text exactly as it appears — drug name, strength, dosage instructions, warnings, expiry date.' + LANG_INSTRUCTION + ' Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
+  food: 'This is a photo of a food product or nutrition label. Extract ALL text exactly as it appears — product name, ingredients, nutrition facts, allergens.' + LANG_INSTRUCTION + ' Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
+  currency: 'Extract any text, numbers, and denomination visible on this currency/banknote.' + LANG_INSTRUCTION + ' Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
+  barcode: 'Extract any text, numbers, and barcode digits visible in this image.' + LANG_INSTRUCTION + ' Return only the extracted text, no commentary. If no readable text, respond with exactly "NO_TEXT_FOUND".',
 };
 
 export default async function handler(req, res) {

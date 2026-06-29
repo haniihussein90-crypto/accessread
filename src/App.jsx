@@ -681,7 +681,6 @@ export default function App() {
         </div>
 
         <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14, textAlign: 'center' }}>
-          {console.log('Rendering camera/upload card. camActive=', camActive, '| scanType=', scanType, '| processing=', processing)}
           <video ref={videoRef} autoPlay playsInline style={{ width: '100%', borderRadius: 10, display: camActive ? 'block' : 'none', maxHeight: 240, objectFit: 'cover' }} />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
           {scannedImg && !camActive && <img src={scannedImg} alt="scan" style={{ width: '100%', borderRadius: 10, maxHeight: 200, objectFit: 'cover', marginBottom: 10 }} />}
@@ -1032,18 +1031,23 @@ export default function App() {
   // ── Render ──
   return (
     <div style={wrap} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+      {/* Render tabs/modals as function calls, not <Component/> elements.
+          Defined inside App(), each render created a new component identity,
+          so <HomeTab/> unmounted+remounted the whole subtree on every state
+          change (e.g. selecting a scan type) — which made the camera/upload
+          card vanish. Calling them inline avoids the remount entirely. */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', transform: `scale(${zoom})`, transformOrigin: 'top center' }}>
-        {tab === 'home' && <HomeTab />}
-        {tab === 'results' && <ResultsTab />}
-        {tab === 'history' && <HistoryTab />}
-        {tab === 'emergency' && <EmergencyTab />}
-        {tab === 'settings' && <SettingsTab />}
+        {tab === 'home' && HomeTab()}
+        {tab === 'results' && ResultsTab()}
+        {tab === 'history' && HistoryTab()}
+        {tab === 'emergency' && EmergencyTab()}
+        {tab === 'settings' && SettingsTab()}
       </div>
-      <BottomNav />
-      {showAgeCheck && <AgeCheckPopup />}
-      {medModal && <MedModal />}
-      {showPremModal && <PremiumModal />}
-      {premSuccess && <PremSuccess />}
+      {BottomNav()}
+      {showAgeCheck && AgeCheckPopup()}
+      {medModal && MedModal()}
+      {showPremModal && PremiumModal()}
+      {premSuccess && PremSuccess()}
     </div>
   );
 }
