@@ -26,7 +26,7 @@ export default async function handler(req, res) {
   const key = process.env.CLAUDE_API_KEY;
   if (!key) return res.status(500).json({ text: null, error: 'CLAUDE_API_KEY not configured on server' });
 
-  const { imageBase64, image, scanType = 'general' } = req.body;
+  const { imageBase64, image, scanType = 'general', language } = req.body;
   const input = imageBase64 || image;
   if (!input) return res.status(400).json({ text: null, source: 'claude', error: 'image is required' });
 
@@ -39,7 +39,12 @@ export default async function handler(req, res) {
   // media_type to png when the caller used the imageBase64 field without a prefix.
   else if (imageBase64) { mediaType = 'image/png'; }
 
-  const prompt = PROMPTS[scanType] || PROMPTS.general;
+  let prompt = PROMPTS[scanType] || PROMPTS.general;
+  // If the user picked a language, hint Claude toward it (but still allow others).
+  const SUPPORTED = ['English','Spanish','Mandarin','Hindi','Arabic','Portuguese','Russian','Japanese','Punjabi','French','Dutch','Vietnamese'];
+  if (language && SUPPORTED.includes(language)) {
+    prompt = `The text is likely in ${language}. Transcribe exactly as written in the original script — do not translate. ` + prompt;
+  }
 
   try {
     const upstream = await fetch(ANTHROPIC_API, {

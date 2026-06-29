@@ -65,6 +65,21 @@ const SCAN_TYPES = [
 
 const COMING_SOON = ['💵 Currency', '🔲 Barcode', '✈️ Flight Scanner'];
 
+const LANGUAGES = [
+  { code: 'English', label: 'English', native: 'English', flag: '🇬🇧' },
+  { code: 'Spanish', label: 'Spanish', native: 'Español', flag: '🇪🇸' },
+  { code: 'Mandarin', label: 'Mandarin', native: '中文', flag: '🇨🇳' },
+  { code: 'Hindi', label: 'Hindi', native: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'Arabic', label: 'Arabic', native: 'العربية', flag: '🇸🇦' },
+  { code: 'Portuguese', label: 'Portuguese', native: 'Português', flag: '🇵🇹' },
+  { code: 'Russian', label: 'Russian', native: 'Русский', flag: '🇷🇺' },
+  { code: 'Japanese', label: 'Japanese', native: '日本語', flag: '🇯🇵' },
+  { code: 'Punjabi', label: 'Punjabi', native: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
+  { code: 'French', label: 'French', native: 'Français', flag: '🇫🇷' },
+  { code: 'Dutch', label: 'Dutch', native: 'Nederlands', flag: '🇳🇱' },
+  { code: 'Vietnamese', label: 'Vietnamese', native: 'Tiếng Việt', flag: '🇻🇳' },
+];
+
 // Only features that actually work are advertised in the premium modal.
 // Removed: Flight Scanner, History Export (PDF/CSV), Smart Parsing — not built.
 const PREMIUM_FEATURES = [
@@ -100,8 +115,11 @@ export default function App() {
     fontSize: 12, fontWeight: 600, display: 'inline-block',
   });
 
-  // Screen / nav
-  const [screen, setScreen] = useState(ls.get('agreedToTerms', false) ? 'main' : 'legal');
+  // Screen / nav: language picker on very first load, then legal, then app
+  const [userLanguage, setUserLanguage] = useState(ls.get('userLanguage', null));
+  const [screen, setScreen] = useState(
+    !ls.get('userLanguage', null) ? 'language' : (ls.get('agreedToTerms', false) ? 'main' : 'legal')
+  );
   const [tab, setTab] = useState('home');
 
   // Legal
@@ -294,14 +312,14 @@ export default function App() {
     const res = await fetch('/api/ocr', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ imageBase64: imgData, scanType }),
+      body: JSON.stringify({ imageBase64: imgData, scanType, language: userLanguage }),
     });
     const data = await res.json();
     console.log('OCR: Claude API response:', data);
     if (!res.ok || data.error) throw new Error(data.error || `Server returned ${res.status}`);
     console.log('OCR: Fallback to Claude success');
     return (data.text || '').trim();
-  }, [scanType]);
+  }, [scanType, userLanguage]);
 
   const runOCR = useCallback(async (imgData) => {
     setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setColorResult(null);
@@ -454,6 +472,42 @@ export default function App() {
     flexDirection: 'column', overflowX: 'hidden',
   };
   const hdr = { padding: '14px 18px 10px', background: C.card, borderBottom: `1px solid ${C.border}`, flexShrink: 0 };
+
+  const chooseLanguage = (code) => {
+    setUserLanguage(code); ls.set('userLanguage', code);
+    setScreen(ls.get('agreedToTerms', false) ? 'main' : 'legal');
+  };
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SCREEN: Language picker (first load only)
+  // ══════════════════════════════════════════════════════════════════════════
+  if (screen === 'language') return (
+    <div style={{ ...wrap, overflowY: 'auto' }}>
+      <div style={{ padding: 24 }}>
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+          <VoiceWaves size={56} />
+          <h1 style={{ ...h1s, marginTop: 10 }}>Welcome to AccessRead</h1>
+          <p style={ps}>Select your language · Selecciona tu idioma · 选择语言</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {LANGUAGES.map(l => (
+            <button key={l.code} onClick={() => chooseLanguage(l.code)} style={{
+              background: C.card2, border: `2px solid ${C.border}`, borderRadius: 14,
+              padding: '14px 10px', color: C.text, cursor: 'pointer', textAlign: 'left',
+              display: 'flex', alignItems: 'center', gap: 10,
+            }}>
+              <span style={{ fontSize: 24 }}>{l.flag}</span>
+              <span>
+                <span style={{ display: 'block', fontWeight: 700, fontSize: 14 }}>{l.native}</span>
+                <span style={{ display: 'block', fontSize: 11, color: C.muted }}>{l.label}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+        <p style={{ ...ps, textAlign: 'center', fontSize: 11, marginTop: 16 }}>You can change this anytime in Settings.</p>
+      </div>
+    </div>
+  );
 
   // ══════════════════════════════════════════════════════════════════════════
   // SCREEN: Legal
@@ -974,6 +1028,14 @@ export default function App() {
       <div style={hdr}><h1 style={h1s}>⚙️ Settings</h1></div>
       <div style={{ padding: 16 }}>
         <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14 }}>
+          <h2 style={h2s}>🌐 Language</h2>
+          <label style={lbl}>Used to improve OCR text recognition</label>
+          <select value={userLanguage || 'English'} onChange={e => { setUserLanguage(e.target.value); ls.set('userLanguage', e.target.value); }} style={inp}>
+            {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.flag} {l.native} ({l.label})</option>)}
+          </select>
+        </div>
+
+        <div style={{ background: C.card2, borderRadius: 16, padding: 16, marginBottom: 14 }}>
           <h2 style={h2s}>Display</h2>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <span style={{ color: C.text, fontSize: 14 }}>Dark Mode</span>
@@ -1020,7 +1082,7 @@ export default function App() {
             onClick={() => { setHistory([]); ls.set('history', []); setScanCount(0); ls.set('scanData', { count: 0, date: todayStr() }); setBookmarks([]); ls.set('bookmarks', []); alert('Cleared.'); }}>
             🗑 Clear All History & Bookmarks
           </button>
-          <button style={btn(C.red)} onClick={() => { localStorage.clear(); setScreen('legal'); }}>
+          <button style={btn(C.red)} onClick={() => { localStorage.clear(); setUserLanguage(null); setScreen('language'); }}>
             ⚠️ Reset App
           </button>
         </div>
