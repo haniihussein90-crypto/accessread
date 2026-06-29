@@ -19,14 +19,18 @@ export default async function handler(req, res) {
   const key = process.env.CLAUDE_API_KEY;
   if (!key) return res.status(500).json({ text: null, error: 'CLAUDE_API_KEY not configured on server' });
 
-  const { image, scanType = 'general' } = req.body;
-  if (!image) return res.status(400).json({ text: null, error: 'image is required' });
+  const { imageBase64, image, scanType = 'general' } = req.body;
+  const input = imageBase64 || image;
+  if (!input) return res.status(400).json({ text: null, source: 'claude', error: 'image is required' });
 
-  // Accept either a full data URL ("data:image/jpeg;base64,...") or raw base64.
+  // Accept a full data URL ("data:image/jpeg;base64,...") or raw base64.
   let mediaType = 'image/jpeg';
-  let base64 = image;
-  const match = /^data:(image\/[a-zA-Z+]+);base64,(.*)$/.exec(image);
+  let base64 = input;
+  const match = /^data:(image\/[a-zA-Z+]+);base64,(.*)$/.exec(input);
   if (match) { mediaType = match[1]; base64 = match[2]; }
+  // Raw PNG base64 (from canvas.toDataURL('image/png').split(',')[1]) — default
+  // media_type to png when the caller used the imageBase64 field without a prefix.
+  else if (imageBase64) { mediaType = 'image/png'; }
 
   const prompt = PROMPTS[scanType] || PROMPTS.general;
 
@@ -54,17 +58,17 @@ export default async function handler(req, res) {
     const data = await upstream.json();
 
     if (!upstream.ok) {
-      return res.status(upstream.status).json({ text: null, error: data.error?.message || 'Vision API error' });
+      return res.status(upstream.status).json({ text: null, source: 'claude', error: data.error?.message || 'Vision API error' });
     }
 
     const raw = (data.content?.[0]?.text || '').trim();
 
     if (!raw || raw === 'NO_TEXT_FOUND') {
-      return res.status(200).json({ text: '', confidence: 0, error: null });
+      return res.status(200).json({ text: '', source: 'claude', confidence: 0, error: null });
     }
 
-    return res.status(200).json({ text: raw, confidence: 95, error: null });
+    return res.status(200).json({ text: raw, source: 'claude', confidence: 95, error: null });
   } catch (err) {
-    return res.status(500).json({ text: null, error: err.message || 'could not read image' });
+    return res.status(500).json({ text: null, source: 'claude', error: err.message || 'could not read image' });
   }
 }

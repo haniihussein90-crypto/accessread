@@ -246,31 +246,47 @@ export default function App() {
     img.src = imgData;
   }, []);
 
+  // OCR extraction with dual strategy: try Tesseract.js first (fast, free,
+  // client-side). If it fails — e.g. iOS Safari "Error attempting to read
+  // image" — fall back to the Claude vision endpoint (/api/ocr, reliable).
+  const extractText = useCallback(async (imgData) => {
+    // Step 1: Tesseract
+    if (window.Tesseract) {
+      try {
+        const result = await window.Tesseract.recognize(imgData, 'eng', { logger: () => {} });
+        const text = (result?.data?.text || '').trim();
+        if (text) { console.log('OCR: Tesseract success'); return text; }
+        console.log('OCR: Tesseract returned empty text, trying Claude API...');
+      } catch (err) {
+        console.log('OCR: Tesseract failed, trying Claude API...', err?.message);
+      }
+    } else {
+      console.log('OCR: Tesseract not loaded, using Claude API...');
+    }
+
+    // Step 2: Claude vision fallback
+    const res = await fetch('/api/ocr', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ imageBase64: imgData, scanType }),
+    });
+    const data = await res.json();
+    console.log('OCR: Claude API response:', data);
+    if (!res.ok || data.error) throw new Error(data.error || `Server returned ${res.status}`);
+    console.log('OCR: Fallback to Claude success');
+    return (data.text || '').trim();
+  }, [scanType]);
+
   const runOCR = useCallback(async (imgData) => {
     setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
     try {
       // Color detection is a pure client-side canvas operation — no OCR needed.
       if (scanType === 'color' && isPremium) { detectColors(imgData); setProcessing(false); setTab('results'); return; }
 
-      // OCR runs server-side via Claude vision (/api/ocr) — reliable on iOS Safari
-      // where Tesseract.js fails with "Error attempting to read image".
-      console.log('Sending image to /api/ocr, scanType:', scanType, '| length:', imgData?.length ?? 'n/a');
-      const res = await fetch('/api/ocr', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ image: imgData, scanType }),
-      });
-      const data = await res.json();
-      console.log('OCR response:', data);
-
-      if (!res.ok || data.error) {
-        throw new Error(data.error || `Server returned ${res.status}`);
-      }
-
-      const cleaned = (data.text || '').trim();
+      const cleaned = await extractText(imgData);
       if (!cleaned) {
         setOcrText('');
-        setAiError('No readable text found in the image. Try again with better lighting.');
+        setAiError('Could not read image. Try a clearer photo with better lighting.');
         setTab('results');
         return;
       }
@@ -292,13 +308,12 @@ export default function App() {
         setAiError('AI analysis unavailable. Please try again.');
       }
     } catch (e) {
-      console.error('OCR Error (full object):', e);
-      console.error('OCR Error message:', e?.message);
-      alert('OCR failed: ' + (e?.message || 'Could not read image. Please try again.'));
+      console.error('OCR: Both methods failed', e);
+      alert('Could not read image. Try clearer photo.');
     } finally {
       setProcessing(false);
     }
-  }, [scanType, history, scanCount, callClaude, detectColors, isPremium]);
+  }, [scanType, history, scanCount, callClaude, detectColors, isPremium, extractText]);
 
   const sendChat = async () => {
     if (!chatInput.trim() || chatLoading) return;
