@@ -247,12 +247,21 @@ export default function App() {
   }, []);
 
   const runOCR = useCallback(async (imgData) => {
-    if (!window.Tesseract) { alert('OCR library not loaded. Check internet connection.'); return; }
+    if (!window.Tesseract) {
+      console.error('OCR Error: Tesseract not found on window object. CDN script may not have loaded.');
+      alert('OCR library not loaded. Check internet connection.');
+      return;
+    }
+    console.log('Tesseract loaded:', typeof window.Tesseract, '| scan type:', scanType, '| imgData type:', typeof imgData, '| imgData length:', imgData?.length ?? 'n/a');
     setProcessing(true); setOcrText(''); setAiClassify(null); setAiError(null); setCookingResult(null); setFlightResult(null); setColorResult(null);
     try {
       if (scanType === 'color' && isPremium) { detectColors(imgData); setProcessing(false); setTab('results'); return; }
-      const { data: { text } } = await window.Tesseract.recognize(imgData, 'eng', { logger: () => {} });
+      console.log('Starting Tesseract.recognize...');
+      const result = await window.Tesseract.recognize(imgData, 'eng', { logger: () => {} });
+      console.log('Tesseract raw result:', result);
+      const { data: { text } } = result;
       const cleaned = text.trim();
+      console.log('OCR text extracted, length:', cleaned.length);
       setOcrText(cleaned);
       const newCount = scanCount + 1;
       setScanCount(newCount); ls.set('scanData', { count: newCount, date: todayStr() });
@@ -265,11 +274,16 @@ export default function App() {
       try {
         const r = await callClaude(`In 1 sentence, classify and describe this scanned text: "${cleaned.slice(0,300)}"`, 'You are a concise product classifier.');
         setAiClassify(r);
-      } catch {
+      } catch (aiErr) {
+        console.error('AI classification error:', aiErr);
         setAiError('AI analysis unavailable. Please try again.');
       }
     } catch (e) {
-      alert('OCR failed: ' + e.message);
+      console.error('OCR Error (full object):', e);
+      console.error('OCR Error name:', e?.name);
+      console.error('OCR Error message:', e?.message);
+      console.error('OCR Error stack:', e?.stack);
+      alert('OCR failed: ' + (e?.message || e?.name || JSON.stringify(e) || 'Unknown error'));
     } finally {
       setProcessing(false);
     }
