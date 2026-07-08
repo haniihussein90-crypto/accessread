@@ -53,6 +53,14 @@
   <div id="pdpRoot"></div>
 
   <section style="margin-top: var(--sp-7);">
+    <div class="section-head reveal is-visible" style="justify-content:center; text-align:center; flex-direction:column;">
+      <div class="eyebrow" style="justify-content:center;">Inside the box</div>
+      <h2 class="h-section">The card tucked behind the necklace.</h2>
+    </div>
+    <div id="letterRoot"></div>
+  </section>
+
+  <section style="margin-top: var(--sp-7);">
     <div class="section-head reveal is-visible">
       <div><div class="eyebrow">You might also like</div><h2 class="h-section">Pairs well with this one</h2></div>
     </div>
@@ -184,6 +192,10 @@
     </div>
   `;
   armLineArt(root);
+
+  const letterRoot = document.getElementById('letterRoot');
+  letterRoot.innerHTML = letterCardMarkup(product);
+  observeReveals(letterRoot);
 
   const recipientSelect = document.getElementById('recipientSelect');
   const messageBox = document.getElementById('messageBox');

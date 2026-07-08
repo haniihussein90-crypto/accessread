@@ -39,6 +39,13 @@ const PRODUCTS = [
     recipients: ['mom', 'wife', 'girlfriend', 'sister'],
     image: 'assets/products/love-knot-necklace-gold.jpg',
     stripeLink: 'https://buy.stripe.com/REPLACE_love_knot_gold',
+    letter: {
+      icon: '💍',
+      eyebrow: 'To My Wife',
+      salutation: 'To My Amazing Wife,',
+      body: 'Marrying you was the greatest decision of my life. Through every challenge and every celebration, you’ve been my safe place, my greatest supporter, and my forever love. Thank you for sharing this beautiful journey with me. I will choose you, today and every day.',
+      signoff: 'Love Always.',
+    },
   },
   {
     id: 'eternal-knot-necklace-gold',
@@ -52,6 +59,13 @@ const PRODUCTS = [
     recipients: ['wife', 'girlfriend', 'mom'],
     image: 'assets/products/eternal-knot-necklace-gold.jpg',
     stripeLink: 'https://buy.stripe.com/REPLACE_eternal_knot_gold',
+    letter: {
+      icon: '💕',
+      eyebrow: 'Anniversary',
+      salutation: 'My Love,',
+      body: 'Every year with you is another chapter in the most beautiful story I’ve ever known. Thank you for filling my life with laughter, love, and unforgettable memories. Here’s to everything we’ve shared and everything still to come. My heart will always belong to you.',
+      signoff: 'Happy Anniversary.',
+    },
   },
   {
     id: 'heart-solitaire-necklace-gold',
@@ -65,6 +79,13 @@ const PRODUCTS = [
     recipients: ['girlfriend', 'wife', 'daughter'],
     image: 'assets/products/heart-solitaire-necklace-gold.jpg',
     stripeLink: 'https://buy.stripe.com/REPLACE_heart_gold',
+    letter: {
+      icon: '❤️',
+      eyebrow: 'To My Girlfriend',
+      salutation: 'To My Beautiful Girlfriend,',
+      body: 'You are the best part of my life and the reason my heart feels at home. Thank you for loving me, believing in me, and making every ordinary day feel extraordinary. No matter where life takes us, my love for you will only grow stronger. Wear this necklace as a reminder that you are loved beyond words.',
+      signoff: 'Forever Yours.',
+    },
   },
   {
     id: 'heart-solitaire-necklace-silver',
@@ -78,6 +99,13 @@ const PRODUCTS = [
     recipients: ['mom', 'daughter', 'sister', 'best friend'],
     image: 'assets/products/heart-solitaire-necklace-silver.jpg',
     stripeLink: 'https://buy.stripe.com/REPLACE_heart_silver',
+    letter: {
+      icon: '👭',
+      eyebrow: 'To My Best Friend',
+      salutation: 'To My Best Friend,',
+      body: 'Thank you for standing beside me through every laugh, every tear, and every chapter of life. True friendship is one of life’s greatest gifts, and I’m grateful every day that I found mine in you. No matter where life takes us, you’ll always have a special place in my heart.',
+      signoff: 'Forever Friends.',
+    },
   },
   {
     id: 'rose-name-necklace-gold',
@@ -92,6 +120,13 @@ const PRODUCTS = [
     image: 'assets/products/rose-name-necklace-gold.jpg',
     imageFit: 'contain',
     stripeLink: 'https://buy.stripe.com/REPLACE_rose_name_gold',
+    letter: {
+      icon: '👵',
+      eyebrow: 'To My Grandma',
+      salutation: 'To My Beautiful Grandma,',
+      body: 'Your love has been a guiding light throughout my life. Thank you for every hug, every lesson, and every memory you’ve given me. You are truly one of life’s greatest blessings, and I hope this necklace reminds you how much you are loved every single day.',
+      signoff: 'With Love Always.',
+    },
   },
   {
     id: 'name-necklace-gold',
@@ -106,6 +141,13 @@ const PRODUCTS = [
     image: 'assets/products/name-necklace-gold.jpg',
     imageFit: 'contain',
     stripeLink: 'https://buy.stripe.com/REPLACE_name_gold',
+    letter: {
+      icon: '👧',
+      eyebrow: 'To My Daughter',
+      salutation: 'To My Precious Daughter,',
+      body: 'Never forget how loved you are. Be brave enough to chase your dreams, kind enough to lift others, and strong enough to overcome every challenge. Wherever life takes you, my love will always be with you. Wear this necklace and remember you’ll always have a place in my heart.',
+      signoff: 'Love, Dad/Mom.',
+    },
   },
   {
     id: 'name-necklace-silver',
@@ -116,10 +158,17 @@ const PRODUCTS = [
     material: 'Rhodium-plated stainless steel',
     description: 'The same script name in a brighter, cooler finish — for someone whose jewellery box runs silver and white gold.',
     personalizable: true,
-    recipients: ['daughter', 'sister', 'best friend', 'girlfriend'],
+    recipients: ['mom', 'daughter', 'sister', 'best friend', 'girlfriend'],
     image: 'assets/products/name-necklace-silver.jpg',
     imageFit: 'contain',
     stripeLink: 'https://buy.stripe.com/REPLACE_name_silver',
+    letter: {
+      icon: '👩',
+      eyebrow: 'To My Mom',
+      salutation: 'To My Wonderful Mom,',
+      body: 'No words could ever thank you for everything you’ve done for me. Your love, strength, and kindness have shaped the person I am today. No matter how old I get, I’ll always be grateful to call you my mom. This necklace is a small reminder of how deeply you are loved.',
+      signoff: 'With All My Love.',
+    },
   },
 ];
 
