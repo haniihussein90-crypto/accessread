@@ -15,7 +15,7 @@
  *    listing each item with its own "Pay for this item" link instead of
  *    pretending a single combined checkout exists.
  */
-const CART_KEY = 'kindredlane_cart_v1';
+const CART_KEY = 'zaviqu_cart_v1';
 
 function readCart(){
   try{

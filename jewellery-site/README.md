@@ -1,8 +1,8 @@
-# Kindred Lane — Personalized Necklace Shop
+# Zaviqu — Personalized Necklace Shop
 
 Static site (no build step). Personalized, made-to-order necklace catalog with a client-side cart and Stripe-hosted checkout — designed to be sold as a print-on-demand jewellery brand with no backend to maintain.
 
-> **"Kindred Lane" is a placeholder brand name.** Swap it before launch — see "Renaming the brand" below.
+> Brand name: **Zaviqu**. If it ever changes, see "Renaming the brand" below.
 
 ## Running locally
 
@@ -35,10 +35,10 @@ assets/products/       Real product photography (cropped from supplier catalog)
 
 ## Renaming the brand
 
-"Kindred Lane" appears in each HTML file's `<title>`, the header/footer `.logo` markup, and the cart's `CART_KEY` in `js/cart.js`. There's no templating layer, so it's a find-and-replace across the 5 HTML files:
+"Zaviqu" appears in each HTML file's `<title>`, the header/footer `.logo` markup, and the cart's `CART_KEY` in `js/cart.js`. There's no templating layer, so a rename is a find-and-replace across the 5 HTML files plus `js/cart.js`:
 
 ```bash
-grep -rl "Kindred Lane\|Kindred <em>Lane</em>" jewellery-site/*.html
+grep -rl "Zaviqu" jewellery-site/*.html jewellery-site/js/cart.js
 ```
 
 ## Wiring up real checkout
