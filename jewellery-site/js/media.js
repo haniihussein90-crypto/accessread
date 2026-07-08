@@ -1,15 +1,15 @@
 /**
  * Renders a product visual: tries the real photo first, falls back to the
- * category's hand-drawn line-art mark if the photo is missing (default
- * state until real photography is dropped into assets/products/).
+ * style's hand-drawn line-art mark if the photo is missing.
  */
 function productFrameMarkup(product, { tag } = {}){
   const tagHtml = tag ? `<span class="card__tag">${tag}</span>` : '';
+  const fitStyle = product.imageFit ? ` style="object-fit:${product.imageFit};"` : '';
   return `
     ${tagHtml}
-    <img src="${product.image}" alt="${product.name}" loading="lazy"
+    <img src="${product.image}" alt="${product.name}" loading="lazy"${fitStyle}
          onerror="this.parentElement.classList.add('no-photo')">
-    <div class="art-fallback">${renderIcon(product.category)}</div>
+    <div class="art-fallback">${renderIcon(product.style)}</div>
   `;
 }
 

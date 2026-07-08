@@ -1,37 +1,30 @@
 /**
- * Hand-authored line-art SVG marks for each product category.
- * Kept dependency-free (no images) so the catalog renders instantly
- * and scales perfectly at any size/density.
+ * Hand-authored line-art SVG marks, keyed by product `style` (knot/heart/name).
+ * Used only as a fallback if a product photo fails to load — every catalog
+ * item currently ships with a real photo, but this keeps the site resilient
+ * (never a broken-image icon) if a future item launches photo-less.
  */
-const CATEGORY_ICONS = {
-  ring: `
+const STYLE_ICONS = {
+  knot: `
     <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path class="draw-path" style="--i:0" d="M100 120c22 0 40-17.9 40-40s-18-40-40-40-40 17.9-40 40 18 40 40 40Z"/>
-      <path class="draw-path" style="--i:1" d="M100 40 88 16h24l-12 24Z"/>
-      <path class="draw-path" style="--i:2" d="M78 20h44"/>
+      <path class="draw-path" style="--i:1" d="M75 70c14-14 36-14 50 0M75 130c14 14 36 14 50 0"/>
+      <path class="draw-path" style="--i:2" d="M100 20v20M100 160v20"/>
     </svg>`,
-  necklace: `
+  heart: `
     <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path class="draw-path" style="--i:0" d="M40 30c0 46 26.9 84 60 84s60-38 60-84"/>
-      <path class="draw-path" style="--i:1" d="M100 114 88 138h24l-12-24Z"/>
-      <path class="draw-path" style="--i:2" d="M40 30c0 5-4 8-4 8M160 30c0 5 4 8 4 8"/>
+      <path class="draw-path" style="--i:0" d="M100 150 60 108c-14-14-14-36 0-50s36-14 40 0c4-14 26-14 40 0s14 36 0 50L100 150Z"/>
+      <path class="draw-path" style="--i:1" d="M100 30v20"/>
     </svg>`,
-  earring: `
+  name: `
     <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path class="draw-path" style="--i:0" d="M100 60a14 14 0 1 1-0.1 0Z"/>
-      <path class="draw-path" style="--i:1" d="M100 74v26"/>
-      <path class="draw-path" style="--i:2" d="M100 100 84 132h32l-16-32Z"/>
-    </svg>`,
-  bracelet: `
-    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path class="draw-path" style="--i:0" d="M30 100c0-22.1 31.3-40 70-40s70 17.9 70 40-31.3 40-70 40-70-17.9-70-40Z"/>
-      <path class="draw-path" style="--i:1" d="M50 76c8 32 6 56 0 88M150 76c-8 32-6 56 0 88" transform="translate(0,-20)"/>
-      <path class="draw-path" style="--i:2" d="M92 86h16v16H92z"/>
+      <path class="draw-path" style="--i:0" d="M40 60c0 5 4 20 4 20M160 60c0 5-4 20-4 20"/>
+      <path class="draw-path" style="--i:1" d="M55 130c20-30 30-30 35-10 5-25 20-25 25 0 5-20 20-20 30 5"/>
     </svg>`,
 };
 
-function renderIcon(category){
-  return CATEGORY_ICONS[category] || CATEGORY_ICONS.ring;
+function renderIcon(style){
+  return STYLE_ICONS[style] || STYLE_ICONS.name;
 }
 
 /** Compute + set stroke-dasharray/length for every .draw-path inside root, then arm the draw animation. */

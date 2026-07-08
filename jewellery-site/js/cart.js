@@ -3,14 +3,19 @@
  * so there is no server-side order/session. Checkout hands off to Stripe's
  * hosted Payment Links (see README "Wiring up real checkout"):
  *
- *  - Single product in cart → straight to that product's Stripe link,
- *    quantity preserved via the Stripe-hosted page.
+ *  - Single product in cart → straight to that product's Stripe link.
+ *    If you've enabled Stripe's "Collect additional information" custom
+ *    field on the link (label it "Personalization"), the customer's chosen
+ *    name/message flows through automatically — we prefill it via the
+ *    `prefilled_promo_code`-style query params Stripe supports for that
+ *    field where possible, and always show it in the checkout modal so the
+ *    customer can paste it in if not.
  *  - Multiple distinct products → Stripe Payment Links can't combine
  *    arbitrary line items without a backend, so we open a checkout modal
  *    listing each item with its own "Pay for this item" link instead of
  *    pretending a single combined checkout exists.
  */
-const CART_KEY = 'noiretor_cart_v1';
+const CART_KEY = 'kindredlane_cart_v1';
 
 function readCart(){
   try{
@@ -24,14 +29,20 @@ function writeCart(lines){
   document.dispatchEvent(new CustomEvent('cart:change', { detail: lines }));
 }
 
-function cartAdd(productId, size, qty = 1){
+/**
+ * personalization: { recipient, name, message } | null
+ * Each personalized line is kept distinct (not merged with a differently
+ * personalized line for the same product).
+ */
+function cartAdd(productId, personalization, qty = 1){
   const lines = readCart();
-  const key = productId + '::' + (size || '');
-  const existing = lines.find((l) => l.key === key);
+  const key = productId + '::' + (personalization ? JSON.stringify(personalization) : 'none') + '::' + Date.now();
+  const mergeKey = productId + '::' + (personalization ? JSON.stringify(personalization) : 'none');
+  const existing = lines.find((l) => l.mergeKey === mergeKey);
   if (existing){
     existing.qty += qty;
   } else {
-    lines.push({ key, productId, size: size || null, qty });
+    lines.push({ key, mergeKey, productId, personalization: personalization || null, qty });
   }
   writeCart(lines);
 }
@@ -94,12 +105,17 @@ function renderCartDrawer(){
   if (emptyEl) emptyEl.style.display = 'none';
   if (footEl) footEl.style.display = 'block';
 
-  itemsEl.innerHTML = lines.map((l) => `
+  itemsEl.innerHTML = lines.map((l) => {
+    const p = l.personalization;
+    const metaBits = [l.product.metal === 'silver' ? 'Silver' : 'Gold'];
+    if (p && p.recipient) metaBits.push('For ' + p.recipient);
+    return `
     <div class="cart-line" data-key="${l.key}">
-      <div class="cart-line__thumb">${renderIcon(l.product.category)}</div>
+      <div class="cart-line__thumb">${renderIcon(l.product.style)}</div>
       <div>
         <div class="cart-line__name">${l.product.name}</div>
-        <div class="cart-line__meta">${l.size ? 'Size ' + l.size : l.product.material}</div>
+        <div class="cart-line__meta">${metaBits.join(' · ')}</div>
+        ${p && (p.name || p.message) ? `<div class="cart-line__personalize">${p.name ? '“' + p.name + '”' : ''}${p.message ? (p.name ? ' — ' : '') + p.message : ''}</div>` : ''}
         <div class="qty">
           <button type="button" data-action="dec" aria-label="Decrease quantity">−</button>
           <span>${l.qty}</span>
@@ -111,7 +127,8 @@ function renderCartDrawer(){
         <button type="button" class="cart-line__remove" data-action="remove">Remove</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   armLineArt(itemsEl);
 
@@ -141,20 +158,29 @@ function closeCart(){
   document.body.style.overflow = '';
 }
 
+function personalizationSummary(l){
+  if (!l.personalization) return '';
+  const bits = [];
+  if (l.personalization.recipient) bits.push('for ' + l.personalization.recipient);
+  if (l.personalization.name) bits.push('name: "' + l.personalization.name + '"');
+  if (l.personalization.message) bits.push('message: "' + l.personalization.message + '"');
+  return bits.length ? ' (' + bits.join(', ') + ')' : '';
+}
+
 function openCheckoutModal(){
   const lines = cartLinesWithProducts();
   const modal = document.getElementById('checkoutModal');
   const listEl = document.getElementById('checkoutList');
   if (!modal || !listEl) return;
 
-  if (lines.length === 1){
+  if (lines.length === 1 && !lines[0].personalization){
     window.open(lines[0].product.stripeLink, '_blank', 'noopener');
     return;
   }
 
   listEl.innerHTML = lines.map((l) => `
     <div class="checkout-line">
-      <span class="checkout-line__name">${l.product.name} × ${l.qty}${l.size ? ' (Size ' + l.size + ')' : ''}</span>
+      <span class="checkout-line__name">${l.product.name} × ${l.qty}${personalizationSummary(l)}</span>
       <a href="${l.product.stripeLink}" target="_blank" rel="noopener">Pay for this item →</a>
     </div>
   `).join('');
@@ -189,14 +215,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape'){ closeCart(); closeCheckoutModal(); }
   });
 
-  // Delegated "Add to cart" handling for grids/cards rendered dynamically.
+  // Delegated "Add to cart" handling for grids/cards without personalization.
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-add-to-cart]');
     if (!btn) return;
     e.preventDefault();
     const id = btn.dataset.addToCart;
-    const size = btn.dataset.size || null;
-    cartAdd(id, size, 1);
+    cartAdd(id, null, 1);
     showToast('Added to cart');
     openCart();
   });
