@@ -470,21 +470,32 @@
   inset: 10px;
   border: 1px solid var(--border);
   pointer-events: none;
+  z-index: 1;
 }
-.letter__icon{
+/* The necklace, duplicated from the gallery photo and laid on top of the
+   card — same piece, same photo, so the product and its message read as
+   one gift rather than two separate ideas. */
+.letter__necklace{
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  margin-bottom: var(--sp-2);
-  font-size: 24px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(228,195,130,0.28), rgba(228,195,130,0.02) 70%);
+  z-index: 2;
+  width: 190px;
+  aspect-ratio: 4 / 5;
+  margin: calc(-1 * var(--sp-6) + 14px) auto var(--sp-4);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(155deg, var(--surface), var(--bg-panel));
   border: 1px solid var(--border-strong);
+  box-shadow: 0 24px 48px -16px rgba(0,0,0,0.65);
+}
+.letter__necklace img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .letter__eyebrow{
+  position: relative;
+  z-index: 2;
   font-size: var(--step--1);
   letter-spacing: 0.2em;
   text-transform: uppercase;

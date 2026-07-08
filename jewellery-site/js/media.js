@@ -20,16 +20,22 @@ function armProductFrame(frameEl){
 
 /**
  * Renders the gift-card message that ships tucked behind the necklace in
- * the box — a real example of what a customer might write, not a required
- * message (their own personalization always overrides it at checkout).
+ * the box. The necklace photo is duplicated here, laid on top of the card
+ * exactly as it sits in the box, so the piece and the message read as one
+ * complete gift rather than two separate ideas. This is a real example of
+ * what a customer might write, not a required message — their own
+ * personalization always overrides it at checkout.
  */
 function letterCardMarkup(product){
   const l = product.letter;
   if (!l) return '';
+  const fitStyle = product.imageFit ? ` style="object-fit:${product.imageFit};"` : '';
   return `
     <div class="letter reveal">
-      <div class="letter__icon">${l.icon}</div>
-      <div class="letter__eyebrow">${l.eyebrow}</div>
+      <div class="letter__necklace">
+        <img src="${product.image}" alt="${product.name}, laid on the message card" loading="lazy"${fitStyle}>
+      </div>
+      <div class="letter__eyebrow">${l.icon} ${l.eyebrow}</div>
       <div class="letter__salutation">${l.salutation}</div>
       <p class="letter__body">${l.body}</p>
       <p class="letter__signoff">${l.signoff}</p>
