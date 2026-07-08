@@ -1,35 +1,45 @@
 /* ==========================================================================
-   NOIR & OR — Design tokens & global styles
+   ZAVIQU — Design system: tokens & global styles
+   A cinematic, editorial design language for a premium romantic gifting
+   brand. Black/charcoal ground, warm champagne gold accent, ivory/white
+   for light moments. See /design-system.html for the full living guide.
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 
 :root{
-  /* Color — near-black ground, antique gold accent */
-  --bg:            #0C0A09;
-  --bg-panel:      #15120F;
-  --surface:       #1C1815;
-  --border:        rgba(212,175,122,0.16);
-  --border-strong: rgba(212,175,122,0.32);
+  /* ---- Color — primitives (brand spec) ------------------------------- */
+  --black:         #0A0A0A;
+  --charcoal:      #141414;
+  --charcoal-2:    #1B1B1A;   /* one step up from charcoal — card/surface plane */
+  --white:         #FFFFFF;
+  --ivory:         #F4EFE4;   /* soft ivory */
+  --ivory-alt:     #ECE4D2;   /* deeper ivory for alternating light panels */
+  --gold:          #C8A86B;   /* warm champagne gold */
+  --gold-bright:   #DFC28D;   /* gold, lifted — hover/emphasis on dark */
+  --gold-deep:     #7C5F35;   /* gold, deepened — AA text on light grounds */
 
-  --cream:         #F6F1E7;
-  --cream-dim:     #C9C0AF;
-  --muted:         #8A8071;
+  /* ---- Color — semantic roles (what components consume) --------------- */
+  --bg:            var(--black);
+  --bg-panel:      var(--charcoal);
+  --surface:       var(--charcoal-2);
+  --border:        rgba(200,168,107,0.16);
+  --border-strong: rgba(200,168,107,0.32);
 
-  --gold:          #C9A15E;
-  --gold-bright:   #E4C382;
-  --gold-deep:     #8A6B33;
+  --cream:         var(--ivory);       /* primary text on dark grounds */
+  --cream-dim:     #C9C2B2;            /* secondary text on dark grounds */
+  --muted:         #8A8377;            /* tertiary text on dark grounds */
 
-  --ink:           #171310;      /* text on light/cream sections */
-  --ink-muted:     #5B5346;
+  --ink:           #14110D;            /* primary text on light grounds */
+  --ink-muted:     #5B5346;            /* secondary text on light grounds */
 
-  --paper:         #F3EEE3;      /* light section background */
-  --paper-alt:     #EAE2D2;
+  --paper:         var(--ivory);       /* light section background */
+  --paper-alt:     var(--ivory-alt);
 
   --danger:        #B23B3B;
 
-  /* Type scale */
-  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  /* ---- Type ------------------------------------------------------------ */
+  --font-display: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
   --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.875rem);
@@ -38,8 +48,9 @@
   --step-2:  clamp(1.75rem, 1.5rem + 1.2vw, 2.25rem);
   --step-3:  clamp(2.25rem, 1.8rem + 2vw, 3.25rem);
   --step-4:  clamp(3rem, 2.2rem + 3.6vw, 5.25rem);
+  --step-5:  clamp(3.75rem, 2.6rem + 5.6vw, 7rem);
 
-  /* Spacing (8px rhythm) */
+  /* ---- Spacing (8px rhythm) --------------------------------------------- */
   --sp-1: 0.5rem;
   --sp-2: 1rem;
   --sp-3: 1.5rem;
@@ -49,13 +60,45 @@
   --sp-7: 7rem;
   --sp-8: 10rem;
 
+  /* ---- Layout ------------------------------------------------------------ */
   --container: 1200px;
+  --container-narrow: 760px;
   --radius: 2px;
+  --radius-md: 4px;
+  --radius-full: 999px;
 
+  /* Breakpoints (referenced in comments — CSS has no var() in media queries) */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1000px;
+  --bp-xl: 1200px;
+
+  /* ---- Elevation ---------------------------------------------------------
+     Restrained shadow scale for a matte, jewellery-lit look: soft and dark,
+     never a grey drop-shadow. Used for cards, drawers, modals, toasts. */
+  --shadow-sm: 0 2px 8px -2px rgba(0,0,0,0.45);
+  --shadow-md: 0 12px 32px -12px rgba(0,0,0,0.55);
+  --shadow-lg: 0 24px 48px -16px rgba(0,0,0,0.65);
+  --shadow-gold: 0 8px 28px -10px rgba(200,168,107,0.35);
+
+  /* ---- Z-index scale ------------------------------------------------------ */
+  --z-base: 1;
+  --z-progress: 90;
+  --z-header: 80;
+  --z-mobile-nav: 95;
+  --z-overlay: 98;
+  --z-drawer: 99;
+  --z-modal: 100;
+  --z-toast: 110;
+
+  /* ---- Motion -------------------------------------------------------------
+     Cinematic, unhurried: entrances read as a slow reveal, not a snap. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 200ms;
   --dur-med: 450ms;
   --dur-slow: 900ms;
+  --dur-cinematic: 1400ms;
 }
 
 /* ---------------------------------- Reset --------------------------------- */
@@ -167,14 +210,14 @@ h1,h2,h3,h4{ margin: 0; font-family: var(--font-display); font-weight: 500; lett
   color: var(--bg);
   border: 1px solid var(--gold);
 }
-.btn-primary:hover{ background: var(--gold-bright); border-color: var(--gold-bright); }
+.btn-primary:hover{ background: var(--gold-bright); border-color: var(--gold-bright); box-shadow: var(--shadow-gold); }
 .btn-outline{
   background: transparent;
   color: var(--cream);
   border: 1px solid var(--border-strong);
 }
 .btn-outline:hover{ border-color: var(--gold); color: var(--gold-bright); }
-.section--paper .btn-outline{ color: var(--ink); border-color: rgba(23,19,16,0.25); }
+.section--paper .btn-outline{ color: var(--ink); border-color: rgba(20,17,13,0.25); }
 .section--paper .btn-outline:hover{ border-color: var(--gold-deep); color: var(--gold-deep); }
 .btn-text{
   padding: 0;
@@ -193,7 +236,7 @@ h1,h2,h3,h4{ margin: 0; font-family: var(--font-display); font-weight: 500; lett
   border-radius: 50%;
   transition: background var(--dur-fast) var(--ease-out);
 }
-.btn-icon:hover{ background: rgba(201,161,94,0.12); }
+.btn-icon:hover{ background: rgba(200,168,107,0.12); }
 
 /* ---------------------------------- Header --------------------------------- */
 .scroll-progress{
@@ -202,7 +245,7 @@ h1,h2,h3,h4{ margin: 0; font-family: var(--font-display); font-weight: 500; lett
   height: 2px;
   width: 100%;
   background: var(--border);
-  z-index: 90;
+  z-index: var(--z-progress);
 }
 .scroll-progress__bar{
   height: 100%;
@@ -214,8 +257,8 @@ h1,h2,h3,h4{ margin: 0; font-family: var(--font-display); font-weight: 500; lett
 .site-header{
   position: sticky;
   top: 2px;
-  z-index: 80;
-  background: rgba(12,10,9,0.82);
+  z-index: var(--z-header);
+  background: rgba(10,10,10,0.82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -291,7 +334,7 @@ h1,h2,h3,h4{ margin: 0; font-family: var(--font-display); font-weight: 500; lett
 .mobile-nav{
   position: fixed;
   inset: 0;
-  z-index: 95;
+  z-index: var(--z-mobile-nav);
   background: var(--bg);
   display: flex;
   flex-direction: column;

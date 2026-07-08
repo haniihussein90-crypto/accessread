@@ -18,11 +18,12 @@ Or open `index.html` directly in a browser (all asset paths are relative).
 ## Structure
 
 ```
-index.html      Home
-shop.html       Full catalog with style/metal filters
-product.html    Product detail — reads ?id=<product-id>, personalization form
-about.html      Brand story
-contact.html    Contact form (static; see "Wiring up the contact form")
+index.html          Home
+shop.html           Full catalog with style/metal filters
+product.html        Product detail — reads ?id=<product-id>, personalization form
+about.html          Brand story
+contact.html        Contact form (static; see "Wiring up the contact form")
+design-system.html  Living style guide — color, type, spacing, components, motion, tokens
 css/style.css        Design tokens + global styles
 css/components.css   Component styles (cards, cart drawer, forms, etc.)
 js/products.js       Catalog data + recipient message templates

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design System — Zaviqu</title>
+<meta name="description" content="Zaviqu design system: color, typography, spacing, components, motion and accessibility rules for a cinematic, editorial, luxury gifting brand.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/components.css">
+<style>
+  /* ---- Documentation-only styles, scoped to this page. Everything they
+     reference (colors, type, spacing, shadow, motion tokens) lives in
+     css/style.css — this page never redefines a token, only displays it. */
+  .ds-nav{
+    position: sticky; top: 0; z-index: var(--z-header);
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding-block: var(--sp-2);
+    margin-bottom: var(--sp-2);
+  }
+  .ds-nav__row{ display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; }
+  .ds-nav a{ font-size: var(--step--1); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-dim); }
+  .ds-nav a:hover{ color: var(--gold-bright); }
+
+  .ds-section{ padding-block: var(--sp-6); border-top: 1px solid var(--border); }
+  .ds-section:first-of-type{ border-top: 0; }
+  .ds-section__head{ margin-bottom: var(--sp-5); max-width: 62ch; }
+  .ds-kicker{ font-size: var(--step--1); color: var(--gold); letter-spacing: 0.06em; margin-top: var(--sp-1); }
+
+  .ds-grid{ display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .ds-swatch{ border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+  .ds-swatch__fill{ height: 96px; }
+  .ds-swatch__meta{ padding: var(--sp-2) var(--sp-3); background: var(--bg-panel); }
+  .ds-swatch__name{ font-size: var(--step--1); letter-spacing: 0.04em; }
+  .ds-swatch__hex{ font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .ds-swatch__ratio{ font-size: 11px; color: var(--gold-bright); margin-top: 6px; }
+
+  .ds-type-row{ display: flex; align-items: baseline; gap: var(--sp-4); padding-block: var(--sp-3); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .ds-type-row:last-child{ border-bottom: 0; }
+  .ds-type-row__meta{ font-size: 12px; color: var(--muted); font-family: ui-monospace, monospace; min-width: 15ch; }
+  .ds-type-sample{ font-family: var(--font-display); }
+  .ds-type-sample--body{ font-family: var(--font-body); }
+
+  .ds-scale{ display: flex; flex-direction: column; gap: var(--sp-1); }
+  .ds-scale__row{ display: flex; align-items: center; gap: var(--sp-3); }
+  .ds-scale__bar{ background: linear-gradient(90deg, var(--gold-deep), var(--gold)); height: 14px; border-radius: var(--radius); }
+  .ds-scale__label{ font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); width: 8ch; flex-shrink: 0; }
+  .ds-scale__px{ font-family: ui-monospace, monospace; font-size: 12px; color: var(--cream-dim); }
+
+  .ds-demo-row{ display: flex; flex-wrap: wrap; gap: var(--sp-3); align-items: center; padding-block: var(--sp-2); }
+  .ds-demo-label{ font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); width: 100%; margin-top: var(--sp-3); }
+  .ds-demo-label:first-child{ margin-top: 0; }
+
+  .ds-shadow-card{
+    width: 180px; height: 120px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    padding: var(--sp-2);
+    font-size: 12px; color: var(--muted);
+    font-family: ui-monospace, monospace;
+  }
+
+  .ds-icon-tile{
+    display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+    padding: var(--sp-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .ds-icon-tile svg{ width: 24px; height: 24px; }
+  .ds-icon-tile span{ font-size: 11px; color: var(--muted); text-align: center; }
+
+  .ds-motion-tile{
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--sp-3);
+    text-align: center;
+    cursor: pointer;
+  }
+  .ds-motion-tile__chip{
+    width: 40px; height: 40px; margin-inline: auto var(--sp-2);
+    background: var(--gold);
+    border-radius: var(--radius);
+    transition: transform var(--_dur, 300ms) var(--_ease, ease);
+  }
+  .ds-motion-tile:hover .ds-motion-tile__chip{ transform: translateY(-10px); }
+  .ds-motion-tile__label{ font-size: 12px; color: var(--cream-dim); font-family: ui-monospace, monospace; }
+
+  .ds-token-table{ width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+  .ds-token-table th, .ds-token-table td{ text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .ds-token-table th{ color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; font-weight: 500; }
+  .ds-token-table td:first-child{ font-family: ui-monospace, monospace; color: var(--cream); }
+  .ds-token-table td:last-child{ color: var(--muted); }
+  .ds-table-wrap{ overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); }
+
+  .ds-do-dont{ display: grid; gap: var(--sp-3); grid-template-columns: 1fr; }
+  @media (min-width: 700px){ .ds-do-dont{ grid-template-columns: 1fr 1fr; } }
+  .ds-do, .ds-dont{ padding: var(--sp-3); border-radius: var(--radius-md); border: 1px solid var(--border); }
+  .ds-do{ border-color: rgba(200,168,107,0.35); }
+  .ds-dont{ border-color: rgba(178,59,59,0.35); }
+  .ds-do h4, .ds-dont h4{ font-family: var(--font-body); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: var(--sp-1); }
+  .ds-do h4{ color: var(--gold-bright); }
+  .ds-dont h4{ color: #D98888; }
+  .ds-do ul, .ds-dont ul{ display: flex; flex-direction: column; gap: 6px; font-size: var(--step--1); color: var(--cream-dim); }
+</style>
+</head>
+<body>
+<noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
+
+<nav class="ds-nav" aria-label="Design system sections">
+  <div class="container ds-nav__row">
+    <a href="index.html" class="logo" style="font-size: var(--step-0);">Zaviqu</a>
+    <a href="#principles">Principles</a>
+    <a href="#color">Color</a>
+    <a href="#type">Type</a>
+    <a href="#spacing">Spacing &amp; Grid</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#forms">Forms</a>
+    <a href="#cards">Cards</a>
+    <a href="#elevation">Elevation</a>
+    <a href="#icons">Iconography</a>
+    <a href="#motion">Motion</a>
+    <a href="#tokens">Tokens</a>
+  </div>
+</nav>
+
+<main class="container">
+
+  <section class="ds-section" id="principles" style="padding-top: var(--sp-5);">
+    <div class="eyebrow">Zaviqu design system</div>
+    <h1 class="h-display" style="font-size: var(--step-4); margin-top: var(--sp-2);">Not a necklace store. A way to say the thing you couldn't.</h1>
+    <p class="lede" style="max-width: 62ch; margin-top: var(--sp-3);">This page is the single source of truth for how Zaviqu looks, moves, and speaks visually — cinematic, editorial, luxurious, timeless, emotional, minimal. Every screen in the product should be buildable from what's documented here: no new colors, no new fonts, no one-off spacing.</p>
+    <div class="ds-grid" style="margin-top: var(--sp-5); grid-template-columns: repeat(auto-fill, minmax(160px,1fr));">
+      <div><div class="h-card" style="font-family:var(--font-display); font-style:italic; color:var(--gold);">Cinematic</div><p style="font-size:var(--step--1); color:var(--muted); margin-top:4px;">Slow reveals, full-bleed imagery, restraint over noise.</p></div>
+      <div><div class="h-card" style="font-family:var(--font-display); font-style:italic; color:var(--gold);">Editorial</div><p style="font-size:var(--step--1); color:var(--muted); margin-top:4px;">Type carries hierarchy — big serif statements, quiet body copy.</p></div>
+      <div><div class="h-card" style="font-family:var(--font-display); font-style:italic; color:var(--gold);">Emotional</div><p style="font-size:var(--step--1); color:var(--muted); margin-top:4px;">Copy and layout centre the recipient, not the object.</p></div>
+      <div><div class="h-card" style="font-family:var(--font-display); font-style:italic; color:var(--gold);">Minimal</div><p style="font-size:var(--step--1); color:var(--muted); margin-top:4px;">One idea per section. Whitespace is a material, not a leftover.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================== COLOR ============================== -->
+  <section class="ds-section" id="color">
+    <div class="ds-section__head">
+      <div class="eyebrow">01 · Foundations</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Color</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Black and charcoal ground the brand; champagne gold is the only accent — used sparingly, always with meaning (price, CTA, emphasis). White and soft ivory carry the rare light moments. Every text/background pairing below is verified against WCAG AA.</p>
+    </div>
+
+    <p class="ds-kicker">Primitives</p>
+    <div class="ds-grid" style="margin-top: var(--sp-2); margin-bottom: var(--sp-5);">
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#0A0A0A;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Black</div><div class="ds-swatch__hex">--black · #0A0A0A</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#141414;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Charcoal</div><div class="ds-swatch__hex">--charcoal · #141414</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#1B1B1A;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Charcoal 2 (surface)</div><div class="ds-swatch__hex">--charcoal-2 · #1B1B1A</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#C8A86B;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Champagne Gold</div><div class="ds-swatch__hex">--gold · #C8A86B</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#DFC28D;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Gold, bright</div><div class="ds-swatch__hex">--gold-bright · #DFC28D</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#7C5F35;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Gold, deep</div><div class="ds-swatch__hex">--gold-deep · #7C5F35</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#FFFFFF; border-bottom:1px solid var(--border);"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">White</div><div class="ds-swatch__hex">--white · #FFFFFF</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#F4EFE4;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Soft Ivory</div><div class="ds-swatch__hex">--ivory · #F4EFE4</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#ECE4D2;"></div><div class="ds-swatch__meta"><div class="ds-swatch__name">Ivory, alt</div><div class="ds-swatch__hex">--ivory-alt · #ECE4D2</div></div></div>
+    </div>
+
+    <p class="ds-kicker">Verified text / background pairs</p>
+    <div class="ds-grid" style="margin-top: var(--sp-2);">
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#0A0A0A; color:#C8A86B; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.1rem;">Gold on Black</div><div class="ds-swatch__meta"><div class="ds-swatch__ratio">8.7 : 1 — AAA</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#0A0A0A; color:#F4EFE4; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.1rem;">Ivory on Black</div><div class="ds-swatch__meta"><div class="ds-swatch__ratio">17.3 : 1 — AAA</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#C8A86B; color:#0A0A0A; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.1rem;">Black on Gold</div><div class="ds-swatch__meta"><div class="ds-swatch__ratio">8.7 : 1 — AAA</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#F4EFE4; color:#14110D; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.1rem;">Ink on Ivory</div><div class="ds-swatch__meta"><div class="ds-swatch__ratio">16.4 : 1 — AAA</div></div></div>
+      <div class="ds-swatch"><div class="ds-swatch__fill" style="background:#F4EFE4; color:#7C5F35; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.1rem;">Gold-deep on Ivory</div><div class="ds-swatch__meta"><div class="ds-swatch__ratio">5.2 : 1 — AA</div></div></div>
+    </div>
+    <div class="ds-do-dont" style="margin-top: var(--sp-4);">
+      <div class="ds-do"><h4>Do</h4><ul><li>Use gold only for accents: eyebrows, CTAs, prices, active states.</li><li>Use gold-deep (not gold) for gold-colored text on light/ivory sections.</li><li>Reserve pure white for rare, deliberate high-contrast moments.</li></ul></div>
+      <div class="ds-dont"><h4>Don't</h4><ul><li>Never set body copy in gold — it's an accent, not a text color.</li><li>Never use gold at full saturation as a large background fill.</li><li>Never introduce a second accent hue.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ============================== TYPE ============================== -->
+  <section class="ds-section" id="type">
+    <div class="ds-section__head">
+      <div class="eyebrow">02 · Foundations</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Typography</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Cormorant Garamond carries every emotional beat — headlines, prices, quotes, signatures. Inter, light and quiet, carries everything functional: navigation, labels, body copy, forms. Never mix the two roles.</p>
+    </div>
+
+    <div style="margin-bottom: var(--sp-5);">
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">display · step-5</div>
+        <div class="ds-type-sample" style="font-size: var(--step-5); line-height:1.02;">Say it in gold.</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">display · step-4 / h-display</div>
+        <div class="ds-type-sample" style="font-size: var(--step-4); line-height:1.04;">A necklace that says what you couldn't.</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">display · step-3 / h-section</div>
+        <div class="ds-type-sample" style="font-size: var(--step-3);">Four pieces, one purpose.</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">display italic · step-2</div>
+        <div class="ds-type-sample" style="font-size: var(--step-2); font-style: italic; color: var(--gold-bright);">"However long we've got, I want it with you."</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">display · step-1 / h-card</div>
+        <div class="ds-type-sample" style="font-size: var(--step-1);">Rose &amp; Name Necklace</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">body · step-1 / lede</div>
+        <div class="ds-type-sample ds-type-sample--body" style="font-size: var(--step-1); font-weight:300; color: var(--cream-dim); max-width:52ch;">Every piece is cast to order and personalized with a name or a short message.</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">body · step-0</div>
+        <div class="ds-type-sample ds-type-sample--body" style="font-size: var(--step-0); font-weight:300;">Base paragraph size — 16–18px, line-height 1.6.</div>
+      </div>
+      <div class="ds-type-row">
+        <div class="ds-type-row__meta">body · step--1 / eyebrow</div>
+        <div class="ds-type-sample ds-type-sample--body" style="font-size: var(--step--1); text-transform:uppercase; letter-spacing:0.22em; color:var(--gold);">Made to order, one at a time</div>
+      </div>
+    </div>
+
+    <div class="ds-do-dont">
+      <div class="ds-do"><h4>Do</h4><ul><li>Cormorant Garamond for anything emotional: headlines, quotes, prices, gift messages.</li><li>Inter for anything functional: nav, buttons, labels, body, forms.</li><li>Uppercase + wide tracking (0.08–0.22em) only on short labels (eyebrows, nav, buttons).</li></ul></div>
+      <div class="ds-dont"><h4>Don't</h4><ul><li>Never set long paragraphs in the display serif — it's for short, weighted lines.</li><li>Never letter-space body paragraphs; it hurts readability.</li><li>Never drop below 16px for body copy.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ============================== SPACING / GRID ============================== -->
+  <section class="ds-section" id="spacing">
+    <div class="ds-section__head">
+      <div class="eyebrow">03 · Foundations</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Spacing, Grid &amp; Responsive Rules</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">An 8px-rooted spacing scale keeps rhythm consistent from a button's internal padding to the gap between sections. Layout is mobile-first: a single column below 768px, expanding to 2–4 columns as space allows.</p>
+    </div>
+
+    <p class="ds-kicker">Spacing scale</p>
+    <div class="ds-scale" style="margin-top: var(--sp-2); margin-bottom: var(--sp-5);">
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-1</span><div class="ds-scale__bar" style="width:8px;"></div><span class="ds-scale__px">8px — tight gaps (icon + label)</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-2</span><div class="ds-scale__bar" style="width:16px;"></div><span class="ds-scale__px">16px — form field gaps, card body gaps</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-3</span><div class="ds-scale__bar" style="width:24px;"></div><span class="ds-scale__px">24px — mobile container gutter</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-4</span><div class="ds-scale__bar" style="width:32px;"></div><span class="ds-scale__px">32px — grid gaps, button groups</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-5</span><div class="ds-scale__bar" style="width:48px;"></div><span class="ds-scale__px">48px — desktop gutter, section-head margin</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-6</span><div class="ds-scale__bar" style="width:72px;"></div><span class="ds-scale__px">72px — mobile section padding</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-7</span><div class="ds-scale__bar" style="width:112px;"></div><span class="ds-scale__px">112px — desktop section padding</span></div>
+      <div class="ds-scale__row"><span class="ds-scale__label">sp-8</span><div class="ds-scale__bar" style="width:160px;"></div><span class="ds-scale__px">160px — hero-scale breathing room</span></div>
+    </div>
+
+    <div class="ds-table-wrap" style="margin-bottom: var(--sp-5);">
+      <table class="ds-token-table">
+        <thead><tr><th>Breakpoint</th><th>Value</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Base (mobile)</td><td>&lt; 480px</td><td>Single column, 24px gutter, stacked nav in drawer</td></tr>
+          <tr><td>sm</td><td>480px</td><td>2-column product grids begin</td></tr>
+          <tr><td>md</td><td>768px</td><td>48px gutter, 3-column grids, filter bar wraps to one line</td></tr>
+          <tr><td>lg</td><td>1000px</td><td>Hero/split sections go 2-column, primary nav replaces drawer</td></tr>
+          <tr><td>xl</td><td>1200px</td><td>4-column grids, container reaches max-width</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="ds-kicker">Container widths</p>
+    <div class="ds-demo-row" style="margin-top: var(--sp-2);">
+      <div style="font-size: var(--step--1); color: var(--muted);"><strong style="color:var(--cream);">--container</strong>: 1200px — standard page width</div>
+      <div style="font-size: var(--step--1); color: var(--muted);"><strong style="color:var(--cream);">--container-narrow</strong>: 760px — long-form reading (letters, gift messages, contact copy)</div>
+    </div>
+  </section>
+
+  <!-- ============================== BUTTONS ============================== -->
+  <section class="ds-section" id="buttons">
+    <div class="ds-section__head">
+      <div class="eyebrow">04 · Components</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Buttons</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">One primary action per screen. Everything else is outline or text. All buttons keep a 48px minimum touch target and a 150–300ms transition on hover.</p>
+    </div>
+    <div class="ds-demo-label">Primary</div>
+    <div class="ds-demo-row">
+      <button class="btn btn-primary">Shop the Collection</button>
+      <button class="btn btn-primary" disabled style="opacity:0.4; cursor:not-allowed;">Disabled</button>
+    </div>
+    <div class="ds-demo-label">Outline</div>
+    <div class="ds-demo-row">
+      <button class="btn btn-outline">How Personalizing Works</button>
+    </div>
+    <div class="ds-demo-label">Text link</div>
+    <div class="ds-demo-row">
+      <a href="#buttons" class="btn-text">View full shop →</a>
+    </div>
+    <div class="ds-demo-label">Icon button (44×44 min hit area)</div>
+    <div class="ds-demo-row">
+      <button type="button" class="btn-icon" aria-label="Example icon button" style="border:1px solid var(--border);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+      </button>
+    </div>
+    <div class="ds-demo-label">Filter chip — default / active</div>
+    <div class="ds-demo-row">
+      <span class="filter-chip">All</span>
+      <span class="filter-chip is-active">Gold</span>
+    </div>
+  </section>
+
+  <!-- ============================== FORMS ============================== -->
+  <section class="ds-section" id="forms">
+    <div class="ds-section__head">
+      <div class="eyebrow">05 · Components</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Forms</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Visible uppercase micro-labels, never placeholder-only. Focus state is a gold border, never a color-only change on error — errors carry an icon and message.</p>
+    </div>
+    <div style="max-width: 480px;">
+      <div class="field">
+        <label for="dsName">Name</label>
+        <input type="text" id="dsName" placeholder="Your name" value="Priya Shah">
+      </div>
+      <div class="field">
+        <label for="dsFocus">Focused state</label>
+        <input type="text" id="dsFocus" placeholder="Click to see focus ring" style="border-color: var(--gold);">
+      </div>
+      <div class="field">
+        <label for="dsErr">Email <span style="text-transform:none; letter-spacing:0; color:#D98888;">— required</span></label>
+        <input type="email" id="dsErr" value="not-an-email" style="border-color:#B23B3B;" aria-invalid="true" aria-describedby="dsErrMsg">
+        <p id="dsErrMsg" style="color:#D98888; font-size:var(--step--1); margin-top:6px;">Enter a valid email address so we can confirm your order.</p>
+      </div>
+      <div class="field">
+        <label for="dsMsg">Message</label>
+        <textarea id="dsMsg" placeholder="Write a short note…"></textarea>
+      </div>
+      <div class="field">
+        <label for="dsDisabled">Disabled</label>
+        <input type="text" id="dsDisabled" value="Locked after production starts" disabled style="opacity:0.5; cursor:not-allowed;">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CARDS ============================== -->
+  <section class="ds-section" id="cards">
+    <div class="ds-section__head">
+      <div class="eyebrow">06 · Components</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Cards</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">The product card is the core unit of the shop: a 4:5 image frame with a soft shadow, a gold tag for metal/finish, and a quick-view action that appears on hover or focus.</p>
+    </div>
+    <div class="grid grid--4" style="max-width: 900px;">
+      <div class="card">
+        <div class="card__frame no-photo">
+          <div class="art-fallback" style="display:flex;">
+            <svg viewBox="0 0 200 200" fill="none" width="58%"><path d="M100 150 60 108c-14-14-14-36 0-50s36-14 40 0c4-14 26-14 40 0s14 36 0 50L100 150Z" stroke="var(--gold)" stroke-width="1.1"/></svg>
+          </div>
+          <span class="card__tag">Gold</span>
+          <div class="card__quick" style="opacity:1; transform:none;"><span class="btn btn-outline" style="padding:8px 14px;min-height:auto;">View</span></div>
+        </div>
+        <div class="card__body">
+          <span class="card__cat">Gold</span>
+          <h3 class="card__name">Forever Heart Necklace</h3>
+          <span class="card__price">$128</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== ELEVATION ============================== -->
+  <section class="ds-section" id="elevation">
+    <div class="ds-section__head">
+      <div class="eyebrow">07 · Foundations</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Elevation &amp; Shadow</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Shadows are soft, dark and low-opacity — never grey. They read as jewellery-case lighting, not flat-UI drop-shadow. A gold shadow exists only for gold surfaces (buttons, toasts).</p>
+    </div>
+    <div class="ds-demo-row">
+      <div class="ds-shadow-card" style="box-shadow: var(--shadow-sm);">shadow-sm — resting cards</div>
+      <div class="ds-shadow-card" style="box-shadow: var(--shadow-md);">shadow-md — hovered cards</div>
+      <div class="ds-shadow-card" style="box-shadow: var(--shadow-lg);">shadow-lg — drawers, modals</div>
+      <div class="ds-shadow-card" style="box-shadow: var(--shadow-gold); background:var(--gold); color:var(--bg);">shadow-gold — CTAs, toasts</div>
+    </div>
+  </section>
+
+  <!-- ============================== ICONS ============================== -->
+  <section class="ds-section" id="icons">
+    <div class="ds-section__head">
+      <div class="eyebrow">08 · Foundations</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Iconography</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Two icon languages, never mixed on the same screen: a 24px functional line-icon set (1.5px stroke, currentColor) for UI chrome, and hand-drawn gold line-art marks reserved for decorative brand moments (empty states, photo fallbacks).</p>
+    </div>
+    <p class="ds-kicker">Functional (UI)</p>
+    <div class="ds-grid" style="grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); margin-top: var(--sp-2); margin-bottom: var(--sp-5);">
+      <div class="ds-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 6h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg><span>Bag</span></div>
+      <div class="ds-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></div>
+      <div class="ds-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Close</span></div>
+    </div>
+    <p class="ds-kicker">Decorative (brand marks)</p>
+    <div class="ds-grid" style="grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); margin-top: var(--sp-2);">
+      <div class="ds-icon-tile"><svg viewBox="0 0 200 200" fill="none" width="28" height="28"><path d="M100 150 60 108c-14-14-14-36 0-50s36-14 40 0c4-14 26-14 40 0s14 36 0 50L100 150Z" stroke="var(--gold)" stroke-width="1.3"/></svg><span>Heart</span></div>
+      <div class="ds-icon-tile"><svg viewBox="0 0 200 200" fill="none" width="28" height="28"><path d="M100 120c22 0 40-17.9 40-40s-18-40-40-40-40 17.9-40 40 18 40 40 40Z" stroke="var(--gold)" stroke-width="1.3"/><path d="M75 70c14-14 36-14 50 0M75 130c14 14 36 14 50 0" stroke="var(--gold)" stroke-width="1.3"/></svg><span>Knot</span></div>
+    </div>
+  </section>
+
+  <!-- ============================== MOTION ============================== -->
+  <section class="ds-section" id="motion">
+    <div class="ds-section__head">
+      <div class="eyebrow">09 · Foundations</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">Motion</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Motion is unhurried — a slow reveal, not a snap. Hover the tiles to feel each timing. Every animation on the site respects <code style="color:var(--gold-bright);">prefers-reduced-motion</code> and reduces to an instant state.</p>
+    </div>
+    <div class="ds-grid" style="grid-template-columns: repeat(auto-fill, minmax(160px,1fr));">
+      <div class="ds-motion-tile" style="--_dur:200ms; --_ease: cubic-bezier(0.16,1,0.3,1);"><div class="ds-motion-tile__chip"></div><div class="ds-motion-tile__label">fast · 200ms</div></div>
+      <div class="ds-motion-tile" style="--_dur:450ms; --_ease: cubic-bezier(0.16,1,0.3,1);"><div class="ds-motion-tile__chip"></div><div class="ds-motion-tile__label">med · 450ms</div></div>
+      <div class="ds-motion-tile" style="--_dur:900ms; --_ease: cubic-bezier(0.16,1,0.3,1);"><div class="ds-motion-tile__chip"></div><div class="ds-motion-tile__label">slow · 900ms</div></div>
+      <div class="ds-motion-tile" style="--_dur:1400ms; --_ease: cubic-bezier(0.16,1,0.3,1);"><div class="ds-motion-tile__chip"></div><div class="ds-motion-tile__label">cinematic · 1400ms</div></div>
+    </div>
+    <div class="ds-do-dont" style="margin-top: var(--sp-4);">
+      <div class="ds-do"><h4>Do</h4><ul><li>Use <code>ease-out</code> for anything entering the viewport (reveal, drawer, modal).</li><li>Stagger grid/list entrances by ~80ms per item, max 8 items.</li><li>Animate opacity/transform only — never width, height, or top/left.</li></ul></div>
+      <div class="ds-dont"><h4>Don't</h4><ul><li>Never exceed ~1.5s even for the most "cinematic" entrance.</li><li>Never animate purely for decoration with no cause-effect relationship.</li><li>Never block input while an animation plays.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ============================== TOKENS ============================== -->
+  <section class="ds-section" id="tokens">
+    <div class="ds-section__head">
+      <div class="eyebrow">10 · Reference</div>
+      <h2 class="h-section" style="margin-top: var(--sp-2);">All tokens</h2>
+      <p class="lede" style="margin-top: var(--sp-2);">Every custom property defined in <code style="color:var(--gold-bright);">css/style.css</code>. Components must consume these — never a raw hex value.</p>
+    </div>
+    <div class="ds-table-wrap">
+      <table class="ds-token-table">
+        <thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>--black</td><td>#0A0A0A</td><td>Page ground</td></tr>
+          <tr><td>--charcoal</td><td>#141414</td><td>Panel / footer background</td></tr>
+          <tr><td>--charcoal-2</td><td>#1B1B1A</td><td>Card &amp; gallery surface plane</td></tr>
+          <tr><td>--white</td><td>#FFFFFF</td><td>Rare high-contrast moments</td></tr>
+          <tr><td>--ivory</td><td>#F4EFE4</td><td>Light section background, primary text on dark</td></tr>
+          <tr><td>--ivory-alt</td><td>#ECE4D2</td><td>Alternating light panels</td></tr>
+          <tr><td>--gold</td><td>#C8A86B</td><td>Accent — CTAs, prices, eyebrows, active states</td></tr>
+          <tr><td>--gold-bright</td><td>#DFC28D</td><td>Hover / emphasis on dark grounds</td></tr>
+          <tr><td>--gold-deep</td><td>#7C5F35</td><td>Gold text on light grounds (AA-safe)</td></tr>
+          <tr><td>--cream / --cream-dim / --muted</td><td>ivory / #C9C2B2 / #8A8377</td><td>Text hierarchy on dark grounds</td></tr>
+          <tr><td>--ink / --ink-muted</td><td>#14110D / #5B5346</td><td>Text hierarchy on light grounds</td></tr>
+          <tr><td>--font-display</td><td>Cormorant Garamond</td><td>Headlines, prices, quotes, signatures</td></tr>
+          <tr><td>--font-body</td><td>Inter</td><td>Nav, labels, body copy, forms</td></tr>
+          <tr><td>--step--1 … --step-5</td><td>0.875rem → 7rem, fluid clamp()</td><td>Full type scale</td></tr>
+          <tr><td>--sp-1 … --sp-8</td><td>8px → 160px</td><td>Spacing scale</td></tr>
+          <tr><td>--container / --container-narrow</td><td>1200px / 760px</td><td>Page and reading-column widths</td></tr>
+          <tr><td>--radius / --radius-md / --radius-full</td><td>2px / 4px / 999px</td><td>Corner radii — sharp by default</td></tr>
+          <tr><td>--shadow-sm / md / lg / gold</td><td>see §07</td><td>Elevation scale</td></tr>
+          <tr><td>--z-header … --z-toast</td><td>80 → 110</td><td>Stacking order</td></tr>
+          <tr><td>--ease-out / --ease-in-out</td><td>cubic-bezier(...)</td><td>Motion curves</td></tr>
+          <tr><td>--dur-fast / med / slow / cinematic</td><td>200 / 450 / 900 / 1400ms</td><td>Motion durations</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-bottom" style="margin-top:0; border-top:0; padding-top:0;">
+    <span>&copy; 2026 Zaviqu. Design system v1.0.</span>
+    <a href="index.html" class="btn-text">Back to the site →</a>
+  </div>
+</footer>
+
+</body>
+</html>
