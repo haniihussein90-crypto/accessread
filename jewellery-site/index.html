@@ -7,6 +7,7 @@
 <meta name="description" content="Zaviqu — a premium jewelry brand helping people celebrate life's most meaningful moments through beautifully personalized jewelry that becomes a lasting keepsake.">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/home.css">
 </head>
 <body>
 <noscript><style>.reveal{opacity:1!important;transform:none!important;}</style></noscript>
@@ -51,111 +52,149 @@
 
 <main>
 
-  <!-- HERO -->
-  <section class="hero container">
-    <div class="hero__grid">
-      <div class="reveal is-visible">
-        <div class="eyebrow hero__eyebrow">Made to order, one at a time</div>
-        <h1 class="h-display hero__title">A necklace that says<br><span class="accent">what you couldn't.</span></h1>
-        <p class="lede">Every piece is cast to order and personalized with a name or a short message — for the mother, partner, sister, or friend you've never quite found the words for.</p>
-        <div class="hero__actions">
-          <a href="shop.html" class="btn btn-primary">Shop the Collection</a>
-          <a href="shop.html#personalize" class="btn btn-outline">How Personalizing Works</a>
-        </div>
-      </div>
-      <div class="hero__art reveal is-visible" style="transition-delay:120ms">
-        <img src="assets/products/heart-solitaire-necklace-gold.jpg" alt="Forever Heart necklace in gold, an open heart pendant set with a single stone">
+  <!-- 01 · COVER -->
+  <section class="story-cover">
+    <img class="story-cover__img" src="assets/products/heart-solitaire-necklace-gold.jpg" alt="Forever Heart necklace in gold, an open heart pendant set with a single stone">
+    <div class="story-cover__content container reveal is-visible">
+      <div class="eyebrow story-cover__eyebrow">Made to order, one at a time</div>
+      <h1 class="h-display story-cover__title">A necklace that says <em>what you couldn't.</em></h1>
+      <p class="lede story-cover__lede">Every piece is cast to order and personalized with a name or a short message — for the mother, partner, sister, or friend you've never quite found the words for.</p>
+    </div>
+    <div class="story-cover__cue"><span class="story-cover__cue-line"></span>Scroll</div>
+  </section>
+
+  <!-- 02 · MANIFESTO -->
+  <section class="story-manifesto container">
+    <div class="story-manifesto__grid">
+      <div></div>
+      <div>
+        <p class="story-manifesto__statement reveal">Zaviqu helps people celebrate life's most meaningful moments through <span class="accent">beautifully personalized jewelry</span> that becomes a lasting keepsake.</p>
+        <p class="story-manifesto__note reveal" style="transition-delay:120ms">It started with a single, ordinary problem: a card felt too small for what needed saying, and jewellery from anywhere else felt like it was speaking for a stranger, not for us. So every piece here is cast to order, built to hold one name or one line — because the whole point of giving someone jewellery is that they'll keep it.</p>
       </div>
     </div>
   </section>
 
-  <!-- TRUST STRIP -->
-  <div class="strip">
-    <div class="strip__track">
-      <span>Made to order</span><span>·</span>
-      <span>Free personalization</span><span>·</span>
-      <span>Ships in a keepsake box</span><span>·</span>
-      <span>Hypoallergenic finish</span><span>·</span>
-      <span>30-day returns</span><span>·</span>
-    </div>
-  </div>
-
-  <!-- FEATURED COLLECTION -->
-  <section class="section container">
-    <div class="section-head reveal">
+  <!-- 03 · LOOKBOOK -->
+  <section class="story-lookbook container">
+    <div class="section-head story-lookbook__head reveal">
       <div>
         <div class="eyebrow">The collection</div>
-        <h2 class="h-section">Four pieces, one purpose.</h2>
+        <h2 class="h-section">Three pieces, one purpose.</h2>
       </div>
-      <a href="shop.html" class="btn-text">View full shop →</a>
     </div>
-    <div class="grid grid--4 reveal-stagger" id="featuredGrid"></div>
+
+    <article class="story-panel reveal">
+      <div class="story-panel__figure">
+        <span class="story-panel__index">01 / Name</span>
+        <img src="assets/products/name-necklace-gold.jpg" alt="Custom name necklace in gold cursive script" style="object-fit:contain; background: linear-gradient(155deg, var(--surface), var(--bg-panel));">
+      </div>
+      <div>
+        <div class="story-panel__cat">Gold · Personalized Name</div>
+        <h3 class="story-panel__name">Custom Name Necklace</h3>
+        <p class="story-panel__desc">One name, cast in a fine cursive line and hung from a chain built to be worn daily. The most-gifted piece in the collection, for exactly that reason.</p>
+        <div class="story-panel__meta">
+          <span class="story-panel__price">$49</span>
+          <span class="story-panel__material">18k gold-plated stainless steel</span>
+        </div>
+        <a href="product.html?id=name-necklace-gold" class="btn-text story-panel__link">View this piece →</a>
+      </div>
+    </article>
+
+    <article class="story-panel story-panel--reverse reveal">
+      <div class="story-panel__figure">
+        <span class="story-panel__index">02 / Knot</span>
+        <img src="assets/products/love-knot-necklace-gold.jpg" alt="Love Knot necklace in gold, an interlocking knot set with a center stone" style="object-fit:cover;">
+      </div>
+      <div>
+        <div class="story-panel__cat">Gold · Knot</div>
+        <h3 class="story-panel__name">Love Knot Necklace</h3>
+        <p class="story-panel__desc">A single interlocking knot, set with a bright center stone — a quiet way of saying two lives stayed tangled together on purpose.</p>
+        <div class="story-panel__meta">
+          <span class="story-panel__price">$58</span>
+          <span class="story-panel__material">18k gold-plated stainless steel, cubic zirconia</span>
+        </div>
+        <a href="product.html?id=love-knot-necklace-gold" class="btn-text story-panel__link">View this piece →</a>
+      </div>
+    </article>
+
+    <article class="story-panel reveal">
+      <div class="story-panel__figure">
+        <span class="story-panel__index">03 / Heart</span>
+        <img src="assets/products/heart-solitaire-necklace-silver.jpg" alt="Forever Heart necklace in silver, an open heart pendant set with a single stone" style="object-fit:cover;">
+      </div>
+      <div>
+        <div class="story-panel__cat">Silver · Heart</div>
+        <h3 class="story-panel__name">Forever Heart Necklace</h3>
+        <p class="story-panel__desc">The same open heart in a cooler, quieter finish — for the person whose taste runs toward silver.</p>
+        <div class="story-panel__meta">
+          <span class="story-panel__price">$52</span>
+          <span class="story-panel__material">Rhodium-plated stainless steel, cubic zirconia</span>
+        </div>
+        <a href="product.html?id=heart-solitaire-necklace-silver" class="btn-text story-panel__link">View this piece →</a>
+      </div>
+    </article>
+
+    <div class="story-lookbook__more reveal">
+      <a href="shop.html" class="btn btn-outline">View Full Shop</a>
+    </div>
   </section>
 
-  <!-- WHY IT'S ON TOP / VALUE PROP -->
-  <section class="section section--paper">
-    <div class="container split">
-      <div class="reveal">
-        <div class="eyebrow">Why this, and not a card</div>
-        <h2 class="h-section">A message someone keeps, not one they recycle.</h2>
-        <p class="lede">A card gets read once and put in a drawer. A necklace gets worn — to the wedding, the hard Tuesday, the flight home. Every piece here carries a name or a line you write, so the message doesn't end when the moment does.</p>
-        <div class="stat-row">
-          <div class="stat"><div class="stat__num">100%</div><div class="stat__label">Made to order</div></div>
-          <div class="stat"><div class="stat__num">Free</div><div class="stat__label">Personalization included</div></div>
-          <div class="stat"><div class="stat__num">30&nbsp;day</div><div class="stat__label">Returns on unworn pieces</div></div>
-          <div class="stat"><div class="stat__num">9</div><div class="stat__label">Relationships we write for</div></div>
+  <!-- 04 · INDEX OF FEELINGS -->
+  <section class="story-index">
+    <div class="container">
+      <div class="section-head story-index__head reveal">
+        <div>
+          <div class="eyebrow">Who it's for</div>
+          <h2 class="h-section">An index of feelings.</h2>
         </div>
       </div>
-      <div class="split__art reveal" style="transition-delay:120ms">
-        <img src="assets/products/name-necklace-gold.jpg" alt="Custom name necklace in gold script" style="width:100%;height:100%;object-fit:cover;">
+      <div class="story-index__list reveal">
+        <div class="story-index__row">
+          <div class="story-index__who">For Mom</div>
+          <p class="story-index__quote">"To the woman who gave me everything."</p>
+        </div>
+        <div class="story-index__row">
+          <div class="story-index__who">For a partner</div>
+          <p class="story-index__quote">"However long we've got, I want it with you."</p>
+        </div>
+        <div class="story-index__row">
+          <div class="story-index__who">For Dad</div>
+          <p class="story-index__quote">"You taught me how to stand on my own."</p>
+        </div>
+        <div class="story-index__row">
+          <div class="story-index__who">For a best friend</div>
+          <p class="story-index__quote">"Some people find family. I found you."</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- RECIPIENT / MESSAGE SECTION -->
-  <section class="section container" id="personalize-teaser">
-    <div class="section-head reveal">
-      <div>
-        <div class="eyebrow">Who is it for</div>
-        <h2 class="h-section">Tell us who, we'll suggest the words.</h2>
-      </div>
-    </div>
-    <p class="lede reveal" style="margin-bottom: var(--sp-5);">Pick a piece, tell us who it's for — Mom, Dad, a partner, a sister — and we'll suggest a short message to start from. Keep it, tweak it, or write your own. It ships engraved either way.</p>
-    <div class="grid grid--4 reveal-stagger">
-      <div class="stat" style="border-top-color: var(--border-strong);">
-        <div class="stat__label" style="color:var(--gold-bright);margin-bottom:6px;">For Mom</div>
-        <p style="font-family:var(--font-display);font-style:italic;color:var(--cream-dim);font-size:var(--step-0);line-height:1.4;">“To the woman who gave me everything.”</p>
-      </div>
-      <div class="stat" style="border-top-color: var(--border-strong);">
-        <div class="stat__label" style="color:var(--gold-bright);margin-bottom:6px;">For a partner</div>
-        <p style="font-family:var(--font-display);font-style:italic;color:var(--cream-dim);font-size:var(--step-0);line-height:1.4;">“However long we've got, I want it with you.”</p>
-      </div>
-      <div class="stat" style="border-top-color: var(--border-strong);">
-        <div class="stat__label" style="color:var(--gold-bright);margin-bottom:6px;">For Dad</div>
-        <p style="font-family:var(--font-display);font-style:italic;color:var(--cream-dim);font-size:var(--step-0);line-height:1.4;">“You taught me how to stand on my own.”</p>
-      </div>
-      <div class="stat" style="border-top-color: var(--border-strong);">
-        <div class="stat__label" style="color:var(--gold-bright);margin-bottom:6px;">For a best friend</div>
-        <p style="font-family:var(--font-display);font-style:italic;color:var(--cream-dim);font-size:var(--step-0);line-height:1.4;">“Some people find family. I found you.”</p>
+  <!-- 05 · THE RITUAL -->
+  <section class="story-ritual">
+    <img class="story-ritual__img" src="assets/products/eternal-knot-necklace-gold.jpg" alt="Eternal Knot necklace in gold, a denser pavé-set knot">
+    <div class="story-ritual__content reveal">
+      <div class="eyebrow story-ritual__eyebrow">How it's made</div>
+      <p class="story-ritual__statement">Nothing here sits pre-made on a shelf. Your piece is cast and finished only once you've told us who it's for.</p>
+      <div class="story-ritual__facts">
+        <span>Cast to order</span>
+        <span>Ships in 7–12 days</span>
+        <span>Arrives in a keepsake box</span>
       </div>
     </div>
   </section>
 
-  <!-- TESTIMONIAL -->
-  <section class="section section--panel">
-    <div class="container">
-      <div class="testimonial reveal">
-        <p class="testimonial__quote">"I wrote the message at 1am, half-crying at my laptop. Three weeks later my sister called me crying too. Worth every bit of the wait."</p>
-        <div class="testimonial__by">— Priya, gifted the Rose &amp; Name Necklace</div>
-      </div>
-    </div>
+  <!-- 06 · EDITORIAL QUOTE -->
+  <section class="story-quote container reveal">
+    <div class="story-quote__mark">"</div>
+    <p class="story-quote__text">I wrote the message at 1am, half-crying at my laptop. Three weeks later my sister called me crying too. Worth every bit of the wait.</p>
+    <div class="story-quote__by">Priya · Rose &amp; Name Necklace</div>
   </section>
 
-  <!-- CTA BAND -->
-  <section class="cta-band container reveal">
-    <h2 class="h-section">Start with who it's for.</h2>
-    <p class="lede" style="margin-inline:auto;">The hardest part is usually the words. We'll help with those.</p>
-    <a href="shop.html" class="btn btn-primary">Shop the Collection</a>
+  <!-- 07 · CLOSE -->
+  <section class="story-close container reveal">
+    <div class="eyebrow story-close__eyebrow">Start with who it's for</div>
+    <h2 class="h-section story-close__statement">The hardest part is usually the words. We'll help with those.</h2>
+    <a href="shop.html" class="btn btn-primary story-close__cta">Shop the Collection</a>
   </section>
 
 </main>
@@ -235,25 +274,5 @@
 <script src="js/media.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
-<script>
-  const featuredIds = ['heart-solitaire-necklace-gold', 'love-knot-necklace-gold', 'name-necklace-gold', 'rose-name-necklace-gold'];
-  const featuredGrid = document.getElementById('featuredGrid');
-  featuredGrid.innerHTML = featuredIds.map((id, i) => {
-    const p = getProduct(id);
-    return `
-    <a href="product.html?id=${p.id}" class="card reveal" style="--i:${i}">
-      <div class="card__frame">${productFrameMarkup(p)}
-        <div class="card__quick"><span class="btn btn-outline" style="padding:8px 14px;min-height:auto;">View</span></div>
-      </div>
-      <div class="card__body">
-        <span class="card__cat">${p.metal === 'silver' ? 'Silver' : 'Gold'}</span>
-        <h3 class="card__name">${p.name}</h3>
-        <span class="card__price">${formatPrice(p.price)}</span>
-      </div>
-    </a>`;
-  }).join('');
-  armLineArt(featuredGrid);
-  observeReveals(featuredGrid);
-</script>
 </body>
 </html>

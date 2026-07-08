@@ -1,0 +1,266 @@
+/* ==========================================================================
+   ZAVIQU — Homepage narrative (index.html only)
+   A cinematic editorial story, built only from the tokens and base
+   utilities in css/style.css (color, type, spacing, shadow, motion).
+   Nothing here is shared with other pages — see css/components.css for
+   the reusable, cross-page component library.
+   ========================================================================== */
+
+/* ------------------------------- 01 · Cover -------------------------------- */
+.story-cover{
+  position: relative;
+  min-height: 100svh;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.story-cover__img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+}
+.story-cover::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10,10,10,0.96) 0%,
+    rgba(10,10,10,0.72) 28%,
+    rgba(10,10,10,0.18) 58%,
+    rgba(10,10,10,0.05) 100%
+  );
+}
+.story-cover__content{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: var(--sp-6) var(--sp-3) var(--sp-6);
+}
+@media (min-width: 768px){ .story-cover__content{ padding: var(--sp-7) var(--sp-5) var(--sp-6); } }
+.story-cover__eyebrow{ color: var(--gold); }
+.story-cover__title{
+  font-size: var(--step-4);
+  line-height: 1.05;
+  max-width: 16ch;
+  margin-top: var(--sp-3);
+}
+.story-cover__title em{ font-style: italic; color: var(--gold-bright); }
+.story-cover__lede{
+  margin-top: var(--sp-3);
+  max-width: 42ch;
+  color: var(--cream-dim);
+}
+.story-cover__cue{
+  position: absolute;
+  left: 50%;
+  bottom: var(--sp-4);
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+}
+.story-cover__cue-line{
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: story-cue-pulse var(--dur-cinematic) var(--ease-in-out) infinite;
+}
+@keyframes story-cue-pulse{
+  0%, 100%{ opacity: 0.3; transform: scaleY(0.7); transform-origin: top; }
+  50%{ opacity: 1; transform: scaleY(1); transform-origin: top; }
+}
+@media (prefers-reduced-motion: reduce){ .story-cover__cue-line{ animation: none; opacity: 0.6; } }
+
+/* ------------------------------ 02 · Manifesto ------------------------------ */
+.story-manifesto{
+  padding-block: var(--sp-8) var(--sp-7);
+}
+.story-manifesto__grid{
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px){
+  .story-manifesto__grid{ grid-template-columns: 0.9fr 1.6fr; gap: var(--sp-6); }
+}
+.story-manifesto__statement{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-3);
+  line-height: 1.22;
+  color: var(--cream);
+}
+.story-manifesto__statement .accent{ color: var(--gold); font-style: normal; }
+.story-manifesto__note{
+  margin-top: var(--sp-4);
+  max-width: 46ch;
+  color: var(--cream-dim);
+  font-size: var(--step-0);
+  line-height: 1.7;
+}
+@media (min-width: 900px){ .story-manifesto__note{ margin-top: var(--sp-2); margin-left: var(--sp-5); } }
+
+/* ------------------------------- 03 · Lookbook ------------------------------- */
+.story-lookbook{ padding-block: var(--sp-3) var(--sp-7); }
+.story-lookbook__head{ margin-bottom: var(--sp-6); }
+
+.story-panel{
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+  align-items: center;
+  margin-bottom: var(--sp-7);
+}
+.story-panel:last-child{ margin-bottom: 0; }
+@media (min-width: 900px){
+  .story-panel{ grid-template-columns: 1.15fr 0.85fr; gap: var(--sp-6); }
+  .story-panel--reverse{ direction: rtl; }
+  .story-panel--reverse > *{ direction: ltr; }
+}
+.story-panel__figure{
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--surface);
+}
+@media (min-width: 900px){ .story-panel__figure{ aspect-ratio: 3 / 4; } }
+.story-panel__figure img{ width: 100%; height: 100%; }
+.story-panel__index{
+  position: absolute;
+  top: var(--sp-2); left: var(--sp-2);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--gold-bright);
+  background: rgba(10,10,10,0.6);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+}
+.story-panel__cat{ font-size: var(--step--1); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.story-panel__name{ font-size: var(--step-2); margin-top: var(--sp-1); }
+.story-panel__desc{ margin-top: var(--sp-2); max-width: 46ch; color: var(--cream-dim); }
+.story-panel__meta{ display: flex; align-items: baseline; gap: var(--sp-3); margin-top: var(--sp-3); }
+.story-panel__price{ font-family: var(--font-display); font-size: var(--step-1); color: var(--gold); }
+.story-panel__material{ font-size: 12px; color: var(--muted); }
+.story-panel__link{ margin-top: var(--sp-3); display: inline-block; }
+
+.story-lookbook__more{ text-align: center; margin-top: var(--sp-3); }
+
+/* -------------------------------- 04 · Index --------------------------------- */
+.story-index{ background: var(--bg-panel); padding-block: var(--sp-7); }
+.story-index__head{ margin-bottom: var(--sp-5); }
+.story-index__list{
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--border);
+}
+@media (min-width: 800px){ .story-index__list{ grid-template-columns: 1fr 1fr; } }
+.story-index__row{
+  padding-block: var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+@media (min-width: 800px){ .story-index__row:nth-child(odd){ padding-right: var(--sp-5); border-right: 1px solid var(--border); } }
+@media (min-width: 800px){ .story-index__row:nth-child(even){ padding-left: var(--sp-5); } }
+.story-index__who{
+  font-size: var(--step--1);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.story-index__quote{
+  margin-top: var(--sp-1);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-1);
+  line-height: 1.4;
+  color: var(--cream);
+  max-width: 42ch;
+}
+
+/* -------------------------------- 05 · Ritual --------------------------------- */
+.story-ritual{
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.story-ritual__img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 60% 40%;
+}
+.story-ritual::after{
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 100% at 50% 50%, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.88) 100%);
+}
+.story-ritual__content{
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 44ch;
+  padding-inline: var(--sp-3);
+}
+.story-ritual__eyebrow{ justify-content: center; }
+.story-ritual__statement{
+  margin-top: var(--sp-3);
+  font-size: var(--step-2);
+  line-height: 1.3;
+}
+.story-ritual__facts{
+  margin-top: var(--sp-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  justify-content: center;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  color: var(--cream-dim);
+}
+.story-ritual__facts span:not(:last-child)::after{ content: '·'; margin-left: var(--sp-3); color: var(--gold); }
+
+/* -------------------------------- 06 · Quote --------------------------------- */
+.story-quote{ padding-block: var(--sp-8); text-align: center; }
+.story-quote__mark{ color: var(--gold); font-family: var(--font-display); font-size: var(--step-3); line-height: 1; }
+.story-quote__text{
+  margin-top: var(--sp-2);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-2);
+  line-height: 1.4;
+  max-width: 34ch;
+  margin-inline: auto;
+}
+.story-quote__by{
+  margin-top: var(--sp-4);
+  font-size: var(--step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* --------------------------------- 07 · Close --------------------------------- */
+.story-close{
+  text-align: center;
+  padding-block: var(--sp-7) var(--sp-8);
+  border-top: 1px solid var(--border);
+}
+.story-close__eyebrow{ justify-content: center; }
+.story-close__statement{ margin-top: var(--sp-3); font-size: var(--step-3); }
+.story-close__cta{ margin-top: var(--sp-5); }
