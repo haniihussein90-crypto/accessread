@@ -52,7 +52,7 @@
 <main class="container" style="padding-block: var(--sp-5) var(--sp-7);">
   <div id="pdpRoot"></div>
 
-  <section style="margin-top: var(--sp-7);">
+  <section style="margin-top: var(--sp-7);" id="letterSection">
     <div class="section-head reveal is-visible" style="justify-content:center; text-align:center; flex-direction:column;">
       <div class="eyebrow" style="justify-content:center;">Inside the box</div>
       <h2 class="h-section">The card tucked behind the necklace.</h2>
@@ -193,9 +193,16 @@
   `;
   armLineArt(root);
 
-  const letterRoot = document.getElementById('letterRoot');
-  letterRoot.innerHTML = letterCardMarkup(product);
-  observeReveals(letterRoot);
+  const letterSection = document.getElementById('letterSection');
+  if (product.photoIncludesLetter){
+    // The product photo already shows the message on the card — showing
+    // the separate typed-out letter again underneath would just repeat it.
+    letterSection.style.display = 'none';
+  } else {
+    const letterRoot = document.getElementById('letterRoot');
+    letterRoot.innerHTML = letterCardMarkup(product);
+    observeReveals(letterRoot);
+  }
 
   const recipientSelect = document.getElementById('recipientSelect');
   const messageBox = document.getElementById('messageBox');
