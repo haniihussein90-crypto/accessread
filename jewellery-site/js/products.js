@@ -37,7 +37,7 @@ const PRODUCTS = [
     description: 'A single interlocking knot, set with a bright center stone — a quiet way of saying two lives stayed tangled together on purpose.',
     personalizable: false,
     recipients: ['mom', 'wife', 'girlfriend', 'sister'],
-    image: 'assets/products/love-knot-necklace-gold.jpg',
+    image: 'assets/products/love-knot-necklace-gold-macro.jpg',
     stripeLink: 'https://buy.stripe.com/REPLACE_love_knot_gold',
     letter: {
       icon: '💍',
