@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gift Preview — Zaviqu</title>
+<meta name="description" content="Preview your personalised Zaviqu Love Knot necklace, gift box, and message before checkout.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header gp-header" id="siteHeader">
+  <div class="container site-header__row">
+    <a href="index.html" class="logo">ZAVIQU</a>
+    <a href="index.html#configureSection" class="gp-back">← Back to Build Your Gift</a>
+  </div>
+</header>
+
+<main class="gift-preview">
+  <div class="container gift-preview__head reveal">
+    <p class="gift-preview__eyebrow">Your Gift, Ready to Give</p>
+    <h1 class="gift-preview__title">Gift Preview</h1>
+  </div>
+
+  <div class="container gift-preview__layout">
+    <div class="gift-preview__stage reveal">
+      <div class="gp-necklace">
+        <img id="gpNecklaceImage" src="assets/images/necklace-gold-studio.jpg" alt="Zaviqu Love Knot Necklace">
+        <span class="gp-necklace__tag" id="gpFinishTag">Gold Finish</span>
+      </div>
+
+      <div class="message-preview gp-message">
+        <div class="message-preview__card">
+          <p class="message-preview__text is-placeholder" id="gpMessageText">Your message will appear here…</p>
+        </div>
+      </div>
+
+      <div class="gp-box">
+        <div class="gp-box__image-wrap" id="gpBoxImageWrap">
+          <img id="gpBoxImage" src="assets/images/gift-box.jpg" alt="Zaviqu gift box, beautifully wrapped">
+        </div>
+
+        <div class="gp-box__tiers" role="radiogroup" aria-label="Choose your gift box">
+          <button type="button" class="gp-tier is-selected" data-tier="standard" role="radio" aria-checked="true">
+            <span class="gp-tier__label">Standard Gift Box</span>
+            <span class="gp-tier__price">Included</span>
+          </button>
+          <button type="button" class="gp-tier" data-tier="luxury" role="radio" aria-checked="false">
+            <span class="gp-tier__label">Luxury Gift Box</span>
+            <span class="gp-tier__price">Price TBD</span>
+          </button>
+        </div>
+        <p class="gp-box__note">Gift box photography is shared between tiers, and pricing is a placeholder — add real Standard/Luxury Gift Box products in Shopify to finalize.</p>
+      </div>
+    </div>
+
+    <div class="gift-preview__summary reveal">
+      <h2 class="gp-summary__title">Order Summary</h2>
+
+      <dl class="gp-summary__list">
+        <div class="gp-summary__row">
+          <dt>Love Knot Necklace</dt>
+          <dd id="gpFinishSummary">Gold finish</dd>
+        </div>
+        <div class="gp-summary__row">
+          <dt>Personalised Message</dt>
+          <dd id="gpMessageSummary">No message added</dd>
+        </div>
+        <div class="gp-summary__row">
+          <dt>Gift Box</dt>
+          <dd id="gpBoxSummary">Standard</dd>
+        </div>
+      </dl>
+
+      <div class="gp-summary__total">
+        <span>Total</span>
+        <span id="gpTotal">Price upon selection</span>
+      </div>
+
+      <p class="gp-summary__note">Pricing shown is illustrative — connect real products in Shopify to finalize checkout.</p>
+
+      <button type="button" class="btn-gold gp-checkout" id="checkoutBtn">Continue to Checkout</button>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+</body>
+</html>
