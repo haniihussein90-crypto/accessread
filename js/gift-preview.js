@@ -35,7 +35,7 @@ const BOX_OPTIONS = {
 // Curated design set shown to customers. Each `shineOnTemplateId` must be filled in with
 // the real supported ShineOn template ID before this can drive real fulfilment.
 const CARD_DESIGNS = [
-  { id: 'midnight-lux', name: 'Midnight Lux', shineOnTemplateId: null },
+  { id: 'midnight-luxe', name: 'Midnight Luxe', shineOnTemplateId: null },
   { id: 'ivory-elegance', name: 'Ivory Elegance', shineOnTemplateId: null },
   { id: 'romantic-blush', name: 'Romantic Blush', shineOnTemplateId: null },
   { id: 'classic-minimal', name: 'Classic Minimal', shineOnTemplateId: null },
@@ -54,20 +54,28 @@ const giftPreviewMain = document.querySelector('.gift-preview');
 if (giftPreviewMain) {
   const gpNotice = document.getElementById('gpNotice');
   const gpHeroImage = document.getElementById('gpHeroImage');
-  const gpFinishTag = document.getElementById('gpFinishTag');
   const gpHeroCard = document.getElementById('gpHeroCard');
   const gpMessageText = document.getElementById('gpMessageText');
+  const gpMessageSummaryText = document.getElementById('gpMessageSummaryText');
 
-  const gpFinishSummary = document.getElementById('gpFinishSummary');
-  const gpMessageSummary = document.getElementById('gpMessageSummary');
   const gpItemPrice = document.getElementById('gpItemPrice');
   const gpBoxUpgradePrice = document.getElementById('gpBoxUpgradePrice');
   const gpTotal = document.getElementById('gpTotal');
   const gpStickyTotal = document.getElementById('gpStickyTotal');
 
-  const cardOptions = Array.from(document.querySelectorAll('.gp-option[data-design]'));
-  const boxOptions = Array.from(document.querySelectorAll('.gp-option[data-tier]'));
+  const finishOptions = Array.from(document.querySelectorAll('.gp-pill[data-finish]'));
+  const cardOptions = Array.from(document.querySelectorAll('.gp-pill[data-design]'));
+  const boxOptions = Array.from(document.querySelectorAll('.gp-pill[data-tier]'));
   const checkoutButtons = [document.getElementById('checkoutBtn'), document.getElementById('checkoutBtnSticky')].filter(Boolean);
+
+  const editMessageBtn = document.getElementById('editMessageBtn');
+  const messageModal = document.getElementById('messageModal');
+  const messageModalBackdrop = document.getElementById('messageModalBackdrop');
+  const messageModalInput = document.getElementById('messageModalInput');
+  const messageModalCounter = document.getElementById('messageModalCounter');
+  const messageModalCancel = document.getElementById('messageModalCancel');
+  const messageModalSave = document.getElementById('messageModalSave');
+  const messageMaxLength = messageModalInput ? Number(messageModalInput.getAttribute('maxlength')) : 200;
 
   let hadStoredConfig = false;
   let stored = {};
@@ -84,7 +92,7 @@ if (giftPreviewMain) {
   const state = {
     finish: stored.finish === 'silver' ? 'silver' : 'gold',
     message: typeof stored.message === 'string' ? stored.message : '',
-    cardDesign: CARD_DESIGNS.some((d) => d.id === stored.cardDesign) ? stored.cardDesign : 'midnight-lux',
+    cardDesign: CARD_DESIGNS.some((d) => d.id === stored.cardDesign) ? stored.cardDesign : 'midnight-luxe',
     box: stored.box === 'white' ? 'white' : 'wood',
   };
 
@@ -96,8 +104,8 @@ if (giftPreviewMain) {
     sessionStorage.setItem('zaviquGiftConfig', JSON.stringify(state));
   }
 
-  // Shared radiogroup behaviour (selection + roving tabindex + arrow-key nav) for both
-  // the card design list and the gift box list.
+  // Shared radiogroup behaviour (selection + roving tabindex + arrow-key nav) for the
+  // necklace finish, gift box, and card design pill groups.
   function selectInGroup(options, target) {
     options.forEach((option) => {
       const isMatch = option === target;
@@ -131,10 +139,7 @@ if (giftPreviewMain) {
   }
 
   function renderHero() {
-    const label = state.finish === 'silver' ? 'Silver' : 'Gold';
     if (gpHeroImage) gpHeroImage.src = HERO_IMAGES[state.finish][state.box];
-    if (gpFinishTag) gpFinishTag.textContent = `${label} Finish`;
-    if (gpFinishSummary) gpFinishSummary.textContent = `${label} finish`;
   }
 
   function renderMessage() {
@@ -143,7 +148,13 @@ if (giftPreviewMain) {
       gpMessageText.textContent = value || MESSAGE_PLACEHOLDER;
       gpMessageText.classList.toggle('is-placeholder', !value);
     }
-    if (gpMessageSummary) gpMessageSummary.textContent = value || 'No message added';
+    if (gpMessageSummaryText) gpMessageSummaryText.textContent = value || 'No message added yet.';
+  }
+
+  function renderFinish() {
+    const match = finishOptions.find((option) => option.dataset.finish === state.finish);
+    if (match) selectInGroup(finishOptions, match);
+    renderHero();
   }
 
   function renderCardDesign() {
@@ -170,12 +181,18 @@ if (giftPreviewMain) {
     if (gpStickyTotal) gpStickyTotal.textContent = 'Price upon selection';
   }
 
-  renderHero();
+  renderFinish();
   renderMessage();
   renderCardDesign();
   renderBox();
   renderPricing();
   persist();
+
+  wireRadioGroup(finishOptions, (target) => {
+    state.finish = target.dataset.finish === 'silver' ? 'silver' : 'gold';
+    renderFinish();
+    persist();
+  });
 
   wireRadioGroup(cardOptions, (target) => {
     state.cardDesign = target.dataset.design;
@@ -188,6 +205,46 @@ if (giftPreviewMain) {
     renderBox();
     persist();
   });
+
+  // ---- Edit Message modal ----
+  function updateModalCounter() {
+    if (messageModalInput && messageModalCounter) {
+      messageModalCounter.textContent = `${messageModalInput.value.length} / ${messageMaxLength}`;
+    }
+  }
+
+  function openMessageModal() {
+    if (!messageModal || !messageModalInput) return;
+    messageModalInput.value = state.message;
+    updateModalCounter();
+    messageModal.hidden = false;
+    messageModalInput.focus();
+  }
+
+  function closeMessageModal() {
+    if (!messageModal) return;
+    messageModal.hidden = true;
+    if (editMessageBtn) editMessageBtn.focus();
+  }
+
+  function saveMessage() {
+    if (messageModalInput) state.message = messageModalInput.value.trim();
+    renderMessage();
+    persist();
+    closeMessageModal();
+  }
+
+  if (editMessageBtn) editMessageBtn.addEventListener('click', openMessageModal);
+  if (messageModalInput) messageModalInput.addEventListener('input', updateModalCounter);
+  if (messageModalCancel) messageModalCancel.addEventListener('click', closeMessageModal);
+  if (messageModalBackdrop) messageModalBackdrop.addEventListener('click', closeMessageModal);
+  if (messageModalSave) messageModalSave.addEventListener('click', saveMessage);
+
+  if (messageModal) {
+    messageModal.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMessageModal();
+    });
+  }
 
   // ---- Checkout ----
   function buildCheckoutIntent() {
