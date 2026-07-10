@@ -172,13 +172,6 @@ a { color: inherit; text-decoration: none; }
   color: var(--black);
 }
 
-.btn-gold:disabled {
-  border-color: var(--gold-dim);
-  color: var(--gold-dim);
-  background: none;
-  cursor: default;
-}
-
 .hero__media-col {
   flex: 1 1 58%;
   position: relative;

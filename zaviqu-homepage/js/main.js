@@ -90,19 +90,19 @@ if (configureSection) {
     updateCount();
   }
 
+  // Set this once the gift-preview step or Shopify product page exists.
+  // Until then, the CTA still captures the config on every click so nothing
+  // needs to change here beyond pointing this at a real URL.
+  const GIFT_PREVIEW_URL = null;
+
   if (previewBtn) {
     previewBtn.addEventListener('click', () => {
-      const message = messageField ? messageField.value.trim() : '';
-      const params = new URLSearchParams({ finish: selectedFinish, message });
-      sessionStorage.setItem('zaviquGiftConfig', params.toString());
+      const config = { finish: selectedFinish, message: messageField ? messageField.value.trim() : '' };
+      sessionStorage.setItem('zaviquGiftConfig', JSON.stringify(config));
 
-      const originalLabel = previewBtn.textContent;
-      previewBtn.textContent = 'Saved — Preview Coming Soon';
-      previewBtn.disabled = true;
-      setTimeout(() => {
-        previewBtn.textContent = originalLabel;
-        previewBtn.disabled = false;
-      }, 1800);
+      if (GIFT_PREVIEW_URL) {
+        window.location.href = `${GIFT_PREVIEW_URL}?${new URLSearchParams(config)}`;
+      }
     });
   }
 }
