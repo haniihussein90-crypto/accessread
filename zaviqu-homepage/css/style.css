@@ -1066,28 +1066,38 @@ a { color: inherit; text-decoration: none; }
   height: 50%;
   overflow: hidden;
   background: #f7f5f3;
-  transition: background 250ms ease;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-color 250ms ease;
 }
 
-.gp-hero-card[data-design="midnight-luxe"] { background: #121212; }
-.gp-hero-card[data-design="ivory-elegance"] { background: #f5ede2; }
-.gp-hero-card[data-design="romantic-blush"] { background: #f7d7cf; }
-.gp-hero-card[data-design="classic-minimal"] { background: #f7f5f3; }
+/* Real photographed card artwork per design, with the sample paragraph blanked out
+   so the customer's own message (rendered by .gp-hero-card__message on top) reads as
+   if it were printed directly on the card — not pasted over someone else's text. */
+.gp-hero-card[data-design="midnight-luxe"] { background-color: #121212; background-image: url('../assets/images/card-midnight-lux-blank.jpg'); }
+.gp-hero-card[data-design="ivory-elegance"] { background-color: #f5ede2; background-image: url('../assets/images/card-ivory-elegance-blank.jpg'); }
+.gp-hero-card[data-design="romantic-blush"] { background-color: #f7d7cf; background-image: url('../assets/images/card-romantic-blush-blank.jpg'); }
+.gp-hero-card[data-design="classic-minimal"] { background-color: #f7f5f3; background-image: url('../assets/images/card-classic-minimal-blank.jpg'); }
 
 .gp-hero-card__message {
   position: absolute;
-  left: 24%;
-  right: 32%;
-  bottom: 28%;
+  left: 18%;
+  right: 24%;
+  top: 49%;
+  bottom: 27%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(0.55rem, 1vw, 0.75rem);
-  line-height: 1.3;
+  font-size: clamp(0.55rem, 1vw, 0.72rem);
+  line-height: 1.35;
   text-align: center;
   color: #2a2620;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  word-break: break-word;
   transition: color 250ms ease;
 }
 
@@ -1177,6 +1187,10 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--ivory);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Pills, shared by Necklace Finish, Gift Box, and Card Design */
@@ -1367,6 +1381,10 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
 }
 
+.gp-modal__handle {
+  display: none;
+}
+
 .gp-modal__title {
   font-family: var(--font-display);
   font-weight: 500;
@@ -1531,8 +1549,38 @@ a:focus-visible,
   .gp-pill-grid { grid-template-columns: 1fr; }
   .gp-pill-row { flex-direction: column; }
   .gp-checkout__note { display: none; }
-  .gp-modal__panel { padding: 28px 24px; }
   .site-header__row { flex-wrap: wrap; gap: 10px 16px; }
+
+  /* Edit Message becomes a bottom sheet on mobile instead of a centered modal */
+  .gp-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .gp-modal__panel {
+    max-width: none;
+    width: 100%;
+    max-height: 86vh;
+    overflow-y: auto;
+    padding: 16px 24px calc(28px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    animation: gp-sheet-up 280ms ease;
+  }
+
+  .gp-modal__handle {
+    display: block;
+    width: 40px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--hairline);
+    margin: 0 auto 18px;
+  }
+
+  @keyframes gp-sheet-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
 
   .gp-sticky-cta {
     display: flex;
