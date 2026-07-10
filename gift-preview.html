@@ -59,7 +59,7 @@
 
         <div class="gp-control-group">
           <div class="gp-control-group__head">
-            <h3 class="gp-control-group__title">Personalised Message</h3>
+            <h3 class="gp-control-group__title">Your Message</h3>
             <button type="button" class="gp-edit-link" id="editMessageBtn">Edit Message</button>
           </div>
           <p class="gp-control-group__message" id="gpMessageSummaryText">No message added yet.</p>
@@ -137,12 +137,13 @@
 <div class="gp-modal" id="messageModal" hidden>
   <div class="gp-modal__backdrop" id="messageModalBackdrop"></div>
   <div class="gp-modal__panel" role="dialog" aria-modal="true" aria-labelledby="messageModalTitle">
+    <div class="gp-modal__handle" aria-hidden="true"></div>
     <h3 class="gp-modal__title" id="messageModalTitle">Edit Your Message</h3>
     <textarea class="gp-modal__textarea" id="messageModalInput" rows="5" maxlength="200" placeholder="Write your message here…"></textarea>
     <div class="gp-modal__counter" id="messageModalCounter">0 / 200</div>
     <div class="gp-modal__actions">
       <button type="button" class="gp-modal__cancel" id="messageModalCancel">Cancel</button>
-      <button type="button" class="btn-gold gp-modal__save" id="messageModalSave">Save Message</button>
+      <button type="button" class="btn-gold gp-modal__save" id="messageModalSave">Update Preview</button>
     </div>
   </div>
 </div>

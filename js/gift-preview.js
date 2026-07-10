@@ -223,10 +223,23 @@ if (giftPreviewMain) {
     messageModalInput.focus();
   }
 
+  // Closing without saving (Cancel, backdrop, Escape) re-renders from the last
+  // committed state.message, which discards any live-typed-but-unsaved preview text —
+  // a no-op if the customer just saved, a revert if they backed out instead.
   function closeMessageModal() {
     if (!messageModal) return;
     messageModal.hidden = true;
+    renderMessage();
     if (editMessageBtn) editMessageBtn.focus();
+  }
+
+  // Live preview: reflect the in-progress edit on the card immediately, on every
+  // design, without touching state.message until the customer commits via Update Preview.
+  function previewMessageLive() {
+    if (!gpMessageText || !messageModalInput) return;
+    const value = messageModalInput.value.trim();
+    gpMessageText.textContent = value || MESSAGE_PLACEHOLDER;
+    gpMessageText.classList.toggle('is-placeholder', !value);
   }
 
   function saveMessage() {
@@ -237,7 +250,12 @@ if (giftPreviewMain) {
   }
 
   if (editMessageBtn) editMessageBtn.addEventListener('click', openMessageModal);
-  if (messageModalInput) messageModalInput.addEventListener('input', updateModalCounter);
+  if (messageModalInput) {
+    messageModalInput.addEventListener('input', () => {
+      updateModalCounter();
+      previewMessageLive();
+    });
+  }
   if (messageModalCancel) messageModalCancel.addEventListener('click', closeMessageModal);
   if (messageModalBackdrop) messageModalBackdrop.addEventListener('click', closeMessageModal);
   if (messageModalSave) messageModalSave.addEventListener('click', saveMessage);
