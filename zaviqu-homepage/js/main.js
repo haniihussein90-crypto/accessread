@@ -51,3 +51,58 @@ if (storySection && storyVideo) {
   storyVideo.addEventListener('focus', showControls);
   storyVideo.addEventListener('blur', hideControls);
 }
+
+const configureSection = document.getElementById('configureSection');
+
+if (configureSection) {
+  const finishOptions = configureSection.querySelectorAll('.finish-option');
+  const finishImages = configureSection.querySelectorAll('.configure__image');
+  const messageField = document.getElementById('giftMessage');
+  const messageCount = document.getElementById('giftMessageCount');
+  const previewBtn = document.getElementById('previewGiftBtn');
+  const maxLength = messageField ? Number(messageField.getAttribute('maxlength')) : 200;
+
+  let selectedFinish = 'gold';
+
+  function selectFinish(finish) {
+    selectedFinish = finish;
+
+    finishOptions.forEach((option) => {
+      const isMatch = option.dataset.finish === finish;
+      option.classList.toggle('is-selected', isMatch);
+      option.setAttribute('aria-checked', String(isMatch));
+    });
+
+    finishImages.forEach((image) => {
+      image.classList.toggle('is-active', image.dataset.image === finish);
+    });
+  }
+
+  finishOptions.forEach((option) => {
+    option.addEventListener('click', () => selectFinish(option.dataset.finish));
+  });
+
+  if (messageField && messageCount) {
+    const updateCount = () => {
+      messageCount.textContent = `${messageField.value.length} / ${maxLength}`;
+    };
+    messageField.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  if (previewBtn) {
+    previewBtn.addEventListener('click', () => {
+      const message = messageField ? messageField.value.trim() : '';
+      const params = new URLSearchParams({ finish: selectedFinish, message });
+      sessionStorage.setItem('zaviquGiftConfig', params.toString());
+
+      const originalLabel = previewBtn.textContent;
+      previewBtn.textContent = 'Saved — Preview Coming Soon';
+      previewBtn.disabled = true;
+      setTimeout(() => {
+        previewBtn.textContent = originalLabel;
+        previewBtn.disabled = false;
+      }, 1800);
+    });
+  }
+}

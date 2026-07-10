@@ -123,6 +123,47 @@
   </div>
 </section>
 
+<section class="configure" id="configureSection">
+  <div class="container configure__inner">
+    <h2 class="configure__title">Choose Your Finish</h2>
+    <p class="configure__subtitle">Select the finish that best reflects their style.</p>
+
+    <div class="configure__stage">
+      <img class="configure__image is-active" data-image="gold" src="assets/images/necklace-gold-studio.jpg" alt="Zaviqu Love Knot Necklace in gold">
+      <img class="configure__image" data-image="silver" src="assets/images/necklace-silver-studio.jpg" alt="Zaviqu Love Knot Necklace in silver">
+    </div>
+
+    <div class="finish-select" role="radiogroup" aria-label="Choose your finish">
+      <button type="button" class="finish-option is-selected" data-finish="gold" role="radio" aria-checked="true">
+        <span class="finish-option__swatch finish-option__swatch--gold" aria-hidden="true"></span>
+        <span class="finish-option__label">Gold</span>
+      </button>
+      <button type="button" class="finish-option" data-finish="silver" role="radio" aria-checked="false">
+        <span class="finish-option__swatch finish-option__swatch--silver" aria-hidden="true"></span>
+        <span class="finish-option__label">Silver</span>
+      </button>
+    </div>
+
+    <div class="personalize">
+      <h3 class="personalize__title">Make It Personal</h3>
+      <p class="personalize__text">Write the message that will be beautifully presented inside the gift box.</p>
+
+      <div class="message-field">
+        <textarea
+          class="message-field__textarea"
+          id="giftMessage"
+          rows="4"
+          maxlength="200"
+          placeholder="Write your message here…"
+          aria-describedby="giftMessageCount"></textarea>
+        <div class="message-field__counter" id="giftMessageCount">0 / 200</div>
+      </div>
+
+      <button type="button" class="btn-gold configure__cta" id="previewGiftBtn">Preview Your Gift</button>
+    </div>
+  </div>
+</section>
+
 <script src="js/main.js"></script>
 </body>
 </html>
