@@ -41,12 +41,12 @@ const CARD_DESIGNS = [
   { id: 'classic-minimal', name: 'Classic Minimal', shineOnTemplateId: null },
 ];
 
-// Real product photography, pre-processed so the box's cushion area is transparent —
-// this lets the selected card design show as the full background beneath the necklace,
-// with the necklace itself preserved on top exactly as photographed.
+// Real product photography of the necklace in its box. The card design/message live in
+// their own smaller preview below (see .gp-card-preview) rather than composited into this
+// shot — a fully integrated single photo is a post-launch revisit, not a launch requirement.
 const HERO_IMAGES = {
-  gold: { wood: 'assets/images/box-hole-wood-gold.png', white: 'assets/images/box-hole-white-gold.png' },
-  silver: { wood: 'assets/images/box-hole-wood-silver.png', white: 'assets/images/box-hole-white-silver.png' },
+  gold: { wood: 'assets/images/gift-box-wood-gold.jpg', white: 'assets/images/gift-box-white-gold.jpg' },
+  silver: { wood: 'assets/images/gift-box-wood-silver.jpg', white: 'assets/images/gift-box-white-silver.jpg' },
 };
 
 const MESSAGE_PLACEHOLDER = 'Your message will appear here…';
@@ -56,7 +56,7 @@ const giftPreviewMain = document.querySelector('.gift-preview');
 if (giftPreviewMain) {
   const gpNotice = document.getElementById('gpNotice');
   const gpHeroImage = document.getElementById('gpHeroImage');
-  const gpHeroCard = document.getElementById('gpHeroCard');
+  const gpCardPreviewInner = document.getElementById('gpCardPreviewInner');
   const gpMessageText = document.getElementById('gpMessageText');
   const gpMessageSummaryText = document.getElementById('gpMessageSummaryText');
 
@@ -162,7 +162,7 @@ if (giftPreviewMain) {
   function renderCardDesign() {
     const design = CARD_DESIGNS.find((d) => d.id === state.cardDesign) || CARD_DESIGNS[0];
 
-    if (gpHeroCard) gpHeroCard.dataset.design = design.id;
+    if (gpCardPreviewInner) gpCardPreviewInner.dataset.design = design.id;
 
     const match = cardOptions.find((option) => option.dataset.design === design.id);
     if (match) selectInGroup(cardOptions, match);

@@ -1045,7 +1045,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 .gp-hero img {
-  position: relative;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1054,46 +1053,51 @@ a { color: inherit; text-decoration: none; }
 }
 
 /*
- * The personalised card fills the entire base of the box (the full cushion area) and sits
- * BEHIND the box photo, which has its cushion pixels made transparent (see box-hole-*.png) —
- * so the real, photographed necklace shows through on top, exactly as the customer receives it.
+ * Smaller, supporting preview of the personalised card — deliberately not styled as a
+ * second hero. Sits below the necklace-in-box shot, which remains the main focus.
  */
-.gp-hero-card {
-  position: absolute;
-  left: 22%;
-  width: 58%;
-  top: 39%;
-  height: 50%;
+.gp-card-preview {
+  width: 100%;
+  max-width: 66%;
+  margin: 0 auto;
+}
+
+.gp-card-preview__inner {
+  position: relative;
+  aspect-ratio: 1093 / 965;
+  border-radius: 14px;
   overflow: hidden;
   background: #f7f5f3;
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
+  border: 1px solid var(--hairline);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
   transition: background-color 250ms ease;
 }
 
 /* Real photographed card artwork per design, with the sample paragraph blanked out
-   so the customer's own message (rendered by .gp-hero-card__message on top) reads as
-   if it were printed directly on the card — not pasted over someone else's text. */
-.gp-hero-card[data-design="midnight-luxe"] { background-color: #121212; background-image: url('../assets/images/card-midnight-lux-blank.jpg'); }
-.gp-hero-card[data-design="ivory-elegance"] { background-color: #f5ede2; background-image: url('../assets/images/card-ivory-elegance-blank.jpg'); }
-.gp-hero-card[data-design="romantic-blush"] { background-color: #f7d7cf; background-image: url('../assets/images/card-romantic-blush-blank.jpg'); }
-.gp-hero-card[data-design="classic-minimal"] { background-color: #f7f5f3; background-image: url('../assets/images/card-classic-minimal-blank.jpg'); }
+   so the customer's own message (rendered by .gp-card-preview__message on top) reads
+   as if it were printed directly on the card — not pasted over someone else's text. */
+.gp-card-preview__inner[data-design="midnight-luxe"] { background-color: #121212; background-image: url('../assets/images/card-midnight-lux-blank.jpg'); }
+.gp-card-preview__inner[data-design="ivory-elegance"] { background-color: #f5ede2; background-image: url('../assets/images/card-ivory-elegance-blank.jpg'); }
+.gp-card-preview__inner[data-design="romantic-blush"] { background-color: #f7d7cf; background-image: url('../assets/images/card-romantic-blush-blank.jpg'); }
+.gp-card-preview__inner[data-design="classic-minimal"] { background-color: #f7f5f3; background-image: url('../assets/images/card-classic-minimal-blank.jpg'); }
 
-.gp-hero-card__message {
+.gp-card-preview__message {
   position: absolute;
-  left: 18%;
-  right: 24%;
-  top: 49%;
-  bottom: 27%;
+  left: 14%;
+  right: 14%;
+  top: 48%;
+  bottom: 26.5%;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(0.55rem, 1vw, 0.72rem);
-  line-height: 1.35;
+  font-size: clamp(0.62rem, 1.3vw, 0.85rem);
+  line-height: 1.4;
   text-align: center;
   color: #2a2620;
   white-space: pre-wrap;
@@ -1101,23 +1105,23 @@ a { color: inherit; text-decoration: none; }
   transition: color 250ms ease;
 }
 
-.gp-hero-card__message.is-placeholder {
+.gp-card-preview__message.is-placeholder {
   opacity: 0.55;
 }
 
-.gp-hero-card[data-design="midnight-luxe"] .gp-hero-card__message {
+.gp-card-preview__inner[data-design="midnight-luxe"] .gp-card-preview__message {
   color: var(--ivory);
 }
 
-.gp-hero-card[data-design="ivory-elegance"] .gp-hero-card__message {
+.gp-card-preview__inner[data-design="ivory-elegance"] .gp-card-preview__message {
   color: #2a2620;
 }
 
-.gp-hero-card[data-design="romantic-blush"] .gp-hero-card__message {
+.gp-card-preview__inner[data-design="romantic-blush"] .gp-card-preview__message {
   color: #3a2129;
 }
 
-.gp-hero-card[data-design="classic-minimal"] .gp-hero-card__message {
+.gp-card-preview__inner[data-design="classic-minimal"] .gp-card-preview__message {
   color: #2a2620;
 }
 
