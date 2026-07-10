@@ -70,6 +70,11 @@ if (giftPreviewMain) {
   const boxOptions = Array.from(document.querySelectorAll('.gp-pill[data-tier]'));
   const checkoutButtons = [document.getElementById('checkoutBtn'), document.getElementById('checkoutBtnSticky')].filter(Boolean);
 
+  const cardPrevBtn = document.getElementById('cardPrevBtn');
+  const cardNextBtn = document.getElementById('cardNextBtn');
+  const cardPreviewName = document.getElementById('cardPreviewName');
+  const cardPreviewDots = Array.from(document.querySelectorAll('.gp-card-preview__dot'));
+
   const editMessageBtn = document.getElementById('editMessageBtn');
   const messageModal = document.getElementById('messageModal');
   const messageModalBackdrop = document.getElementById('messageModalBackdrop');
@@ -163,9 +168,25 @@ if (giftPreviewMain) {
     const design = CARD_DESIGNS.find((d) => d.id === state.cardDesign) || CARD_DESIGNS[0];
 
     if (gpCardPreviewInner) gpCardPreviewInner.dataset.design = design.id;
+    if (cardPreviewName) cardPreviewName.textContent = design.name;
 
     const match = cardOptions.find((option) => option.dataset.design === design.id);
     if (match) selectInGroup(cardOptions, match);
+
+    cardPreviewDots.forEach((dot) => {
+      dot.classList.toggle('is-active', dot.dataset.design === design.id);
+    });
+  }
+
+  // Lets the customer flip through card designs right at the card preview — via the
+  // prev/next arrows, the dots, a swipe/drag gesture, or arrow keys — instead of only
+  // the pill buttons in the panel below, which requires scrolling back and forth.
+  function cycleCardDesign(delta) {
+    const currentIndex = CARD_DESIGNS.findIndex((d) => d.id === state.cardDesign);
+    const nextIndex = (currentIndex + delta + CARD_DESIGNS.length) % CARD_DESIGNS.length;
+    state.cardDesign = CARD_DESIGNS[nextIndex].id;
+    renderCardDesign();
+    persist();
   }
 
   function renderBox() {
@@ -207,6 +228,47 @@ if (giftPreviewMain) {
     renderBox();
     persist();
   });
+
+  // ---- Card preview: arrows, dots, keyboard, and swipe/drag ----
+  if (cardPrevBtn) cardPrevBtn.addEventListener('click', () => cycleCardDesign(-1));
+  if (cardNextBtn) cardNextBtn.addEventListener('click', () => cycleCardDesign(1));
+
+  cardPreviewDots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      state.cardDesign = dot.dataset.design;
+      renderCardDesign();
+      persist();
+    });
+  });
+
+  if (gpCardPreviewInner) {
+    gpCardPreviewInner.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') { event.preventDefault(); cycleCardDesign(1); }
+      else if (event.key === 'ArrowLeft') { event.preventDefault(); cycleCardDesign(-1); }
+    });
+
+    const SWIPE_THRESHOLD = 40;
+    let dragStartX = null;
+    let dragging = false;
+
+    gpCardPreviewInner.addEventListener('pointerdown', (event) => {
+      dragStartX = event.clientX;
+      dragging = true;
+    });
+
+    gpCardPreviewInner.addEventListener('pointerup', (event) => {
+      if (!dragging || dragStartX === null) return;
+      dragging = false;
+      const delta = event.clientX - dragStartX;
+      if (Math.abs(delta) > SWIPE_THRESHOLD) cycleCardDesign(delta < 0 ? 1 : -1);
+      dragStartX = null;
+    });
+
+    gpCardPreviewInner.addEventListener('pointercancel', () => {
+      dragging = false;
+      dragStartX = null;
+    });
+  }
 
   // ---- Edit Message modal ----
   function updateModalCounter() {

@@ -1063,6 +1063,7 @@ a { color: inherit; text-decoration: none; }
  * second hero. Sits below the necklace-in-box shot, which remains the main focus.
  */
 .gp-card-preview {
+  position: relative;
   width: 100%;
   max-width: 47%;
   margin: 0 auto;
@@ -1080,6 +1081,81 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid rgba(243, 239, 230, 0.16);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
   transition: background-color 250ms ease;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.gp-card-preview__inner:active {
+  cursor: grabbing;
+}
+
+/* Prev/Next arrows flank the card, half-overlapping its edges like a carousel,
+   so browsing designs doesn't cost any extra width or push the card narrower. */
+.gp-card-preview__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.6);
+  border: 1px solid var(--hairline);
+  color: var(--ivory-dim);
+  cursor: pointer;
+  z-index: 2;
+  transition: border-color 200ms ease, color 200ms ease, background 200ms ease;
+}
+
+.gp-card-preview__nav svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gp-card-preview__nav:hover,
+.gp-card-preview__nav:focus-visible {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(10, 10, 10, 0.8);
+}
+
+.gp-card-preview__nav--prev { left: -14px; }
+.gp-card-preview__nav--next { right: -14px; }
+
+.gp-card-preview__name {
+  margin: 12px 0 0;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ivory-dim);
+}
+
+.gp-card-preview__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.gp-card-preview__dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--hairline);
+  cursor: pointer;
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.gp-card-preview__dot.is-active {
+  background: var(--gold);
+  transform: scale(1.4);
 }
 
 /* Real photographed card artwork per design, with the sample paragraph blanked out
