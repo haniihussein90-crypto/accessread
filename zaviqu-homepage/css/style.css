@@ -186,7 +186,7 @@ a { color: inherit; text-decoration: none; }
 /* ---------- How it works ---------- */
 .how {
   background: var(--black);
-  padding: 140px 0 160px;
+  padding: 240px 0 160px;
 }
 
 .how__head {
@@ -206,7 +206,7 @@ a { color: inherit; text-decoration: none; }
 .how__title {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-size: clamp(2.25rem, 3.6vw, 3.1rem);
   line-height: 1.2;
   color: var(--ivory);
   margin: 0;
@@ -235,11 +235,15 @@ a { color: inherit; text-decoration: none; }
   transform: rotate(45deg);
 }
 
+.container.how__steps {
+  max-width: 1520px;
+}
+
 .how__steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6rem;
-  margin-top: 96px;
+  gap: 4rem;
+  margin-top: 112px;
 }
 
 .step {
@@ -277,6 +281,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--ivory-dim);
   margin: 0 0 40px;
   max-width: 32ch;
+  min-height: 4.9rem;
 }
 
 .step__media {
@@ -352,6 +357,7 @@ a { color: inherit; text-decoration: none; }
   }
 
   .step__media-item { aspect-ratio: 1 / 1; }
+  .step__text { min-height: 0; }
 }
 
 @media (max-width: 480px) {
