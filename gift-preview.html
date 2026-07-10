@@ -37,8 +37,25 @@
       </div>
 
       <div class="gp-card-preview">
-        <div class="gp-card-preview__inner" id="gpCardPreviewInner" data-design="midnight-luxe">
+        <button type="button" class="gp-card-preview__nav gp-card-preview__nav--prev" id="cardPrevBtn" aria-label="Previous card design">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+
+        <div class="gp-card-preview__inner" id="gpCardPreviewInner" data-design="midnight-luxe" tabindex="0" role="group" aria-label="Card design preview, swipe or use arrow keys to browse designs">
           <div class="gp-card-preview__message" id="gpMessageText">Your message will appear here…</div>
+        </div>
+
+        <button type="button" class="gp-card-preview__nav gp-card-preview__nav--next" id="cardNextBtn" aria-label="Next card design">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+
+        <p class="gp-card-preview__name" id="cardPreviewName">Midnight Luxe</p>
+
+        <div class="gp-card-preview__dots" id="cardPreviewDots" role="tablist" aria-label="Card design pagination">
+          <button type="button" class="gp-card-preview__dot is-active" data-design="midnight-luxe" aria-label="Midnight Luxe"></button>
+          <button type="button" class="gp-card-preview__dot" data-design="ivory-elegance" aria-label="Ivory Elegance"></button>
+          <button type="button" class="gp-card-preview__dot" data-design="romantic-blush" aria-label="Romantic Blush"></button>
+          <button type="button" class="gp-card-preview__dot" data-design="classic-minimal" aria-label="Classic Minimal"></button>
         </div>
       </div>
     </div>
