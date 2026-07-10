@@ -41,10 +41,12 @@ const CARD_DESIGNS = [
   { id: 'classic-minimal', name: 'Classic Minimal', shineOnTemplateId: null },
 ];
 
-// Real product photography: one combined necklace + gift box shot per finish/box combination.
+// Real product photography, pre-processed so the box's cushion area is transparent —
+// this lets the selected card design show as the full background beneath the necklace,
+// with the necklace itself preserved on top exactly as photographed.
 const HERO_IMAGES = {
-  gold: { wood: 'assets/images/gift-box-wood-gold.jpg', white: 'assets/images/gift-box-white-gold.jpg' },
-  silver: { wood: 'assets/images/gift-box-wood-silver.jpg', white: 'assets/images/gift-box-white-silver.jpg' },
+  gold: { wood: 'assets/images/box-hole-wood-gold.png', white: 'assets/images/box-hole-white-gold.png' },
+  silver: { wood: 'assets/images/box-hole-wood-silver.png', white: 'assets/images/box-hole-white-silver.png' },
 };
 
 const MESSAGE_PLACEHOLDER = 'Your message will appear here…';
