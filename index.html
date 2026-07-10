@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zaviqu — Fine Jewelry for Meaningful Moments</title>
+<meta name="description" content="Zaviqu — premium, personalized jewelry for the moments and people that matter most.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="container site-header__row">
+    <a href="index.html" class="logo">ZAVIQU</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#">Shop</a>
+      <a href="#">Personalize</a>
+      <a href="#">Our Story</a>
+      <a href="#">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="btn-icon" aria-label="Open cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 6h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="10" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+      </button>
+      <button type="button" class="btn-icon nav-toggle" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero__copy-col">
+    <div class="hero__copy">
+      <p class="hero__eyebrow">The Knot Necklace</p>
+      <h1 class="hero__title">A Necklace That Turns a Moment Into a Memory</h1>
+      <p class="hero__subtitle">A meaningful gift designed to celebrate the bond you never want to forget.</p>
+      <a href="#" class="btn-gold">Shop the Necklace</a>
+    </div>
+  </div>
+  <div class="hero__media-col">
+    <video
+      class="hero__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="assets/video/hero-poster.jpg"
+      aria-label="Zaviqu knot pendant, studio showcase">
+      <source src="assets/video/hero-knot-pendant.mp4" type="video/mp4">
+    </video>
+  </div>
+</section>
+
+<section class="how">
+  <div class="container how__head">
+    <p class="how__eyebrow">Create a Gift They'll Never Forget</p>
+    <h2 class="how__title">Three Simple Steps. One Meaningful Gift.</h2>
+    <div class="how__divider" aria-hidden="true"><span></span></div>
+  </div>
+
+  <div class="container how__steps">
+    <div class="step">
+      <span class="step__number">1</span>
+      <h3 class="step__title">Choose Your Necklace</h3>
+      <p class="step__text">Choose your favourite finish.<br>Gold or Silver.</p>
+      <div class="step__media step__media--pair">
+        <div class="step__media-item" data-placeholder="Gold Knot Necklace">
+          <img class="step__image" src="assets/images/necklace-gold.jpg" alt="Zaviqu Knot Necklace in gold" onerror="this.parentElement.classList.add('is-empty')">
+        </div>
+        <div class="step__media-item" data-placeholder="Silver Knot Necklace">
+          <img class="step__image" src="assets/images/necklace-silver.jpg" alt="Zaviqu Knot Necklace in silver" onerror="this.parentElement.classList.add('is-empty')">
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step__number">2</span>
+      <h3 class="step__title">Personalise Your Message</h3>
+      <p class="step__text">Write a heartfelt message that will be printed inside the gift box.</p>
+      <div class="step__media">
+        <div class="step__media-item" data-placeholder="Message Card — “To My Love”">
+          <img class="step__image" src="assets/images/message-card.jpg" alt="Personalized message card reading To My Love, every day with you is my favourite chapter, love always" onerror="this.parentElement.classList.add('is-empty')">
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="step__number">3</span>
+      <h3 class="step__title">We'll Craft It Beautifully</h3>
+      <p class="step__text">We'll carefully prepare your gift, beautifully package it, and deliver it ready to surprise someone special.</p>
+      <div class="step__media">
+        <div class="step__media-item" data-placeholder="Finished Gift Box">
+          <img class="step__image" src="assets/images/gift-box.jpg" alt="Zaviqu gift box, beautifully wrapped" onerror="this.parentElement.classList.add('is-empty')">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="storySection">
+  <div class="container story__inner">
+    <h2 class="story__title">A Necklace That Turns a Moment Into a Memory</h2>
+    <p class="story__subtitle">More than a gift. A deeply personal keepsake that celebrates the people and moments that matter most.</p>
+
+    <div class="story__frame">
+      <video
+        class="story__video"
+        id="storyVideo"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster="assets/video/story-poster.jpg"
+        aria-label="A necklace that turns a moment into a memory — lifestyle film">
+        <source src="assets/video/story-necklace.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
+<section class="configure" id="configureSection">
+  <div class="container configure__inner">
+    <h2 class="configure__title">Choose Your Finish</h2>
+    <p class="configure__subtitle">Select the finish that best reflects their style.</p>
+
+    <div class="configure__stage">
+      <img class="configure__image is-active" data-image="gold" src="assets/images/necklace-gold-studio.jpg" alt="Zaviqu Love Knot Necklace in gold">
+      <img class="configure__image" data-image="silver" src="assets/images/necklace-silver-studio.jpg" alt="Zaviqu Love Knot Necklace in silver">
+    </div>
+
+    <div class="finish-select" role="radiogroup" aria-label="Choose your finish">
+      <button type="button" class="finish-option is-selected" data-finish="gold" role="radio" aria-checked="true">
+        <span class="finish-option__swatch finish-option__swatch--gold" aria-hidden="true"></span>
+        <span class="finish-option__label">Gold</span>
+      </button>
+      <button type="button" class="finish-option" data-finish="silver" role="radio" aria-checked="false">
+        <span class="finish-option__swatch finish-option__swatch--silver" aria-hidden="true"></span>
+        <span class="finish-option__label">Silver</span>
+      </button>
+    </div>
+
+    <div class="personalize">
+      <h3 class="personalize__title">Make It Personal</h3>
+      <p class="personalize__text">Write the message that will be beautifully presented inside the gift box.</p>
+
+      <div class="message-field">
+        <textarea
+          class="message-field__textarea"
+          id="giftMessage"
+          rows="4"
+          maxlength="200"
+          placeholder="Write your message here…"
+          aria-describedby="giftMessageCount"></textarea>
+        <div class="message-field__counter" id="giftMessageCount">0 / 200</div>
+      </div>
+
+      <button type="button" class="btn-gold configure__cta" id="previewGiftBtn">Preview Your Gift</button>
+    </div>
+  </div>
+</section>
+
+<script src="js/main.js"></script>
+</body>
+</html>
