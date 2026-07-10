@@ -67,6 +67,14 @@ if (configureSection) {
 
   let selectedFinish = 'gold';
 
+  let restoredConfig = {};
+  try {
+    const raw = sessionStorage.getItem('zaviquGiftConfig');
+    if (raw) restoredConfig = JSON.parse(raw);
+  } catch (e) {
+    // Malformed or missing config — start from the gold/blank defaults below.
+  }
+
   function selectFinish(finish) {
     selectedFinish = finish;
 
@@ -93,6 +101,9 @@ if (configureSection) {
     }
   }
 
+  if (restoredConfig.finish === 'silver') selectFinish('silver');
+  if (messageField && typeof restoredConfig.message === 'string') messageField.value = restoredConfig.message;
+
   if (messageField && messageCount) {
     const updateCount = () => {
       messageCount.textContent = `${messageField.value.length} / ${maxLength}`;
@@ -107,80 +118,24 @@ if (configureSection) {
 
   if (previewBtn) {
     previewBtn.addEventListener('click', () => {
-      const config = { finish: selectedFinish, message: messageField ? messageField.value.trim() : '' };
+      // Merge into any existing stored config (rather than overwrite) so a customer who
+      // came back to edit finish/message doesn't lose card design / gift box choices
+      // already made on the Gift Preview page.
+      let existing = {};
+      try {
+        const raw = sessionStorage.getItem('zaviquGiftConfig');
+        if (raw) existing = JSON.parse(raw);
+      } catch (e) {
+        // Malformed existing config — proceed with just the fields set below.
+      }
+      const config = {
+        ...existing,
+        finish: selectedFinish,
+        message: messageField ? messageField.value.trim() : '',
+      };
       sessionStorage.setItem('zaviquGiftConfig', JSON.stringify(config));
       // No preventDefault — previewBtn is a real link to gift-preview.html,
       // this just makes sure the config is saved before the page navigates.
-    });
-  }
-}
-
-const giftPreviewMain = document.querySelector('.gift-preview');
-
-if (giftPreviewMain) {
-  const NECKLACE_IMAGES = {
-    gold: 'assets/images/necklace-gold-studio.jpg',
-    silver: 'assets/images/necklace-silver-studio.jpg',
-  };
-  const GP_MESSAGE_PLACEHOLDER = 'Your message will appear here…';
-
-  const gpNecklaceImage = document.getElementById('gpNecklaceImage');
-  const gpFinishTag = document.getElementById('gpFinishTag');
-  const gpMessageText = document.getElementById('gpMessageText');
-  const gpFinishSummary = document.getElementById('gpFinishSummary');
-  const gpMessageSummary = document.getElementById('gpMessageSummary');
-  const gpBoxSummary = document.getElementById('gpBoxSummary');
-  const gpBoxImageWrap = document.getElementById('gpBoxImageWrap');
-  const tierButtons = document.querySelectorAll('.gp-tier');
-  const checkoutBtn = document.getElementById('checkoutBtn');
-
-  let storedConfig = { finish: 'gold', message: '' };
-  try {
-    const raw = sessionStorage.getItem('zaviquGiftConfig');
-    if (raw) storedConfig = { ...storedConfig, ...JSON.parse(raw) };
-  } catch (e) {
-    // Malformed or missing config falls back to the gold/no-message defaults above.
-  }
-
-  function applyFinish(finish) {
-    const label = finish === 'silver' ? 'Silver' : 'Gold';
-    if (gpNecklaceImage) gpNecklaceImage.src = NECKLACE_IMAGES[finish] || NECKLACE_IMAGES.gold;
-    if (gpFinishTag) gpFinishTag.textContent = `${label} Finish`;
-    if (gpFinishSummary) gpFinishSummary.textContent = `${label} finish`;
-  }
-
-  function applyMessage(message) {
-    const value = (message || '').trim();
-    if (gpMessageText) {
-      gpMessageText.textContent = value || GP_MESSAGE_PLACEHOLDER;
-      gpMessageText.classList.toggle('is-placeholder', !value);
-    }
-    if (gpMessageSummary) {
-      gpMessageSummary.textContent = value || 'No message added';
-    }
-  }
-
-  applyFinish(storedConfig.finish === 'silver' ? 'silver' : 'gold');
-  applyMessage(storedConfig.message);
-
-  function selectTier(tier) {
-    tierButtons.forEach((button) => {
-      const isMatch = button.dataset.tier === tier;
-      button.classList.toggle('is-selected', isMatch);
-      button.setAttribute('aria-checked', String(isMatch));
-    });
-    if (gpBoxImageWrap) gpBoxImageWrap.classList.toggle('is-luxury', tier === 'luxury');
-    if (gpBoxSummary) gpBoxSummary.textContent = tier === 'luxury' ? 'Luxury' : 'Standard';
-  }
-
-  tierButtons.forEach((button) => {
-    button.addEventListener('click', () => selectTier(button.dataset.tier));
-  });
-
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', () => {
-      // Checkout destination isn't wired up yet — kept ready (no dead-end/"Coming Soon" text)
-      // for a future real Shopify checkout URL once the product connector is finalized.
     });
   }
 }
