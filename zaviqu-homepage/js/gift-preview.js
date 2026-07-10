@@ -13,37 +13,37 @@ const CHECKOUT_CONFIG = {
   },
   // TODO: confirm the real ShineOn personalisation character limit (using the homepage's 200 as a placeholder).
   messageCharLimit: 200,
-  // Fulfillment model for the Luxury Gift Box is NOT confirmed yet. It could be:
-  //   'variant' -> combined into the necklace's own Shopify variant (e.g. "Gold / Luxury Box")
+  // Fulfillment model for the Luxury Wooden Gift Box is NOT confirmed yet. It could be:
+  //   'variant' -> combined into the necklace's own Shopify variant (e.g. "Gold / Wooden Box")
   //   'addon'   -> a separate Shopify add-on product, added as its own line item
   //   'shineon' -> a ShineOn product/order option rather than a Shopify line item at all
   // Until this is confirmed, box selection here is preview-only and intentionally does not
   // assume one of these models — checkout will not add real line items for it yet.
   giftBox: {
-    standard: { fulfillmentType: null, shopifyId: null, price: 0 },
-    luxury: { fulfillmentType: null, shopifyId: null, price: null },
+    white: { fulfillmentType: null, shopifyId: null, price: 0 },
+    wood: { fulfillmentType: null, shopifyId: null, price: null },
   },
 };
 
-// Curated design set shown to customers. Names/thumbnails are illustrative placeholders —
-// each `shineOnTemplateId` must be filled in with the real supported ShineOn template ID
-// before this can drive real fulfilment.
+// Curated design set shown to customers, matching the real card photography in
+// assets/images/. Each `shineOnTemplateId` must be filled in with the real supported
+// ShineOn template ID before this can drive real fulfilment.
 const CARD_DESIGNS = [
-  { id: 'minimal-cream', name: 'Minimal Cream', shineOnTemplateId: null },
-  { id: 'classic-black', name: 'Classic Black', shineOnTemplateId: null },
-  { id: 'soft-pink', name: 'Soft Pink', shineOnTemplateId: null },
-  { id: 'floral-romance', name: 'Floral Romance', shineOnTemplateId: null },
-  { id: 'warm-gold', name: 'Warm Gold', shineOnTemplateId: null },
-  { id: 'anniversary', name: 'Anniversary', shineOnTemplateId: null },
-  { id: 'birthday', name: 'Birthday', shineOnTemplateId: null },
-  { id: 'for-mum', name: 'For Mum', shineOnTemplateId: null },
-  { id: 'elegant-white', name: 'Elegant White', shineOnTemplateId: null },
-  { id: 'rose-gold-shimmer', name: 'Rose Gold Shimmer', shineOnTemplateId: null },
+  { id: 'midnight-lux', name: 'Midnight Lux', image: 'assets/images/card-midnight-lux.jpg', shineOnTemplateId: null },
+  { id: 'ivory-elegance', name: 'Ivory Elegance', image: 'assets/images/card-ivory-elegance.jpg', shineOnTemplateId: null },
+  { id: 'romantic-blush', name: 'Romantic Blush', image: 'assets/images/card-romantic-blush.jpg', shineOnTemplateId: null },
+  { id: 'classic-minimal', name: 'Classic Minimal', image: 'assets/images/card-classic-minimal.jpg', shineOnTemplateId: null },
 ];
 
-const NECKLACE_IMAGES = {
-  gold: 'assets/images/necklace-gold-studio.jpg',
-  silver: 'assets/images/necklace-silver-studio.jpg',
+const BOX_OPTIONS = {
+  wood: { label: 'Luxury Wooden Gift Box', priceLabel: 'Paid Upgrade' },
+  white: { label: 'Classic White Gift Box', priceLabel: 'Included' },
+};
+
+// Real product photography: one combined necklace + gift box shot per finish/box combination.
+const HERO_IMAGES = {
+  gold: { wood: 'assets/images/gift-box-wood-gold.jpg', white: 'assets/images/gift-box-white-gold.jpg' },
+  silver: { wood: 'assets/images/gift-box-wood-silver.jpg', white: 'assets/images/gift-box-white-silver.jpg' },
 };
 
 const MESSAGE_PLACEHOLDER = 'Your message will appear here…';
@@ -52,27 +52,23 @@ const giftPreviewMain = document.querySelector('.gift-preview');
 
 if (giftPreviewMain) {
   const gpNotice = document.getElementById('gpNotice');
-  const gpNecklaceImage = document.getElementById('gpNecklaceImage');
+  const gpHeroImage = document.getElementById('gpHeroImage');
   const gpFinishTag = document.getElementById('gpFinishTag');
-  const gpMessageCard = document.getElementById('gpMessageCard');
+  const gpCardPreview = document.getElementById('gpCardPreview');
+  const gpCardImage = document.getElementById('gpCardImage');
   const gpMessageText = document.getElementById('gpMessageText');
-  const gpBoxImageWrap = document.getElementById('gpBoxImageWrap');
 
   const gpFinishSummary = document.getElementById('gpFinishSummary');
   const gpMessageSummary = document.getElementById('gpMessageSummary');
-  const gpCardSummary = document.getElementById('gpCardSummary');
-  const gpBoxSummary = document.getElementById('gpBoxSummary');
   const gpItemPrice = document.getElementById('gpItemPrice');
   const gpBoxUpgradePrice = document.getElementById('gpBoxUpgradePrice');
   const gpTotal = document.getElementById('gpTotal');
   const gpStickyTotal = document.getElementById('gpStickyTotal');
 
-  const cardTrack = document.getElementById('cardCarouselTrack');
-  const cardThumbs = Array.from(document.querySelectorAll('.card-carousel__thumb'));
-  const cardPrevBtn = document.getElementById('cardCarouselPrev');
-  const cardNextBtn = document.getElementById('cardCarouselNext');
-
+  const cardThumbs = Array.from(document.querySelectorAll('.card-grid__thumb'));
   const tierButtons = Array.from(document.querySelectorAll('.gp-tier'));
+  const gpTierImgWood = document.getElementById('gpTierImgWood');
+  const gpTierImgWhite = document.getElementById('gpTierImgWhite');
   const checkoutButtons = [document.getElementById('checkoutBtn'), document.getElementById('checkoutBtnSticky')].filter(Boolean);
 
   let hadStoredConfig = false;
@@ -90,8 +86,8 @@ if (giftPreviewMain) {
   const state = {
     finish: stored.finish === 'silver' ? 'silver' : 'gold',
     message: typeof stored.message === 'string' ? stored.message : '',
-    cardDesign: CARD_DESIGNS.some((d) => d.id === stored.cardDesign) ? stored.cardDesign : 'minimal-cream',
-    box: stored.box === 'luxury' ? 'luxury' : 'standard',
+    cardDesign: CARD_DESIGNS.some((d) => d.id === stored.cardDesign) ? stored.cardDesign : 'midnight-lux',
+    box: stored.box === 'white' ? 'white' : 'wood',
   };
 
   if (!hadStoredConfig && gpNotice) {
@@ -102,9 +98,9 @@ if (giftPreviewMain) {
     sessionStorage.setItem('zaviquGiftConfig', JSON.stringify(state));
   }
 
-  function renderFinish() {
+  function renderHero() {
     const label = state.finish === 'silver' ? 'Silver' : 'Gold';
-    if (gpNecklaceImage) gpNecklaceImage.src = NECKLACE_IMAGES[state.finish];
+    if (gpHeroImage) gpHeroImage.src = HERO_IMAGES[state.finish][state.box];
     if (gpFinishTag) gpFinishTag.textContent = `${label} Finish`;
     if (gpFinishSummary) gpFinishSummary.textContent = `${label} finish`;
   }
@@ -118,36 +114,31 @@ if (giftPreviewMain) {
     if (gpMessageSummary) gpMessageSummary.textContent = value || 'No message added';
   }
 
-  function renderCardDesign({ scrollIntoView = false } = {}) {
+  function renderCardDesign() {
     const design = CARD_DESIGNS.find((d) => d.id === state.cardDesign) || CARD_DESIGNS[0];
 
-    if (gpMessageCard) {
-      CARD_DESIGNS.forEach((d) => gpMessageCard.classList.remove(`card-swatch--${d.id}`));
-      gpMessageCard.classList.add(`card-swatch--${design.id}`);
-    }
-    if (gpCardSummary) gpCardSummary.textContent = design.name;
+    if (gpCardImage) gpCardImage.src = design.image;
+    if (gpCardPreview) gpCardPreview.dataset.design = design.id;
 
     cardThumbs.forEach((thumb) => {
       const isMatch = thumb.dataset.design === design.id;
       thumb.classList.toggle('is-selected', isMatch);
       thumb.setAttribute('aria-checked', String(isMatch));
       thumb.tabIndex = isMatch ? 0 : -1;
-      if (isMatch && scrollIntoView) {
-        thumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-      }
     });
   }
 
   function renderBox() {
-    const isLuxury = state.box === 'luxury';
     tierButtons.forEach((button) => {
       const isMatch = button.dataset.tier === state.box;
       button.classList.toggle('is-selected', isMatch);
       button.setAttribute('aria-checked', String(isMatch));
     });
-    if (gpBoxImageWrap) gpBoxImageWrap.classList.toggle('is-luxury', isLuxury);
-    if (gpBoxSummary) gpBoxSummary.textContent = isLuxury ? 'Luxury' : 'Standard';
-    if (gpBoxUpgradePrice) gpBoxUpgradePrice.textContent = isLuxury ? 'Price TBD' : '—';
+    if (gpBoxUpgradePrice) gpBoxUpgradePrice.textContent = BOX_OPTIONS[state.box].priceLabel;
+    // Box option thumbnails reflect the currently selected finish, same real photography as the hero.
+    if (gpTierImgWood) gpTierImgWood.src = HERO_IMAGES[state.finish].wood;
+    if (gpTierImgWhite) gpTierImgWhite.src = HERO_IMAGES[state.finish].white;
+    renderHero();
   }
 
   function renderPricing() {
@@ -157,14 +148,14 @@ if (giftPreviewMain) {
     if (gpStickyTotal) gpStickyTotal.textContent = 'Price upon selection';
   }
 
-  renderFinish();
+  renderHero();
   renderMessage();
-  renderCardDesign({ scrollIntoView: true });
+  renderCardDesign();
   renderBox();
   renderPricing();
   persist();
 
-  // ---- Card design carousel ----
+  // ---- Card design grid ----
   cardThumbs.forEach((thumb) => {
     thumb.addEventListener('click', () => {
       state.cardDesign = thumb.dataset.design;
@@ -176,8 +167,8 @@ if (giftPreviewMain) {
       const currentIndex = cardThumbs.indexOf(thumb);
       let targetIndex = null;
 
-      if (event.key === 'ArrowRight') targetIndex = Math.min(currentIndex + 1, cardThumbs.length - 1);
-      else if (event.key === 'ArrowLeft') targetIndex = Math.max(currentIndex - 1, 0);
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') targetIndex = Math.min(currentIndex + 1, cardThumbs.length - 1);
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') targetIndex = Math.max(currentIndex - 1, 0);
       else if (event.key === 'Home') targetIndex = 0;
       else if (event.key === 'End') targetIndex = cardThumbs.length - 1;
 
@@ -185,26 +176,17 @@ if (giftPreviewMain) {
         event.preventDefault();
         const target = cardThumbs[targetIndex];
         state.cardDesign = target.dataset.design;
-        renderCardDesign({ scrollIntoView: true });
+        renderCardDesign();
         target.focus();
         persist();
       }
     });
   });
 
-  function scrollCarousel(direction) {
-    if (!cardTrack) return;
-    const amount = cardTrack.clientWidth * 0.8 * direction;
-    cardTrack.scrollBy({ left: amount, behavior: 'smooth' });
-  }
-
-  if (cardPrevBtn) cardPrevBtn.addEventListener('click', () => scrollCarousel(-1));
-  if (cardNextBtn) cardNextBtn.addEventListener('click', () => scrollCarousel(1));
-
   // ---- Gift box tiers ----
   tierButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      state.box = button.dataset.tier === 'luxury' ? 'luxury' : 'standard';
+      state.box = button.dataset.tier === 'white' ? 'white' : 'wood';
       renderBox();
       persist();
     });
@@ -220,7 +202,7 @@ if (giftPreviewMain) {
         'Personalised Message': state.message.trim(),
         'Card Design': design ? design.name : '',
         'Card Design Template ID': design ? design.shineOnTemplateId : null,
-        'Gift Box': state.box === 'luxury' ? 'Luxury' : 'Standard',
+        'Gift Box': BOX_OPTIONS[state.box].label,
       },
     };
   }

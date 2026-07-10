@@ -1035,20 +1035,21 @@ a { color: inherit; text-decoration: none; }
   top: calc(var(--header-h) + 40px);
 }
 
-.gp-necklace {
+.gp-hero {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 6 / 5;
   border-radius: 24px;
   overflow: hidden;
   background: var(--black-soft);
   box-shadow: 0 34px 80px rgba(0, 0, 0, 0.5);
 }
 
-.gp-necklace img {
+.gp-hero img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: opacity 250ms ease;
 }
 
 .gp-necklace__tag {
@@ -1066,23 +1067,67 @@ a { color: inherit; text-decoration: none; }
   color: var(--gold-light);
 }
 
-.gp-box__image-wrap {
-  aspect-ratio: 16 / 10;
-  border-radius: 20px;
+.gp-card-preview {
+  position: relative;
+  aspect-ratio: 1093 / 965;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 26px 60px rgba(0, 0, 0, 0.4);
-  transition: box-shadow 0.4s ease;
 }
 
-.gp-box__image-wrap img {
+.gp-card-preview__bg {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: opacity 250ms ease;
 }
 
-.gp-box__image-wrap.is-luxury {
-  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--gold), 0 0 40px rgba(201, 162, 75, 0.3);
+.gp-card-preview__message {
+  position: absolute;
+  top: 45%;
+  left: 4%;
+  right: 4%;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 4%;
+  background: #f7f5f3;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+  line-height: 1.5;
+  text-align: center;
+  color: #2a2620;
+  white-space: pre-wrap;
+  word-break: break-word;
+  transition: background 250ms ease, color 250ms ease;
+}
+
+.gp-card-preview__message.is-placeholder {
+  opacity: 0.55;
+}
+
+.gp-card-preview[data-design="midnight-lux"] .gp-card-preview__message {
+  background: #121212;
+  color: var(--ivory);
+}
+
+.gp-card-preview[data-design="ivory-elegance"] .gp-card-preview__message {
+  background: #f5ede2;
+  color: #2a2620;
+}
+
+.gp-card-preview[data-design="romantic-blush"] .gp-card-preview__message {
+  background: #f7d7cf;
+  color: #3a2129;
+}
+
+.gp-card-preview[data-design="classic-minimal"] .gp-card-preview__message {
+  background: #f7f5f3;
+  color: #2a2620;
 }
 
 .gift-preview__panel {
@@ -1114,30 +1159,14 @@ a { color: inherit; text-decoration: none; }
   margin: 0 0 24px;
 }
 
-/* Card design carousel */
-.card-carousel {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.card-carousel__track {
-  display: flex;
+/* Card design grid (4 curated designs) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  padding-bottom: 6px;
-  flex: 1 1 auto;
-  min-width: 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--gold-dim) transparent;
 }
 
-.card-carousel__thumb {
-  flex: 0 0 calc((100% - 3 * 14px) / 4);
-  scroll-snap-align: start;
+.card-grid__thumb {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1150,33 +1179,34 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-body);
 }
 
-.card-carousel__swatch {
+.card-grid__img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1093 / 965;
+  object-fit: cover;
   border-radius: 12px;
   border: 1px solid var(--hairline);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
   transition: border-color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
 }
 
-.card-carousel__thumb.is-selected .card-carousel__swatch {
+.card-grid__thumb.is-selected .card-grid__img {
   border-color: var(--gold);
   box-shadow: 0 0 0 1px var(--gold), 0 0 22px rgba(201, 162, 75, 0.3);
   transform: translateY(-2px);
 }
 
-.card-carousel__name {
+.card-grid__name {
   font-size: 0.76rem;
   letter-spacing: 0.02em;
   color: var(--ivory-dim);
   text-align: center;
 }
 
-.card-carousel__thumb.is-selected .card-carousel__name {
+.card-grid__thumb.is-selected .card-grid__name {
   color: var(--ivory);
 }
 
-.card-carousel__check {
+.card-grid__check {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -1193,31 +1223,12 @@ a { color: inherit; text-decoration: none; }
   transition: opacity 200ms ease, transform 200ms ease;
 }
 
-.card-carousel__thumb.is-selected .card-carousel__check {
+.card-grid__thumb.is-selected .card-grid__check {
   opacity: 1;
   transform: scale(1);
 }
 
-.card-carousel__nav {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: none;
-  border: 1px solid var(--hairline);
-  color: var(--ivory-dim);
-  font-size: 1.2rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: border-color 250ms ease, color 250ms ease;
-}
-
-.card-carousel__nav:hover {
-  border-color: var(--gold);
-  color: var(--gold-light);
-}
-
-.card-carousel__note {
+.card-grid__note {
   font-size: 0.75rem;
   line-height: 1.6;
   color: var(--ivory-dim);
@@ -1225,56 +1236,14 @@ a { color: inherit; text-decoration: none; }
   margin: 18px 0 0;
 }
 
-/* Card swatch palette (illustrative design placeholders) */
-.card-swatch--minimal-cream { background: var(--ivory); }
-.card-swatch--classic-black { background: linear-gradient(135deg, #1c1c1c, #0a0a0a); }
-.card-swatch--soft-pink { background: linear-gradient(135deg, #f7dfe0, #f0c9cd); }
-.card-swatch--floral-romance { background: radial-gradient(circle at 30% 30%, #f6d3d9 0%, #f2cfd6 45%, #eec2cb 100%); }
-.card-swatch--warm-gold { background: linear-gradient(135deg, #f3d98a, #c9a24b); }
-.card-swatch--anniversary { background: linear-gradient(135deg, #4a1019, #2c0810); }
-.card-swatch--birthday { background: radial-gradient(circle at 25% 25%, #fce8c9 0%, #f7d9e6 40%, #d9e8f5 100%); }
-.card-swatch--for-mum { background: linear-gradient(135deg, #e9e3f2, #d8cfe8); }
-.card-swatch--elegant-white { background: #ffffff; border-color: var(--hairline); }
-.card-swatch--rose-gold-shimmer { background: linear-gradient(135deg, #f5d0c5, #e0a899 55%, #c98a72); }
-
-/* Message card colour follows the selected card design */
-.message-preview__card.card-swatch--classic-black,
-.message-preview__card.card-swatch--anniversary {
-  background: linear-gradient(135deg, #201f1d, #121110);
-}
-.message-preview__card.card-swatch--classic-black .message-preview__text,
-.message-preview__card.card-swatch--anniversary .message-preview__text {
-  color: var(--ivory);
-}
-.message-preview__card.card-swatch--classic-black .message-preview__text.is-placeholder,
-.message-preview__card.card-swatch--anniversary .message-preview__text.is-placeholder {
-  color: var(--ivory-dim);
-}
-.message-preview__card.card-swatch--soft-pink,
-.message-preview__card.card-swatch--floral-romance { background: linear-gradient(135deg, #f7dfe0, #f0c9cd); }
-.message-preview__card.card-swatch--soft-pink .message-preview__text,
-.message-preview__card.card-swatch--floral-romance .message-preview__text { color: #3a2129; }
-.message-preview__card.card-swatch--warm-gold,
-.message-preview__card.card-swatch--rose-gold-shimmer { background: linear-gradient(135deg, #f3d98a, #c9a24b); }
-.message-preview__card.card-swatch--warm-gold .message-preview__text,
-.message-preview__card.card-swatch--rose-gold-shimmer .message-preview__text { color: #2a2013; }
-.message-preview__card.card-swatch--birthday,
-.message-preview__card.card-swatch--for-mum { background: linear-gradient(135deg, #f3ecf9, #e6dcf2); }
-.message-preview__card.card-swatch--birthday .message-preview__text,
-.message-preview__card.card-swatch--for-mum .message-preview__text { color: #322b47; }
-.message-preview__card.card-swatch--elegant-white { background: #ffffff; }
-.message-preview__card.card-swatch--minimal-cream { background: var(--ivory); }
-
-.message-preview__card {
-  transition: background 280ms ease;
-}
-
-.message-preview__card .message-preview__text {
-  transition: color 280ms ease;
-}
-
-.gp-box-preview {
-  display: block;
+.gp-readonly {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--black-soft);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  padding: 28px 36px;
 }
 
 .gp-box__tiers {
@@ -1293,11 +1262,19 @@ a { color: inherit; text-decoration: none; }
   background: var(--black);
   border: 1px solid var(--hairline);
   border-radius: 14px;
-  padding: 18px 14px;
+  padding: 14px 14px 18px;
   color: var(--ivory-dim);
   font-family: var(--font-body);
   cursor: pointer;
   transition: border-color 250ms ease, box-shadow 250ms ease, color 250ms ease;
+}
+
+.gp-tier__img {
+  width: 100%;
+  aspect-ratio: 6 / 5;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 .gp-tier__label {
@@ -1509,7 +1486,8 @@ a:focus-visible,
   }
   .gift-preview__stage { position: static; }
   .gp-panel-section { padding: 28px 24px; }
-  .card-carousel__thumb { flex-basis: 78%; }
+  .gp-readonly { padding: 24px 24px; }
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
   .gp-box__tiers { flex-direction: column; }
   .gp-checkout__note { display: none; }
   .site-header__row { flex-wrap: wrap; gap: 10px 16px; }
