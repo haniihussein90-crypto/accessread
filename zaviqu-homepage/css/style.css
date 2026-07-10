@@ -1052,30 +1052,6 @@ a { color: inherit; text-decoration: none; }
   transition: opacity 250ms ease;
 }
 
-.gp-necklace__tag {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 8px 16px;
-  background: rgba(10, 10, 10, 0.6);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--hairline);
-  border-radius: 999px;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gold-light);
-}
-
-.gp-hero__caption {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: var(--ivory-dim);
-  opacity: 0.7;
-  text-align: center;
-}
-
 /* The personalised card, composited into the box's own cushion strip beneath the necklace. */
 .gp-hero-card {
   position: absolute;
@@ -1112,7 +1088,7 @@ a { color: inherit; text-decoration: none; }
   opacity: 0.55;
 }
 
-.gp-hero-card[data-design="midnight-lux"] .gp-hero-card__message {
+.gp-hero-card[data-design="midnight-luxe"] .gp-hero-card__message {
   background: #121212;
   color: var(--ivory);
 }
@@ -1139,13 +1115,6 @@ a { color: inherit; text-decoration: none; }
   min-width: 0;
 }
 
-.gp-panel-section {
-  background: var(--black-soft);
-  border: 1px solid var(--hairline);
-  border-radius: 20px;
-  padding: 36px;
-}
-
 .gp-panel-section__title {
   font-family: var(--font-display);
   font-weight: 500;
@@ -1154,38 +1123,81 @@ a { color: inherit; text-decoration: none; }
   margin: 0 0 10px;
 }
 
-.gp-panel-section__text {
-  font-size: 0.92rem;
-  line-height: 1.7;
+.gp-panel-section__note {
+  font-size: 0.78rem;
+  line-height: 1.6;
   color: var(--ivory-dim);
-  margin: 0 0 24px;
+  opacity: 0.7;
+  margin: 20px 0 0;
 }
 
-.gp-readonly {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+/* Unified control card: Necklace Finish, Personalised Message, Gift Box, Card Design */
+.gp-controls {
   background: var(--black-soft);
   border: 1px solid var(--hairline);
   border-radius: 20px;
-  padding: 28px 36px;
+  padding: 8px 36px;
 }
 
-/* Shared elegant text-based selector, used for both card design and gift box choices. */
-.gp-option-list {
+.gp-control-group {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.gp-control-group:last-of-type {
+  border-bottom: none;
+}
+
+.gp-control-group__head {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.gp-option {
+.gp-control-group__title {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ivory-dim);
+  margin: 0 0 14px;
+}
+
+.gp-control-group__head .gp-control-group__title {
+  margin: 0;
+}
+
+.gp-control-group__message {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ivory);
+}
+
+/* Pills, shared by Necklace Finish, Gift Box, and Card Design */
+.gp-pill-row {
+  display: flex;
+  gap: 12px;
+}
+
+.gp-pill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.gp-pill {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
+  gap: 10px;
   background: var(--black);
   border: 1px solid var(--hairline);
-  border-radius: 12px;
-  padding: 16px 20px;
+  border-radius: 999px;
+  padding: 12px 18px;
   color: var(--ivory-dim);
   font-family: var(--font-body);
   text-align: left;
@@ -1193,62 +1205,59 @@ a { color: inherit; text-decoration: none; }
   transition: border-color 250ms ease, box-shadow 250ms ease, color 250ms ease;
 }
 
-.gp-option__indicator {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid var(--hairline);
-  transition: border-color 250ms ease, box-shadow 250ms ease;
-}
-
-.gp-option__label {
-  flex: 1 1 auto;
-  font-size: 0.92rem;
+.gp-pill__label {
+  font-size: 0.86rem;
   letter-spacing: 0.02em;
   color: var(--ivory);
 }
 
-.gp-option__price {
+.gp-pill__dot {
   flex: none;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gold-dim);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline);
+  transition: border-color 250ms ease, background 250ms ease, box-shadow 250ms ease;
 }
 
-.gp-option.is-selected {
+.gp-pill.is-selected {
   border-color: var(--gold);
-  box-shadow: 0 0 0 1px var(--gold), 0 0 22px rgba(201, 162, 75, 0.22);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 18px rgba(201, 162, 75, 0.2);
+}
+
+.gp-pill.is-selected .gp-pill__label {
   color: var(--ivory);
 }
 
-.gp-option.is-selected .gp-option__indicator {
+.gp-pill.is-selected .gp-pill__dot {
   border-color: var(--gold);
   background: var(--gold);
   box-shadow: inset 0 0 0 3px var(--black);
 }
 
-.gp-panel-section__note {
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: var(--ivory-dim);
-  opacity: 0.7;
-  margin: 18px 0 0;
-}
-
 .gp-edit-link {
-  display: inline-block;
-  margin-top: 4px;
+  flex: none;
+  background: none;
+  border: none;
+  padding: 0;
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold-dim);
+  cursor: pointer;
   transition: color 0.25s ease;
 }
 
 .gp-edit-link:hover {
   color: var(--gold-light);
+}
+
+/* Order summary card */
+.gp-summary-card {
+  background: var(--black-soft);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  padding: 36px;
 }
 
 .gp-summary__list {
@@ -1320,6 +1329,109 @@ a { color: inherit; text-decoration: none; }
 
 .gp-sticky-cta {
   display: none;
+}
+
+/* Edit Message modal */
+.gp-modal[hidden] {
+  display: none;
+}
+
+.gp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.gp-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.gp-modal__panel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--black-soft);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  padding: 36px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+}
+
+.gp-modal__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: var(--ivory);
+  margin: 0 0 20px;
+}
+
+.gp-modal__textarea {
+  width: 100%;
+  min-height: 140px;
+  background: var(--black);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  padding: 18px 20px;
+  color: var(--ivory);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  resize: vertical;
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.gp-modal__textarea::placeholder {
+  color: var(--ivory-dim);
+  opacity: 0.55;
+}
+
+.gp-modal__textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 26px rgba(201, 162, 75, 0.2);
+}
+
+.gp-modal__counter {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-dim);
+  text-align: right;
+}
+
+.gp-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.gp-modal__cancel {
+  background: none;
+  border: none;
+  padding: 1rem 1.2rem;
+  color: var(--ivory-dim);
+  font-family: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.gp-modal__cancel:hover {
+  color: var(--ivory);
+}
+
+.gp-modal__save {
+  flex: none;
 }
 
 button:focus-visible,
@@ -1411,9 +1523,12 @@ a:focus-visible,
     gap: 40px;
   }
   .gift-preview__stage { position: static; }
-  .gp-panel-section { padding: 28px 24px; }
-  .gp-readonly { padding: 24px 24px; }
+  .gp-controls { padding: 4px 24px; }
+  .gp-summary-card { padding: 28px 24px; }
+  .gp-pill-grid { grid-template-columns: 1fr; }
+  .gp-pill-row { flex-direction: column; }
   .gp-checkout__note { display: none; }
+  .gp-modal__panel { padding: 28px 24px; }
   .site-header__row { flex-wrap: wrap; gap: 10px 16px; }
 
   .gp-sticky-cta {

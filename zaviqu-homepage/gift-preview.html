@@ -34,73 +34,77 @@
     <div class="gift-preview__stage reveal">
       <div class="gp-hero" id="gpHero">
         <img id="gpHeroImage" src="assets/images/gift-box-wood-gold.jpg" alt="Zaviqu Love Knot Necklace in its gift box">
-        <span class="gp-necklace__tag" id="gpFinishTag">Gold Finish</span>
 
         <div class="gp-hero-card" id="gpHeroCard">
           <div class="gp-hero-card__message" id="gpMessageText">Your message will appear here…</div>
         </div>
       </div>
-      <p class="gp-hero__caption">The personalised card rests inside the box, beneath the necklace.</p>
     </div>
 
     <div class="gift-preview__panel">
-      <div class="gp-readonly reveal">
-        <div class="gp-summary__row">
-          <dt>Love Knot Necklace <a href="index.html#configureSection" class="gp-edit-link">Edit finish</a></dt>
-          <dd id="gpFinishSummary">Gold finish</dd>
+      <div class="gp-controls reveal">
+        <div class="gp-control-group">
+          <h3 class="gp-control-group__title">Necklace Finish</h3>
+          <div class="gp-pill-row" role="radiogroup" aria-label="Choose your necklace finish">
+            <button type="button" class="gp-pill is-selected" data-finish="gold" role="radio" aria-checked="true" tabindex="0">
+              <span class="gp-pill__label">Gold</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="gp-pill" data-finish="silver" role="radio" aria-checked="false" tabindex="-1">
+              <span class="gp-pill__label">Silver</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+          </div>
         </div>
-        <div class="gp-summary__row">
-          <dt>Personalised Message <a href="index.html#configureSection" class="gp-edit-link">Edit message</a></dt>
-          <dd id="gpMessageSummary">No message added</dd>
+
+        <div class="gp-control-group">
+          <div class="gp-control-group__head">
+            <h3 class="gp-control-group__title">Personalised Message</h3>
+            <button type="button" class="gp-edit-link" id="editMessageBtn">Edit Message</button>
+          </div>
+          <p class="gp-control-group__message" id="gpMessageSummaryText">No message added yet.</p>
         </div>
+
+        <div class="gp-control-group">
+          <h3 class="gp-control-group__title">Gift Box</h3>
+          <div class="gp-pill-row" role="radiogroup" aria-label="Choose your gift box">
+            <button type="button" class="gp-pill" data-tier="white" role="radio" aria-checked="false" tabindex="-1">
+              <span class="gp-pill__label">Signature Box (Included)</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="gp-pill is-selected" data-tier="wood" role="radio" aria-checked="true" tabindex="0">
+              <span class="gp-pill__label">Luxury Wooden Box (+€20)</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="gp-control-group">
+          <h3 class="gp-control-group__title">Card Design</h3>
+          <div class="gp-pill-grid" role="radiogroup" aria-label="Choose your card design">
+            <button type="button" class="gp-pill is-selected" data-design="midnight-luxe" role="radio" aria-checked="true" tabindex="0">
+              <span class="gp-pill__label">Midnight Luxe</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="gp-pill" data-design="ivory-elegance" role="radio" aria-checked="false" tabindex="-1">
+              <span class="gp-pill__label">Ivory Elegance</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="gp-pill" data-design="romantic-blush" role="radio" aria-checked="false" tabindex="-1">
+              <span class="gp-pill__label">Romantic Blush</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="gp-pill" data-design="classic-minimal" role="radio" aria-checked="false" tabindex="-1">
+              <span class="gp-pill__label">Classic Minimal</span>
+              <span class="gp-pill__dot" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+        <p class="gp-panel-section__note">Card and box options shown are illustrative placeholders — connect the real Shopify products and ShineOn templates to finalize.</p>
       </div>
 
-      <section class="gp-panel-section reveal" id="cardDesignSection" aria-labelledby="cardDesignHeading">
-        <h2 class="gp-panel-section__title" id="cardDesignHeading">Choose Your Card Design</h2>
-        <p class="gp-panel-section__text">Select the design that best suits the message and the moment.</p>
-
-        <div class="gp-option-list" role="radiogroup" aria-label="Choose your card design">
-          <button type="button" class="gp-option is-selected" data-design="midnight-lux" role="radio" aria-checked="true" tabindex="0">
-            <span class="gp-option__indicator" aria-hidden="true"></span>
-            <span class="gp-option__label">Midnight Lux</span>
-          </button>
-          <button type="button" class="gp-option" data-design="ivory-elegance" role="radio" aria-checked="false" tabindex="-1">
-            <span class="gp-option__indicator" aria-hidden="true"></span>
-            <span class="gp-option__label">Ivory Elegance</span>
-          </button>
-          <button type="button" class="gp-option" data-design="romantic-blush" role="radio" aria-checked="false" tabindex="-1">
-            <span class="gp-option__indicator" aria-hidden="true"></span>
-            <span class="gp-option__label">Romantic Blush</span>
-          </button>
-          <button type="button" class="gp-option" data-design="classic-minimal" role="radio" aria-checked="false" tabindex="-1">
-            <span class="gp-option__indicator" aria-hidden="true"></span>
-            <span class="gp-option__label">Classic Minimal</span>
-          </button>
-        </div>
-        <p class="gp-panel-section__note">Card template designs — connect the real ShineOn templates to finalize fulfilment.</p>
-      </section>
-
-      <section class="gp-panel-section reveal" id="giftBoxSection" aria-labelledby="giftBoxHeading">
-        <h2 class="gp-panel-section__title" id="giftBoxHeading">Choose Your Gift Box</h2>
-        <p class="gp-panel-section__text">Both boxes arrive wrapped and ready to give.</p>
-
-        <div class="gp-option-list" role="radiogroup" aria-label="Choose your gift box">
-          <button type="button" class="gp-option" data-tier="white" role="radio" aria-checked="false" tabindex="-1">
-            <span class="gp-option__indicator" aria-hidden="true"></span>
-            <span class="gp-option__label">Signature Box</span>
-            <span class="gp-option__price">Included</span>
-          </button>
-          <button type="button" class="gp-option is-selected" data-tier="wood" role="radio" aria-checked="true" tabindex="0">
-            <span class="gp-option__indicator" aria-hidden="true"></span>
-            <span class="gp-option__label">Luxury Wooden Box</span>
-            <span class="gp-option__price">+€20</span>
-          </button>
-        </div>
-        <p class="gp-panel-section__note">Box pricing reflects the intended real price — the underlying Shopify product still needs to be connected to finalize checkout.</p>
-      </section>
-
-      <section class="gp-panel-section reveal" id="reviewSection" aria-labelledby="reviewHeading">
-        <h2 class="gp-panel-section__title" id="reviewHeading">Review Your Gift</h2>
+      <div class="gp-summary-card reveal" id="reviewSection">
+        <h2 class="gp-panel-section__title">Order Summary</h2>
 
         <dl class="gp-summary__list">
           <div class="gp-summary__row">
@@ -109,7 +113,11 @@
           </div>
           <div class="gp-summary__row">
             <dt>Gift Box</dt>
-            <dd id="gpBoxUpgradePrice">Paid Upgrade</dd>
+            <dd id="gpBoxUpgradePrice">+€20</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Shipping</dt>
+            <dd>Calculated at checkout</dd>
           </div>
         </dl>
 
@@ -117,14 +125,27 @@
           <span>Total</span>
           <span id="gpTotal">Price upon selection</span>
         </div>
-        <p class="gp-summary__note">Shipping calculated at checkout. Pricing shown is illustrative — connect real products in Shopify to finalize checkout.</p>
+        <p class="gp-summary__note">Pricing shown is illustrative — connect real products in Shopify to finalize checkout.</p>
 
         <button type="button" class="btn-gold gp-checkout" id="checkoutBtn">Continue to Secure Checkout</button>
         <p class="gp-checkout__note">Checkout will activate once real Shopify products and ShineOn templates are connected.</p>
-      </section>
+      </div>
     </div>
   </div>
 </main>
+
+<div class="gp-modal" id="messageModal" hidden>
+  <div class="gp-modal__backdrop" id="messageModalBackdrop"></div>
+  <div class="gp-modal__panel" role="dialog" aria-modal="true" aria-labelledby="messageModalTitle">
+    <h3 class="gp-modal__title" id="messageModalTitle">Edit Your Message</h3>
+    <textarea class="gp-modal__textarea" id="messageModalInput" rows="5" maxlength="200" placeholder="Write your message here…"></textarea>
+    <div class="gp-modal__counter" id="messageModalCounter">0 / 200</div>
+    <div class="gp-modal__actions">
+      <button type="button" class="gp-modal__cancel" id="messageModalCancel">Cancel</button>
+      <button type="button" class="btn-gold gp-modal__save" id="messageModalSave">Save Message</button>
+    </div>
+  </div>
+</div>
 
 <div class="gp-sticky-cta" id="gpStickyCta">
   <span class="gp-sticky-cta__total" id="gpStickyTotal">Price upon selection</span>
