@@ -106,3 +106,37 @@ if (configureSection) {
     });
   }
 }
+
+const revealEls = document.querySelectorAll('.reveal');
+
+if (revealEls.length) {
+  const genericRevealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          genericRevealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+  revealEls.forEach((el) => genericRevealObserver.observe(el));
+}
+
+document.querySelectorAll('.faq-item__question').forEach((button) => {
+  button.addEventListener('click', () => {
+    const item = button.closest('.faq-item');
+    const wasOpen = item.classList.contains('is-open');
+
+    document.querySelectorAll('.faq-item.is-open').forEach((openItem) => {
+      openItem.classList.remove('is-open');
+      openItem.querySelector('.faq-item__question').setAttribute('aria-expanded', 'false');
+    });
+
+    if (!wasOpen) {
+      item.classList.add('is-open');
+      button.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
