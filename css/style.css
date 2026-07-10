@@ -1,7 +1,11 @@
 /* ---------- Design tokens ---------- */
 :root {
-  --black: #0a0a0a;
-  --black-soft: #121110;
+  /* Warm two-tone luxury dark palette — dark walnut wood and candlelight, not
+     tech-black. --black-soft (Espresso) sits between --black (Warm Black) and
+     --rich-brown as the elevated-panel tone; sections blend gently between them. */
+  --black: #0B0A09;
+  --black-soft: #15100D;
+  --rich-brown: #1C1511;
   --ivory: #f3efe6;
   --ivory-dim: #cfc9bb;
   --gold: #c9a24b;
@@ -26,17 +30,21 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--black);
+  background:
+    radial-gradient(1400px 900px at 12% -8%, rgba(201, 162, 75, 0.035), transparent 60%),
+    radial-gradient(1200px 900px at 88% 20%, rgba(140, 90, 50, 0.04), transparent 65%),
+    linear-gradient(160deg, var(--black) 0%, var(--black-soft) 45%, var(--rich-brown) 100%);
   color: var(--ivory);
   font-family: var(--font-body);
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Gift Preview reads warmer and less dramatic than the rest of the site — a very
-   dark charcoal instead of the homepage's pure black. */
+/* Gift Preview shares the same warm layered atmosphere as the rest of the site. */
 body.gp-page {
-  background: #17150f;
+  background:
+    radial-gradient(1200px 800px at 50% -10%, rgba(201, 162, 75, 0.035), transparent 60%),
+    linear-gradient(160deg, var(--black) 0%, var(--black-soft) 50%, var(--rich-brown) 100%);
 }
 
 .container {
@@ -55,13 +63,13 @@ a { color: inherit; text-decoration: none; }
   right: 0;
   height: var(--header-h);
   z-index: 100;
-  background: linear-gradient(to bottom, rgba(10,10,10,0.85), rgba(10,10,10,0));
+  background: linear-gradient(to bottom, rgba(11, 10, 9,0.85), rgba(11, 10, 9,0));
   transition: background 0.4s ease, border-color 0.4s ease;
   border-bottom: 1px solid transparent;
 }
 
 .site-header.is-scrolled {
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(11, 10, 9, 0.92);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--hairline);
 }
@@ -127,7 +135,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   padding: calc(var(--header-h) + 40px) 4vw 60px 5vw;
   background:
-    radial-gradient(ellipse at 30% 40%, rgba(201,162,75,0.07), transparent 60%),
+    radial-gradient(ellipse at 30% 40%, rgba(201,162,75,0.045), transparent 60%),
     var(--black);
 }
 
@@ -199,7 +207,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- How it works ---------- */
 .how {
-  background: var(--black);
+  background:
+    radial-gradient(1000px 620px at 82% 0%, rgba(201, 162, 75, 0.04), transparent 60%),
+    var(--black);
   padding: 240px 0 160px;
 }
 
@@ -340,7 +350,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Story video ---------- */
 .story {
-  background: linear-gradient(180deg, var(--black) 0%, #171410 100%);
+  background:
+    radial-gradient(900px 520px at 18% 100%, rgba(201, 162, 75, 0.04), transparent 60%),
+    linear-gradient(180deg, var(--black) 0%, var(--black-soft) 100%);
   padding: 130px 0;
 }
 
@@ -411,7 +423,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Build Your Gift (finish + personalize, merged) ---------- */
 .build-gift {
-  background: var(--black);
+  background:
+    radial-gradient(1000px 620px at 12% 5%, rgba(201, 162, 75, 0.04), transparent 60%),
+    var(--black);
   padding: 96px 0 110px;
 }
 
@@ -688,7 +702,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Our Promise ---------- */
 .promise {
-  background: var(--black);
+  background:
+    radial-gradient(900px 560px at 50% 0%, rgba(201, 162, 75, 0.035), transparent 60%),
+    var(--black);
   padding: 150px 0 160px;
 }
 
@@ -768,7 +784,9 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- FAQ ---------- */
 .faq {
-  background: linear-gradient(180deg, var(--black) 0%, #171410 100%);
+  background:
+    radial-gradient(900px 520px at 85% 100%, rgba(201, 162, 75, 0.04), transparent 60%),
+    linear-gradient(180deg, var(--black) 0%, var(--black-soft) 100%);
   padding: 150px 0 160px;
 }
 
@@ -888,8 +906,8 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Final CTA ---------- */
 .finale {
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(201, 162, 75, 0.09), transparent 60%),
-    linear-gradient(180deg, #171410 0%, var(--black) 100%);
+    radial-gradient(ellipse at 50% 0%, rgba(201, 162, 75, 0.05), transparent 60%),
+    linear-gradient(180deg, var(--black-soft) 0%, var(--black) 100%);
   padding: 160px 0 180px;
 }
 
@@ -957,7 +975,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Gift Preview page ---------- */
 .gp-header {
-  background: rgba(10, 10, 10, 0.96);
+  background: rgba(11, 10, 9, 0.96);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--hairline);
 }
@@ -974,7 +992,9 @@ a { color: inherit; text-decoration: none; }
 
 .gift-preview {
   display: block;
-  background: var(--black);
+  background:
+    radial-gradient(1100px 700px at 50% 0%, rgba(201, 162, 75, 0.035), transparent 60%),
+    linear-gradient(160deg, var(--black) 0%, var(--black-soft) 50%, var(--rich-brown) 100%);
   padding: calc(var(--header-h) + 64px) 0 140px;
   min-height: 100vh;
 }
@@ -1101,7 +1121,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(10, 10, 10, 0.6);
+  background: rgba(11, 10, 9, 0.6);
   border: 1px solid var(--hairline);
   color: var(--ivory-dim);
   cursor: pointer;
@@ -1118,7 +1138,7 @@ a { color: inherit; text-decoration: none; }
 .gp-card-preview__nav:focus-visible {
   border-color: var(--gold);
   color: var(--gold-light);
-  background: rgba(10, 10, 10, 0.8);
+  background: rgba(11, 10, 9, 0.8);
 }
 
 .gp-card-preview__nav--prev { left: -14px; }
@@ -1452,7 +1472,7 @@ a { color: inherit; text-decoration: none; }
 .gp-modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 10, 10, 0.72);
+  background: rgba(11, 10, 9, 0.72);
   backdrop-filter: blur(4px);
 }
 
@@ -1679,7 +1699,7 @@ a:focus-visible,
     bottom: 0;
     z-index: 90;
     padding: 12px 16px;
-    background: rgba(10, 10, 10, 0.94);
+    background: rgba(11, 10, 9, 0.94);
     backdrop-filter: blur(8px);
     border-top: 1px solid var(--hairline);
   }
