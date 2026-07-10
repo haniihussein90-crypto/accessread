@@ -208,8 +208,8 @@ a { color: inherit; text-decoration: none; }
 /* ---------- How it works ---------- */
 .how {
   background:
-    radial-gradient(1000px 620px at 82% 0%, rgba(201, 162, 75, 0.04), transparent 60%),
-    var(--black);
+    radial-gradient(ellipse at 50% 0%, rgba(201, 162, 75, 0.05), transparent 60%),
+    linear-gradient(180deg, var(--black-soft) 0%, var(--black) 100%);
   padding: 168px 0 160px;
 }
 
