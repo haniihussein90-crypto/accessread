@@ -406,13 +406,13 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Build Your Gift (finish + personalize, merged) ---------- */
 .build-gift {
   background: var(--black);
-  padding: 130px 0 140px;
+  padding: 96px 0 110px;
 }
 
 .build-gift__head {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto 64px;
+  margin: 0 auto 48px;
 }
 
 .build-gift__title {
@@ -484,9 +484,9 @@ a { color: inherit; text-decoration: none; }
 .configure__stage {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 440px;
   aspect-ratio: 1 / 1;
-  margin: 0 auto 28px;
+  margin: 0 auto;
   border-radius: 24px;
   overflow: hidden;
   background: var(--black-soft);
@@ -633,6 +633,31 @@ a { color: inherit; text-decoration: none; }
 
 .message-preview__text.is-placeholder {
   color: rgba(42, 38, 32, 0.4);
+}
+
+.message-preview--compact {
+  margin-top: 16px;
+}
+
+.message-preview--compact .message-preview__card {
+  min-height: 0;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--hairline);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 14px 4px 0;
+}
+
+.message-preview--compact .message-preview__text {
+  font-size: 0.85rem;
+  color: var(--ivory-dim);
+  opacity: 0.75;
+}
+
+.message-preview--compact .message-preview__text.is-placeholder {
+  color: var(--ivory-dim);
+  opacity: 0.4;
 }
 
 /* ---------- Reveal (generic fade-up) ---------- */
