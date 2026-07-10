@@ -32,15 +32,15 @@
 
   <div class="container gift-preview__layout">
     <div class="gift-preview__stage reveal">
-      <div class="gp-hero">
+      <div class="gp-hero" id="gpHero">
         <img id="gpHeroImage" src="assets/images/gift-box-wood-gold.jpg" alt="Zaviqu Love Knot Necklace in its gift box">
         <span class="gp-necklace__tag" id="gpFinishTag">Gold Finish</span>
-      </div>
 
-      <div class="gp-card-preview" id="gpCardPreview">
-        <img class="gp-card-preview__bg" id="gpCardImage" src="assets/images/card-midnight-lux.jpg" alt="">
-        <div class="gp-card-preview__message" id="gpMessageText">Your message will appear here…</div>
+        <div class="gp-hero-card" id="gpHeroCard">
+          <div class="gp-hero-card__message" id="gpMessageText">Your message will appear here…</div>
+        </div>
       </div>
+      <p class="gp-hero__caption">The personalised card rests inside the box, beneath the necklace.</p>
     </div>
 
     <div class="gift-preview__panel">
@@ -59,50 +59,44 @@
         <h2 class="gp-panel-section__title" id="cardDesignHeading">Choose Your Card Design</h2>
         <p class="gp-panel-section__text">Select the design that best suits the message and the moment.</p>
 
-        <div class="card-grid" role="radiogroup" aria-label="Choose your card design">
-          <button type="button" class="card-grid__thumb is-selected" data-design="midnight-lux" role="radio" aria-checked="true">
-            <img src="assets/images/card-midnight-lux.jpg" alt="" class="card-grid__img">
-            <span class="card-grid__name">Midnight Lux</span>
-            <span class="card-grid__check" aria-hidden="true">✓</span>
+        <div class="gp-option-list" role="radiogroup" aria-label="Choose your card design">
+          <button type="button" class="gp-option is-selected" data-design="midnight-lux" role="radio" aria-checked="true" tabindex="0">
+            <span class="gp-option__indicator" aria-hidden="true"></span>
+            <span class="gp-option__label">Midnight Lux</span>
           </button>
-          <button type="button" class="card-grid__thumb" data-design="ivory-elegance" role="radio" aria-checked="false">
-            <img src="assets/images/card-ivory-elegance.jpg" alt="" class="card-grid__img">
-            <span class="card-grid__name">Ivory Elegance</span>
-            <span class="card-grid__check" aria-hidden="true">✓</span>
+          <button type="button" class="gp-option" data-design="ivory-elegance" role="radio" aria-checked="false" tabindex="-1">
+            <span class="gp-option__indicator" aria-hidden="true"></span>
+            <span class="gp-option__label">Ivory Elegance</span>
           </button>
-          <button type="button" class="card-grid__thumb" data-design="romantic-blush" role="radio" aria-checked="false">
-            <img src="assets/images/card-romantic-blush.jpg" alt="" class="card-grid__img">
-            <span class="card-grid__name">Romantic Blush</span>
-            <span class="card-grid__check" aria-hidden="true">✓</span>
+          <button type="button" class="gp-option" data-design="romantic-blush" role="radio" aria-checked="false" tabindex="-1">
+            <span class="gp-option__indicator" aria-hidden="true"></span>
+            <span class="gp-option__label">Romantic Blush</span>
           </button>
-          <button type="button" class="card-grid__thumb" data-design="classic-minimal" role="radio" aria-checked="false">
-            <img src="assets/images/card-classic-minimal.jpg" alt="" class="card-grid__img">
-            <span class="card-grid__name">Classic Minimal</span>
-            <span class="card-grid__check" aria-hidden="true">✓</span>
+          <button type="button" class="gp-option" data-design="classic-minimal" role="radio" aria-checked="false" tabindex="-1">
+            <span class="gp-option__indicator" aria-hidden="true"></span>
+            <span class="gp-option__label">Classic Minimal</span>
           </button>
         </div>
-        <p class="card-grid__note">Card template designs — connect the real ShineOn templates to finalize fulfilment.</p>
+        <p class="gp-panel-section__note">Card template designs — connect the real ShineOn templates to finalize fulfilment.</p>
       </section>
 
       <section class="gp-panel-section reveal" id="giftBoxSection" aria-labelledby="giftBoxHeading">
         <h2 class="gp-panel-section__title" id="giftBoxHeading">Choose Your Gift Box</h2>
         <p class="gp-panel-section__text">Both boxes arrive wrapped and ready to give.</p>
 
-        <div class="gp-box__tiers" role="radiogroup" aria-label="Choose your gift box">
-          <button type="button" class="gp-tier is-selected" data-tier="wood" role="radio" aria-checked="true">
-            <img class="gp-tier__img" id="gpTierImgWood" src="assets/images/gift-box-wood-gold.jpg" alt="">
-            <span class="gp-tier__label">Luxury Wooden Gift Box</span>
-            <span class="gp-tier__detail">Lacquered wood box, velvet-lined</span>
-            <span class="gp-tier__price">Paid Upgrade</span>
+        <div class="gp-option-list" role="radiogroup" aria-label="Choose your gift box">
+          <button type="button" class="gp-option" data-tier="white" role="radio" aria-checked="false" tabindex="-1">
+            <span class="gp-option__indicator" aria-hidden="true"></span>
+            <span class="gp-option__label">Signature Box</span>
+            <span class="gp-option__price">Included</span>
           </button>
-          <button type="button" class="gp-tier" data-tier="white" role="radio" aria-checked="false">
-            <img class="gp-tier__img" id="gpTierImgWhite" src="assets/images/gift-box-white-gold.jpg" alt="">
-            <span class="gp-tier__label">Classic White Gift Box</span>
-            <span class="gp-tier__detail">Signature Zaviqu presentation box</span>
-            <span class="gp-tier__price">Included</span>
+          <button type="button" class="gp-option is-selected" data-tier="wood" role="radio" aria-checked="true" tabindex="0">
+            <span class="gp-option__indicator" aria-hidden="true"></span>
+            <span class="gp-option__label">Luxury Wooden Box</span>
+            <span class="gp-option__price">+€20</span>
           </button>
         </div>
-        <p class="gp-box__note">Box pricing is a placeholder — connect the real Standard/Luxury Gift Box products in Shopify to finalize.</p>
+        <p class="gp-panel-section__note">Box pricing reflects the intended real price — the underlying Shopify product still needs to be connected to finalize checkout.</p>
       </section>
 
       <section class="gp-panel-section reveal" id="reviewSection" aria-labelledby="reviewHeading">
