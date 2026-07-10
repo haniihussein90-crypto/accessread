@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gift Preview — Zaviqu</title>
-<meta name="description" content="Preview your personalised Zaviqu Love Knot necklace, gift box, and message before checkout.">
+<meta name="description" content="Preview your personalised Zaviqu Love Knot necklace, card design, and gift box before checkout.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -22,7 +22,12 @@
 <main class="gift-preview">
   <div class="container gift-preview__head reveal">
     <p class="gift-preview__eyebrow">Your Gift, Ready to Give</p>
-    <h1 class="gift-preview__title">Gift Preview</h1>
+    <h1 class="gift-preview__title">Your Gift, Previewed</h1>
+    <p class="gift-preview__subtitle">See how every detail comes together before you complete your order.</p>
+  </div>
+
+  <div class="container gp-notice" id="gpNotice" hidden>
+    <p>We couldn't find a saved gift configuration. <a href="index.html#configureSection">Return to Build Your Gift</a> to choose a finish and message, or continue below with the defaults shown.</p>
   </div>
 
   <div class="container gift-preview__layout">
@@ -33,60 +38,156 @@
       </div>
 
       <div class="message-preview gp-message">
-        <div class="message-preview__card">
+        <div class="message-preview__card card-swatch--minimal-cream" id="gpMessageCard">
           <p class="message-preview__text is-placeholder" id="gpMessageText">Your message will appear here…</p>
         </div>
       </div>
 
-      <div class="gp-box">
+      <div class="gp-box-preview">
         <div class="gp-box__image-wrap" id="gpBoxImageWrap">
           <img id="gpBoxImage" src="assets/images/gift-box.jpg" alt="Zaviqu gift box, beautifully wrapped">
         </div>
+      </div>
+    </div>
+
+    <div class="gift-preview__panel">
+      <section class="gp-panel-section reveal" id="cardDesignSection" aria-labelledby="cardDesignHeading">
+        <h2 class="gp-panel-section__title" id="cardDesignHeading">Choose Your Card Design</h2>
+        <p class="gp-panel-section__text">Select the design that best suits the message and the moment.</p>
+
+        <div class="card-carousel">
+          <button type="button" class="card-carousel__nav card-carousel__nav--prev" id="cardCarouselPrev" aria-label="Show previous card designs">‹</button>
+
+          <div class="card-carousel__track" id="cardCarouselTrack" role="radiogroup" aria-label="Choose your card design">
+            <button type="button" class="card-carousel__thumb is-selected" data-design="minimal-cream" role="radio" aria-checked="true" tabindex="0">
+              <span class="card-carousel__swatch card-swatch--minimal-cream" aria-hidden="true"></span>
+              <span class="card-carousel__name">Minimal Cream</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="classic-black" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--classic-black" aria-hidden="true"></span>
+              <span class="card-carousel__name">Classic Black</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="soft-pink" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--soft-pink" aria-hidden="true"></span>
+              <span class="card-carousel__name">Soft Pink</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="floral-romance" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--floral-romance" aria-hidden="true"></span>
+              <span class="card-carousel__name">Floral Romance</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="warm-gold" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--warm-gold" aria-hidden="true"></span>
+              <span class="card-carousel__name">Warm Gold</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="anniversary" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--anniversary" aria-hidden="true"></span>
+              <span class="card-carousel__name">Anniversary</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="birthday" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--birthday" aria-hidden="true"></span>
+              <span class="card-carousel__name">Birthday</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="for-mum" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--for-mum" aria-hidden="true"></span>
+              <span class="card-carousel__name">For Mum</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="elegant-white" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--elegant-white" aria-hidden="true"></span>
+              <span class="card-carousel__name">Elegant White</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+            <button type="button" class="card-carousel__thumb" data-design="rose-gold-shimmer" role="radio" aria-checked="false" tabindex="-1">
+              <span class="card-carousel__swatch card-swatch--rose-gold-shimmer" aria-hidden="true"></span>
+              <span class="card-carousel__name">Rose Gold Shimmer</span>
+              <span class="card-carousel__check" aria-hidden="true">✓</span>
+            </button>
+          </div>
+
+          <button type="button" class="card-carousel__nav card-carousel__nav--next" id="cardCarouselNext" aria-label="Show more card designs">›</button>
+        </div>
+        <p class="card-carousel__note">Card designs shown are illustrative placeholders — connect the real ShineOn templates to finalize.</p>
+      </section>
+
+      <section class="gp-panel-section reveal" id="giftBoxSection" aria-labelledby="giftBoxHeading">
+        <h2 class="gp-panel-section__title" id="giftBoxHeading">Choose Your Gift Box</h2>
+        <p class="gp-panel-section__text">Both boxes arrive wrapped and ready to give.</p>
 
         <div class="gp-box__tiers" role="radiogroup" aria-label="Choose your gift box">
           <button type="button" class="gp-tier is-selected" data-tier="standard" role="radio" aria-checked="true">
             <span class="gp-tier__label">Standard Gift Box</span>
+            <span class="gp-tier__detail">Signature Zaviqu box, ribbon-tied</span>
             <span class="gp-tier__price">Included</span>
           </button>
           <button type="button" class="gp-tier" data-tier="luxury" role="radio" aria-checked="false">
             <span class="gp-tier__label">Luxury Gift Box</span>
+            <span class="gp-tier__detail">Upgraded finish — details pending real product setup</span>
             <span class="gp-tier__price">Price TBD</span>
           </button>
         </div>
-        <p class="gp-box__note">Gift box photography is shared between tiers, and pricing is a placeholder — add real Standard/Luxury Gift Box products in Shopify to finalize.</p>
-      </div>
-    </div>
+        <p class="gp-box__note">Gift box photography is shared between tiers, and Luxury pricing is a placeholder — connect the real Standard/Luxury Gift Box products in Shopify to finalize.</p>
+      </section>
 
-    <div class="gift-preview__summary reveal">
-      <h2 class="gp-summary__title">Order Summary</h2>
+      <section class="gp-panel-section reveal" id="reviewSection" aria-labelledby="reviewHeading">
+        <h2 class="gp-panel-section__title" id="reviewHeading">Review Your Gift</h2>
 
-      <dl class="gp-summary__list">
-        <div class="gp-summary__row">
-          <dt>Love Knot Necklace</dt>
-          <dd id="gpFinishSummary">Gold finish</dd>
+        <dl class="gp-summary__list">
+          <div class="gp-summary__row">
+            <dt>Love Knot Necklace <a href="index.html#configureSection" class="gp-edit-link">Edit finish</a></dt>
+            <dd id="gpFinishSummary">Gold finish</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Personalised Message <a href="index.html#configureSection" class="gp-edit-link">Edit message</a></dt>
+            <dd id="gpMessageSummary">No message added</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Card Design <a href="#cardDesignSection" class="gp-edit-link">Change design</a></dt>
+            <dd id="gpCardSummary">Minimal Cream</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Gift Box <a href="#giftBoxSection" class="gp-edit-link">Change box</a></dt>
+            <dd id="gpBoxSummary">Standard</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Quantity</dt>
+            <dd>1</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Item Price</dt>
+            <dd id="gpItemPrice">Price upon selection</dd>
+          </div>
+          <div class="gp-summary__row">
+            <dt>Box Upgrade</dt>
+            <dd id="gpBoxUpgradePrice">—</dd>
+          </div>
+        </dl>
+
+        <div class="gp-summary__total">
+          <span>Total</span>
+          <span id="gpTotal">Price upon selection</span>
         </div>
-        <div class="gp-summary__row">
-          <dt>Personalised Message</dt>
-          <dd id="gpMessageSummary">No message added</dd>
-        </div>
-        <div class="gp-summary__row">
-          <dt>Gift Box</dt>
-          <dd id="gpBoxSummary">Standard</dd>
-        </div>
-      </dl>
+        <p class="gp-summary__note">Shipping calculated at checkout. Pricing shown is illustrative — connect real products in Shopify to finalize checkout.</p>
 
-      <div class="gp-summary__total">
-        <span>Total</span>
-        <span id="gpTotal">Price upon selection</span>
-      </div>
-
-      <p class="gp-summary__note">Pricing shown is illustrative — connect real products in Shopify to finalize checkout.</p>
-
-      <button type="button" class="btn-gold gp-checkout" id="checkoutBtn">Continue to Checkout</button>
+        <button type="button" class="btn-gold gp-checkout" id="checkoutBtn">Continue to Secure Checkout</button>
+        <p class="gp-checkout__note">Checkout will activate once real Shopify products and ShineOn templates are connected.</p>
+      </section>
     </div>
   </div>
 </main>
 
+<div class="gp-sticky-cta" id="gpStickyCta">
+  <span class="gp-sticky-cta__total" id="gpStickyTotal">Price upon selection</span>
+  <button type="button" class="btn-gold gp-sticky-cta__btn" id="checkoutBtnSticky">Continue to Secure Checkout</button>
+</div>
+
 <script src="js/main.js"></script>
+<script src="js/gift-preview.js"></script>
 </body>
 </html>
