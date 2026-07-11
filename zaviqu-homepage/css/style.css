@@ -21,7 +21,7 @@
   --font-body: "Jost", "Helvetica Neue", Arial, sans-serif;
 
   --container-w: 1280px;
-  --header-h: 84px;
+  --header-h: 104px;
 }
 
 * { box-sizing: border-box; }
@@ -81,12 +81,54 @@ a { color: inherit; text-decoration: none; }
   justify-content: space-between;
 }
 
+/* Full brand mark: diamond knot above the wordmark, thin gold rule + heart below —
+   used as-is in the fixed header (which grew slightly to give it room to breathe). */
 .logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 0;
+}
+
+.logo__mark {
+  width: 24px;
+  height: 24px;
+  color: var(--gold);
+}
+
+.logo__mark path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5;
+  stroke-linejoin: round;
+}
+
+.logo__word {
   font-family: var(--font-display);
-  font-size: 1.6rem;
-  letter-spacing: 0.18em;
+  font-size: 1.3rem;
+  letter-spacing: 0.22em;
   color: var(--gold-light);
   font-weight: 500;
+  line-height: 1;
+}
+
+.logo__rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.logo__rule-line {
+  width: 26px;
+  height: 1px;
+  background: var(--gold-dim);
+}
+
+.logo__heart {
+  font-size: 0.6rem;
+  line-height: 1;
+  color: var(--gold);
 }
 
 .nav-links {
@@ -203,6 +245,17 @@ a { color: inherit; text-decoration: none; }
   border: none;
   outline: none;
   box-shadow: none;
+}
+
+/* Dissolves the seam between the copy column and the video instead of a hard edge —
+   the video's left side fades into the same black the copy column sits on. */
+.hero__media-col::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to right, var(--black) 0%, rgba(11, 10, 9, 0.55) 8%, transparent 22%);
 }
 
 /* ---------- How it works ---------- */
