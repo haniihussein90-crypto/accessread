@@ -328,6 +328,7 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-width: 0;
 }
 
 .step__number {
@@ -362,33 +363,27 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* Product renders float directly on the page — no card, frame, or visible edge.
-   Each PNG is pre-feathered to fade to transparent at its own boundary and shares
-   the same canvas size/aspect ratio, so all three sit at identical visual weight —
-   all three now use the exact same overflow, deliberately, so their rendered size
-   matches exactly rather than just their shared aspect ratio.
-   Each image overflows its own grid column by a fixed 14px per edge (not a
-   percentage) — bounded by the 2rem column gap (28px used of 32px available) and
-   the container's own edge padding (14px used of 32px available), so this can
-   never overlap a neighbouring image or bleed past the page edge at any
-   breakpoint, unlike a percentage-based overflow would. */
+   Each PNG is now cropped tight to its own artwork (a soft feather at the pixel
+   edge, not a large transparent margin), so sizing by a shared height is what
+   makes all three read at identical visual weight — matching by width would
+   still leave them visually mismatched, since the three renders have different
+   natural aspect ratios (the necklace pair is wide and short, the gift box is
+   closer to square). Width is left auto per image, so each keeps its own
+   proportions at that shared height. */
 .step__media {
   width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .step__image {
-  width: calc(100% + 130px);
-  max-width: none;
-  height: auto;
+  height: clamp(210px, 17vw, 270px);
+  width: auto;
+  max-width: 100%;
   display: block;
-  margin-left: -65px;
-  margin-right: -65px;
 }
-
-.step:first-child .step__image { margin-left: -30px; margin-right: -100px; }
-.step:last-child .step__image { margin-left: -100px; margin-right: -30px; }
 
 /* ---------- Story video ---------- */
 .story {
@@ -1644,14 +1639,13 @@ a:focus-visible,
     margin-top: 20px;
   }
 
-  /* Reset the desktop grid-column overflow trick — mobile is a single stacked
-     column, so images should fill it normally rather than bleed past the page's
-     own edge padding. */
+  /* Mobile is a single stacked column, so size by width instead of the
+     desktop shared-height rule — each image gets the same horizontal
+     footprint in the stack rather than competing for row alignment. */
   .step__image {
-    width: 100%;
-    max-width: 460px;
-    margin-left: 0;
-    margin-right: 0;
+    height: auto;
+    width: min(78vw, 380px);
+    max-width: 100%;
   }
   .step__text { min-height: 0; }
 
