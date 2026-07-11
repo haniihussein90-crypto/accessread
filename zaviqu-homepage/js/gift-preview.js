@@ -38,7 +38,7 @@ const CARD_DESIGNS = [
   { id: 'midnight-luxe', name: 'Midnight Luxe', shineOnTemplateId: null },
   { id: 'ivory-elegance', name: 'Ivory Elegance', shineOnTemplateId: null },
   { id: 'romantic-blush', name: 'Romantic Blush', shineOnTemplateId: null },
-  { id: 'classic-minimal', name: 'Classic Minimal', shineOnTemplateId: null },
+  { id: 'vintage-linen', name: 'Vintage Linen', shineOnTemplateId: null },
 ];
 
 // Real product photography of the necklace in its box. The card design/message live in

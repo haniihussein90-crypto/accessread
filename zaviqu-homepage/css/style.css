@@ -1153,7 +1153,7 @@ a { color: inherit; text-decoration: none; }
 
 .gp-card-preview__inner {
   position: relative;
-  aspect-ratio: 1093 / 965;
+  aspect-ratio: 1 / 1;
   border-radius: 14px;
   overflow: hidden;
   background: #f7f5f3;
@@ -1260,20 +1260,27 @@ a { color: inherit; text-decoration: none; }
   transform: scale(1.4);
 }
 
-/* Real photographed card artwork per design, with the sample paragraph blanked out
-   so the customer's own message (rendered by .gp-card-preview__message on top) reads
-   as if it were printed directly on the card — not pasted over someone else's text. */
-.gp-card-preview__inner[data-design="midnight-luxe"] { background-color: #121212; background-image: url('../assets/images/card-midnight-lux-blank.jpg'); }
-.gp-card-preview__inner[data-design="ivory-elegance"] { background-color: #f5ede2; background-image: url('../assets/images/card-ivory-elegance-blank.jpg'); }
-.gp-card-preview__inner[data-design="romantic-blush"] { background-color: #f7d7cf; background-image: url('../assets/images/card-romantic-blush-blank.jpg'); }
-.gp-card-preview__inner[data-design="classic-minimal"] { background-color: #f7f5f3; background-image: url('../assets/images/card-classic-minimal-blank.jpg'); }
+/* Approved Zaviqu card collection (square 1254x1254 templates, diamond-emblem/ZAVIQU/
+   heart-rule logo baked into the artwork itself), with the writable area left blank so
+   the customer's own message (rendered by .gp-card-preview__message on top) reads as if
+   it were printed directly on the card — not pasted over someone else's text. Background
+   colours are sampled from each image's own empty area, for a clean fallback while the
+   image loads rather than a generic placeholder tone. */
+.gp-card-preview__inner[data-design="midnight-luxe"] { background-color: #0e0d0d; background-image: url('../assets/images/card-midnight-lux-blank.jpg'); }
+.gp-card-preview__inner[data-design="ivory-elegance"] { background-color: #efddbd; background-image: url('../assets/images/card-ivory-elegance-blank.jpg'); }
+.gp-card-preview__inner[data-design="romantic-blush"] { background-color: #fad8ce; background-image: url('../assets/images/card-romantic-blush-blank.jpg'); }
+.gp-card-preview__inner[data-design="vintage-linen"] { background-color: #fdf6eb; background-image: url('../assets/images/card-vintage-linen-blank.jpg'); }
 
+/* Message box is positioned/sized to the actual blank area measured on the new square
+   templates (logo block ends ~30% down, the closing heart rule begins ~77% down) —
+   not reused from the old landscape card's coordinates, which no longer apply now that
+   the artwork's own proportions changed from 1093:965 to 1:1. */
 .gp-card-preview__message {
   position: absolute;
-  left: 14%;
-  right: 14%;
-  top: 48%;
-  bottom: 26.5%;
+  left: 18%;
+  right: 18%;
+  top: 30%;
+  bottom: 23%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1305,7 +1312,7 @@ a { color: inherit; text-decoration: none; }
   color: #3a2129;
 }
 
-.gp-card-preview__inner[data-design="classic-minimal"] .gp-card-preview__message {
+.gp-card-preview__inner[data-design="vintage-linen"] .gp-card-preview__message {
   color: #2a2620;
 }
 
@@ -1394,7 +1401,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .gp-card-modal__card {
-  aspect-ratio: 1093 / 965;
+  aspect-ratio: 1 / 1;
   height: min(62vh, 720px);
   width: auto;
   max-width: min(90vw, 820px);
