@@ -50,7 +50,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
 
-        <div class="gp-card-preview__inner" id="gpCardPreviewInner" data-design="midnight-luxe" tabindex="0" role="group" aria-label="Card design preview, swipe or use arrow keys to browse designs">
+        <div class="gp-card-preview__inner" id="gpCardPreviewInner" data-design="midnight-luxe" tabindex="0" role="group" aria-label="Card design preview, swipe or use arrow keys to browse designs, tap to view large">
           <div class="gp-card-preview__message" id="gpMessageText">Your message will appear here…</div>
         </div>
 
@@ -58,7 +58,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
         </button>
 
-        <p class="gp-card-preview__name" id="cardPreviewName">Midnight Luxe</p>
+        <button type="button" class="gp-card-preview__name" id="cardPreviewName">Midnight Luxe</button>
 
         <div class="gp-card-preview__dots" id="cardPreviewDots" role="tablist" aria-label="Card design pagination">
           <button type="button" class="gp-card-preview__dot is-active" data-design="midnight-luxe" aria-label="Midnight Luxe"></button>
@@ -66,6 +66,8 @@
           <button type="button" class="gp-card-preview__dot" data-design="romantic-blush" aria-label="Romantic Blush"></button>
           <button type="button" class="gp-card-preview__dot" data-design="classic-minimal" aria-label="Classic Minimal"></button>
         </div>
+
+        <button type="button" class="gp-edit-link gp-view-card-designs" id="viewCardDesignsBtn">View Card Designs</button>
       </div>
     </div>
 
@@ -173,6 +175,40 @@
       <button type="button" class="gp-modal__cancel" id="messageModalCancel">Cancel</button>
       <button type="button" class="btn-gold gp-modal__save" id="messageModalSave">Update Preview</button>
     </div>
+  </div>
+</div>
+
+<div class="gp-card-modal" id="cardModal" hidden>
+  <div class="gp-card-modal__backdrop" id="cardModalBackdrop"></div>
+  <button type="button" class="gp-card-modal__close" id="cardModalClose" aria-label="Close card preview">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+
+  <div class="gp-card-modal__panel" role="dialog" aria-modal="true" aria-labelledby="cardModalName">
+    <div class="gp-card-modal__stage">
+      <button type="button" class="gp-card-modal__nav gp-card-modal__nav--prev" id="cardModalPrevBtn" aria-label="Previous card design">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+
+      <div class="gp-card-preview__inner gp-card-modal__card" id="cardModalCard" data-design="midnight-luxe">
+        <div class="gp-card-preview__message gp-card-modal__message" id="cardModalMessage">Your message will appear here…</div>
+      </div>
+
+      <button type="button" class="gp-card-modal__nav gp-card-modal__nav--next" id="cardModalNextBtn" aria-label="Next card design">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <p class="gp-card-modal__name" id="cardModalName">Midnight Luxe</p>
+
+    <div class="gp-card-modal__dots" id="cardModalDots" role="tablist" aria-label="Card design pagination">
+      <button type="button" class="gp-card-modal__dot is-active" data-design="midnight-luxe" aria-label="Midnight Luxe"></button>
+      <button type="button" class="gp-card-modal__dot" data-design="ivory-elegance" aria-label="Ivory Elegance"></button>
+      <button type="button" class="gp-card-modal__dot" data-design="romantic-blush" aria-label="Romantic Blush"></button>
+      <button type="button" class="gp-card-modal__dot" data-design="classic-minimal" aria-label="Classic Minimal"></button>
+    </div>
+
+    <button type="button" class="btn-gold gp-card-modal__select" id="cardModalSelectBtn">Select This Design</button>
   </div>
 </div>
 
