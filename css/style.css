@@ -263,7 +263,7 @@ a { color: inherit; text-decoration: none; }
   background:
     radial-gradient(ellipse at 50% 0%, rgba(201, 162, 75, 0.05), transparent 60%),
     linear-gradient(180deg, var(--black-soft) 0%, var(--black) 100%);
-  padding: calc(var(--header-h) + 32px) 0 140px;
+  padding: calc(var(--header-h) + 12px) 0 90px;
 }
 
 .how__head {
@@ -277,7 +277,7 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--gold);
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.75rem;
 }
 
 .how__title {
@@ -294,7 +294,7 @@ a { color: inherit; text-decoration: none; }
   align-items: center;
   justify-content: center;
   gap: 14px;
-  margin: 22px 0 0;
+  margin: 12px 0 0;
 }
 
 .how__divider::before,
@@ -313,14 +313,14 @@ a { color: inherit; text-decoration: none; }
 }
 
 .container.how__steps {
-  max-width: 1560px;
+  max-width: 1620px;
 }
 
 .how__steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 3rem;
-  margin-top: 56px;
+  gap: 2rem;
+  margin-top: 32px;
 }
 
 .step {
@@ -328,6 +328,7 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-width: 0;
 }
 
 .step__number {
@@ -341,7 +342,7 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-display);
   font-size: 1.1rem;
   color: var(--gold-light);
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .step__title {
@@ -349,44 +350,39 @@ a { color: inherit; text-decoration: none; }
   font-weight: 500;
   font-size: 1.5rem;
   color: var(--ivory);
-  margin: 0 0 8px;
+  margin: 0 0 6px;
 }
 
 .step__text {
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--ivory-dim);
-  margin: 0 0 20px;
+  margin: 0 0 10px;
   max-width: 32ch;
-  min-height: 3rem;
+  min-height: 2.6rem;
 }
 
 /* Product renders float directly on the page — no card, frame, or visible edge.
-   Each PNG is pre-feathered to fade to transparent at its own boundary and shares
-   the same canvas size/aspect ratio so all three sit at identical visual weight.
-   Step 3 (the finished gift) is deliberately larger — the payoff of the journey. */
+   Each PNG is now cropped tight to its own artwork (a soft feather at the pixel
+   edge, not a large transparent margin), so sizing by a shared height is what
+   makes all three read at identical visual weight — matching by width would
+   still leave them visually mismatched, since the three renders have different
+   natural aspect ratios (the necklace pair is wide and short, the gift box is
+   closer to square). Width is left auto per image, so each keeps its own
+   proportions at that shared height. */
 .step__media {
   width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .step__image {
-  width: 100%;
-  max-width: 480px;
-  height: auto;
+  height: clamp(210px, 17vw, 270px);
+  width: auto;
+  max-width: 100%;
   display: block;
-}
-
-/* Step 3 deliberately overflows its grid column by ~12% (not just its max-width cap)
-   so it reads as visibly larger than steps 1–2, not merely uncapped within the same
-   column width. The percentage sizing keeps this proportional at every breakpoint. */
-.step:last-child .step__image {
-  width: 112%;
-  max-width: none;
-  margin-left: -6%;
-  margin-right: -6%;
 }
 
 /* ---------- Story video ---------- */
@@ -1635,16 +1631,22 @@ a:focus-visible,
   .hero__copy { max-width: none; margin: 0 auto; text-align: center; }
   .hero__subtitle { margin-left: auto; margin-right: auto; }
 
-  .how { padding: calc(var(--header-h) + 16px) 0 96px; }
+  .how { padding: calc(var(--header-h) + 8px) 0 60px; }
 
   .how__steps {
     grid-template-columns: 1fr;
-    gap: 40px;
-    margin-top: 32px;
+    gap: 24px;
+    margin-top: 20px;
   }
 
-  .step__image { max-width: 340px; }
-  .step:last-child .step__image { max-width: 385px; }
+  /* Mobile is a single stacked column, so size by width instead of the
+     desktop shared-height rule — each image gets the same horizontal
+     footprint in the stack rather than competing for row alignment. */
+  .step__image {
+    height: auto;
+    width: min(78vw, 380px);
+    max-width: 100%;
+  }
   .step__text { min-height: 0; }
 
   .story { padding: 88px 0; }
