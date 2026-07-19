@@ -53,8 +53,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (  # noqa: E402
-    BRAND_GOLD, H264_EXPORT_ARGS, check_tools, ensure_parent, ffprobe_json,
-    get_duration, run, video_stream,
+    BRAND_GOLD, H264_EXPORT_ARGS, audio_stream, check_tools, ensure_parent,
+    ffprobe_json, get_duration, run, video_stream,
 )
 from concat_clips import concat as plain_concat  # noqa: E402
 
@@ -127,7 +127,8 @@ def build_text_group(frame_width: int, frame_height: int, lockup_path: Path,
 
 
 def _solid_text_clip(text_group_png: Path, width: int, height: int, fps: float,
-                      duration: float, alpha_fade: str | None, tmp: Path, name: str) -> Path:
+                      duration: float, alpha_fade: str | None, tmp: Path, name: str,
+                      sample_rate: int = 44100) -> Path:
     """A clip of solid black with the (optionally alpha-fading) text group
     on top — used for the tail once real footage has run out. Not a
     freeze frame: there is no footage here at all, just the brand mark."""
@@ -142,7 +143,12 @@ def _solid_text_clip(text_group_png: Path, width: int, height: int, fps: float,
         "ffmpeg", "-y",
         "-f", "lavfi", "-i", f"color=c=black:s={width}x{height}:r={fps}",
         "-i", str(overlay),
-        "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+        # Must match the real footage segments' sample rate exactly — the
+        # final concat requires identical audio formats across segments,
+        # and a mismatch here (rather than erroring) silently corrupts the
+        # concatenated audio instead, measured as a severe true-peak
+        # overshoot rather than an obvious failure.
+        "-f", "lavfi", "-i", f"anullsrc=channel_layout=stereo:sample_rate={sample_rate}",
         "-t", str(duration),
         "-filter_complex", "[0:v][1:v]overlay=0:0:format=auto[v]",
         "-map", "[v]", "-map", "2:a",
@@ -172,6 +178,8 @@ def add_logo_fade_ending(
     width, height = int(v["width"]), int(v["height"])
     num, den = (v.get("r_frame_rate", "30/1").split("/") + ["1"])[:2]
     fps = float(num) / float(den) if float(den) else 30.0
+    a = audio_stream(probe)
+    sample_rate = int(a["sample_rate"]) if a else 44100
     src_duration = get_duration(src)
 
     requested_moving = fade_in + hold_visible + fade_to_black
@@ -230,11 +238,13 @@ def add_logo_fade_ending(
         # fade the text out over solid black.
         if black_hold > 0:
             segments.append(_solid_text_clip(text_group_png, width, height, fps, black_hold,
-                                              alpha_fade=None, tmp=Path(tmp), name="black_hold"))
+                                              alpha_fade=None, tmp=Path(tmp), name="black_hold",
+                                              sample_rate=sample_rate))
         if final_fade_out > 0:
             fade_out_vf = f"fade=t=out:st=0:d={final_fade_out}:alpha=1"
             segments.append(_solid_text_clip(text_group_png, width, height, fps, final_fade_out,
-                                              alpha_fade=fade_out_vf, tmp=Path(tmp), name="final_fadeout"))
+                                              alpha_fade=fade_out_vf, tmp=Path(tmp), name="final_fadeout",
+                                              sample_rate=sample_rate))
 
         plain_concat(segments, out, width=width, height=height, fps=int(round(fps)))
 

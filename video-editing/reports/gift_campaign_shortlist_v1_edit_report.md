@@ -1,6 +1,6 @@
 # Edit report — gift_campaign_shortlist_v1
 
-Generated: 2026-07-19T09:07:47.245185Z
+Generated: 2026-07-19T13:10:58.123121Z
 Source: `gift_campaign_raw.mp4`
 Brief hook: Get to the gift faster — first 3 seconds must hook before the reveal.
 
@@ -16,9 +16,9 @@ Brief hook: Get to the gift faster — first 3 seconds must hook before the reve
 - Trimmed scene 'proposal_embrace': 9.125–12.833 -> scene_proposal_embrace.mp4
 - Applied slow zoom (in) to scene 'wide_couple'
 - Applied slow zoom (in) to scene 'message_card'
-- Applied per-scene grade (sharpen=0.35) to scene 'necklace_wear'
+- Applied per-scene grade (sharpen=0.35, vignette=False) to scene 'necklace_wear'
 - Assembled 7 scene(s) in order ['wide_couple', 'gift_reveal', 'box_open', 'message_card', 'necklace_wear', 'reaction', 'proposal_embrace'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}]
-- Mixed audio (music=no, original_volume=1.0)
+- Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
 - Applied 3 audio swell window(s)
 - Applied global grade (warmth=0.05, contrast=0.03)
 - Resized to 9:16 (blur_pad) for instagram_facebook

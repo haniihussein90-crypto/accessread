@@ -1,6 +1,6 @@
 # Edit report — necklace_reveal_v1
 
-Generated: 2026-07-19T11:43:07.571537Z
+Generated: 2026-07-19T13:18:23.483118Z
 Source: `necklace_reveal_raw.mp4`
 Brief hook: Box hero shot must read instantly, then the pendant macro (hero shot) pays it off.
 
@@ -17,7 +17,7 @@ Brief hook: Box hero shot must read instantly, then the pendant macro (hero shot
 - Applied per-scene grade (sharpen=0.25, vignette=False) to scene 'pendant_chain'
 - Applied per-scene grade (sharpen=0.2, vignette=False) to scene 'message_card'
 - Assembled 4 scene(s) in order ['box_hero', 'pendant_chain', 'message_card', 'return_to_full'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}]
-- Mixed audio (music=no, original_volume=1.0)
+- Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
 - Applied global grade (warmth=0.03, contrast=0.02)
 - Resized to 9:16 (blur_pad) for instagram_facebook
 - Appended logo-fade ending over final frame for 9:16

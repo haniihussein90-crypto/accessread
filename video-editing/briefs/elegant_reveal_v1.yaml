@@ -119,10 +119,17 @@ captions: []
 
 # Same template source as the previous three videos — original embedded
 # music kept as-is, no new track.
+# AUDIO REBALANCE (client feedback: music had become too quiet/inconsistent
+# across the campaign) — replaced the no-op original_volume=1.0 with
+# two-pass loudness normalization to a level shared by every video in the
+# campaign. See gift_campaign_shortlist_v1.yaml's music_direction comment
+# for the full rationale and how these values were tuned. Visual edit
+# unchanged — mix level only.
 music_direction:
   track: null
-  volume: 0.0
-  original_volume: 1.0
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
   duck: false
 
 # No separate emotional-lift beats requested for this video (as with the

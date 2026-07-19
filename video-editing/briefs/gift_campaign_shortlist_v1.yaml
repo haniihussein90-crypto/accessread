@@ -101,10 +101,25 @@ on_screen_text: []
 captions: []
 
 # "Current music works. Keep it." — no new track, original embedded audio only.
+# AUDIO REBALANCE (client feedback: "the current music has become too
+# quiet... almost silent... removes much of the emotion"): original_volume
+# was a no-op multiplier (1.0 = unchanged), so every video kept whatever
+# loudness its own AI-generated source happened to embed — measured across
+# the 5 campaign sources, that ranged from -21.7 to -13.2 LUFS integrated,
+# a nearly 8.5dB spread, which explains both "too quiet" (the quietest
+# clips) and "inconsistent across videos." Replaced with two-pass loudness
+# normalization (target_lufs/target_tp/target_lra) to a single consistent
+# level shared by every video in the campaign — see mix_audio.py's
+# normalize_original_audio() for how these three values were tuned
+# (verified empirically to bring all 5 sources within 0.1 LUFS of the
+# -15 target, each with real peak headroom, no clipping). This only
+# changes the mix level — no trims, motion, grading, or ending mechanics
+# touched.
 music_direction:
   track: null
-  volume: 0.0
-  original_volume: 1.0
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
   duck: false
 
 # "Slightly increase the emotional lift during: gift box opening, necklace

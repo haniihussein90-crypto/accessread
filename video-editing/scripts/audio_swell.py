@@ -53,7 +53,12 @@ def apply_swells(src: Path, swells: list[dict], out: Path) -> Path:
         return out
 
     expr = build_volume_expr(swells)
-    af = f"volume=volume='{expr}':eval=frame"
+    # A swell peak stacks its boost on top of whatever level the track is
+    # already mixed at (e.g. loudness-normalized background music) — cap
+    # true peak so a swell can never clip, without audibly compressing
+    # the rest of the track (alimiter only engages within ~0.1s of a peak
+    # actually approaching the ceiling).
+    af = f"volume=volume='{expr}':eval=frame,alimiter=limit=0.97:attack=5:release=50"
 
     run([
         "ffmpeg", "-y", "-i", str(src),

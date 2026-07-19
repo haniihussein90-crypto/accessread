@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 """
 Mix a music track under (or instead of) a video's original audio.
-Also handles muting/reducing unwanted original audio on its own.
+Also handles muting/reducing/normalizing the original audio on its own.
 
-- No --music: just changes the original audio's volume (use
-  --original-volume 0 to mute unwanted on-camera sound, e.g. handling
-  noise while placing the gift box).
+- No --music, no --target-lufs: just changes the original audio's volume
+  by a flat multiplier (use --original-volume 0 to mute unwanted
+  on-camera sound, e.g. handling noise while placing the gift box).
+- No --music, --target-lufs given: two-pass loudness normalization
+  (ffmpeg loudnorm) instead of a flat multiplier — the right tool when
+  several source clips have inconsistent embedded-music loudness and the
+  goal is "make them all feel like the same campaign," not just "louder."
+  Uses linear-mode gain (a single consistent boost, no per-moment riding)
+  whenever the clip's true-peak headroom allows reaching the target;
+  ffmpeg automatically falls back to its own gentle dynamic adjustment
+  only for clips too peaky to reach the target via pure gain, rather than
+  clipping or forcing a hard limiter on delicate background music.
 - With --music: mixes music (looped/trimmed to clip length, with a short
   fade in/out) under the original audio. --duck applies sidechain
   compression so the music dips automatically under any original audio
@@ -14,10 +23,13 @@ Also handles muting/reducing unwanted original audio on its own.
 CLI:
     python3 mix_audio.py working/with_text.mp4 --music brand-assets/music/theme.mp3 \
         --music-volume 0.5 --original-volume 1.0 --duck --out working/mixed.mp4
+    python3 mix_audio.py working/with_text.mp4 --target-lufs -15 --target-tp -2 \
+        --out working/mixed.mp4
 """
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -29,6 +41,75 @@ from common import (  # noqa: E402
 FADE_SEC = 0.6
 
 
+def _probe_sample_rate(src: Path) -> int:
+    result = run([
+        "ffprobe", "-v", "error", "-select_streams", "a:0",
+        "-show_entries", "stream=sample_rate",
+        "-of", "default=noprint_wrappers=1:nokey=1", str(src),
+    ])
+    return int(result.stdout.strip())
+
+
+def _measure_loudness(src: Path, target_i: float, target_tp: float, target_lra: float) -> dict:
+    result = run([
+        "ffmpeg", "-i", str(src),
+        "-af", f"loudnorm=I={target_i}:TP={target_tp}:LRA={target_lra}:print_format=json",
+        "-f", "null", "-",
+    ])
+    text = result.stderr
+    json_start = text.rindex("{")
+    json_end = text.rindex("}") + 1
+    return json.loads(text[json_start:json_end])
+
+
+def normalize_original_audio(src: Path, out: Path, target_i: float = -15.0,
+                              target_tp: float = -1.0, target_lra: float = 15.0) -> Path:
+    """Two-pass loudness normalization of the original track only (no
+    music mixing) — brings inconsistent source-embedded music up (or
+    down) to one consistent, clearly-present level across every video in
+    the campaign, instead of leaving each clip at whatever level its own
+    AI-generated source happened to embed.
+
+    Defaults (-15 LUFS / -1 dBTP / LRA 15) were tuned against all 5
+    campaign source clips: a tighter LRA target (7-11, ffmpeg's typical
+    suggested range) left two of the five clips 2-3 LUFS under target
+    because loudnorm's dynamic-mode fallback compressed their (wider,
+    natural) loudness range harder to hit a tight LRA ceiling, which
+    fought against also hitting the integrated-loudness target. Loosening
+    LRA to 15 (i.e. barely constraining it) let all 5 clips converge to
+    within 0.1 LUFS of -15, each with a true peak safely below -1 dBTP —
+    verified empirically, not assumed."""
+    check_tools()
+    ensure_parent(out)
+    measured = _measure_loudness(src, target_i, target_tp, target_lra)
+    # NOTE: deliberately NOT passing measured['target_offset'] back in as
+    # `offset` — that double-applies gain on top of what dynamic-mode
+    # already accounts for internally and produced real clipping (true
+    # peak measured well above 0 dBTP) during testing. Passing only the
+    # four measured_* stats and letting loudnorm recompute the correct
+    # offset itself is the combination that actually respects the TP
+    # ceiling.
+    # loudnorm internally oversamples for true-peak detection and doesn't
+    # resample back to the source's native rate on its own — left alone,
+    # the output stream silently ends up at whatever rate that produces
+    # (e.g. 96kHz from a 44.1kHz source). Downstream, add_logo_fade_ending
+    # concatenates this audio with its own silence segments; a sample-rate
+    # mismatch there corrupts the concatenated audio (measured as a
+    # severe true-peak overshoot, not just a quality artifact). Force the
+    # output back to the source's own original sample rate so every stage
+    # after this one is working with a single consistent rate.
+    source_rate = _probe_sample_rate(src)
+    af = (
+        f"loudnorm=I={target_i}:TP={target_tp}:LRA={target_lra}:"
+        f"measured_I={measured['input_i']}:measured_TP={measured['input_tp']}:"
+        f"measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:"
+        f"linear=true:print_format=summary"
+    )
+    run(["ffmpeg", "-y", "-i", str(src), "-af", af, "-ar", str(source_rate),
+         *H264_EXPORT_ARGS, str(out)])
+    return out
+
+
 def mix_audio(
     src: Path,
     out: Path,
@@ -36,13 +117,18 @@ def mix_audio(
     music_volume: float = 0.5,
     original_volume: float = 1.0,
     duck: bool = False,
+    target_lufs: float | None = None,
+    target_tp: float = -1.0,
+    target_lra: float = 15.0,
 ) -> Path:
     check_tools()
     ensure_parent(out)
     duration = get_duration(src)
 
     if music is None:
-        # Just adjust (or mute) the original track.
+        if target_lufs is not None:
+            return normalize_original_audio(src, out, target_lufs, target_tp, target_lra)
+        # Just adjust (or mute) the original track by a flat multiplier.
         if original_volume <= 0:
             run(["ffmpeg", "-y", "-i", str(src), "-an", *H264_EXPORT_ARGS, str(out)])
         else:
@@ -99,10 +185,14 @@ def main() -> None:
     ap.add_argument("--music-volume", type=float, default=0.5)
     ap.add_argument("--original-volume", type=float, default=1.0)
     ap.add_argument("--duck", action="store_true")
+    ap.add_argument("--target-lufs", type=float, help="two-pass loudness-normalize the original track to this integrated LUFS instead of a flat multiplier")
+    ap.add_argument("--target-tp", type=float, default=-1.0, help="true-peak ceiling for --target-lufs, dBTP")
+    ap.add_argument("--target-lra", type=float, default=15.0, help="loudness range target for --target-lufs, LU")
     args = ap.parse_args()
 
     out = mix_audio(args.input, args.out, args.music, args.music_volume,
-                     args.original_volume, args.duck)
+                     args.original_volume, args.duck,
+                     args.target_lufs, args.target_tp, args.target_lra)
     print(f"Mixed-audio video written: {out}")
 
 

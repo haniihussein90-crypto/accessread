@@ -1,6 +1,6 @@
 # Edit report — gift_reveal_v1
 
-Generated: 2026-07-19T10:36:50.873072Z
+Generated: 2026-07-19T13:14:58.172928Z
 Source: `gift_reveal_raw.mp4`
 Brief hook: Box hero shot must read instantly — first 2 seconds are the hook.
 
@@ -13,11 +13,11 @@ Brief hook: Box hero shot must read instantly — first 2 seconds are the hook.
 - Trimmed scene 'hero_return_zoomout': 10.583–15.069 -> scene_hero_return_zoomout.mp4
 - Applied slow zoom (in) + drift(x=0.012, y=0.018) to scene 'box_hero'
 - Applied slow zoom (in) + drift(x=0.035, y=0.0) to scene 'box_angle_reveal'
-- Applied per-scene grade (sharpen=0.0) to scene 'box_hero'
-- Applied per-scene grade (sharpen=0.3) to scene 'card_to_macro'
-- Applied per-scene grade (sharpen=0.2) to scene 'box_angle_reveal'
+- Applied per-scene grade (sharpen=0.0, vignette=False) to scene 'box_hero'
+- Applied per-scene grade (sharpen=0.3, vignette=False) to scene 'card_to_macro'
+- Applied per-scene grade (sharpen=0.2, vignette=False) to scene 'box_angle_reveal'
 - Assembled 4 scene(s) in order ['box_hero', 'card_to_macro', 'box_angle_reveal', 'hero_return_zoomout'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}]
-- Mixed audio (music=no, original_volume=1.0)
+- Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
 - Applied global grade (warmth=0.03, contrast=0.02)
 - Resized to 9:16 (blur_pad) for instagram_facebook
 - Appended logo-fade ending over final frame for 9:16

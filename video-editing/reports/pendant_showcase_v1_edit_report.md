@@ -1,6 +1,6 @@
 # Edit report — pendant_showcase_v1
 
-Generated: 2026-07-19T12:23:53.050453Z
+Generated: 2026-07-19T13:25:10.973208Z
 Source: `pendant_showcase_raw.mp4`
 Brief hook: Full necklace on black satin reads instantly — first ~2 seconds are the hook before the push-in accelerates.
 
@@ -10,7 +10,7 @@ Brief hook: Full necklace on black satin reads instantly — first ~2 seconds ar
 - Trimmed scene 'pendant_showcase': 1.8–15.069 -> scene_pendant_showcase.mp4
 - Applied per-scene grade (sharpen=0.22, vignette=False) to scene 'pendant_showcase'
 - Assembled 1 scene(s) in order ['pendant_showcase'] with transitions plan []
-- Mixed audio (music=no, original_volume=1.0)
+- Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
 - Applied global grade (warmth=0.03, contrast=0.02)
 - Resized to 9:16 (blur_pad) for instagram_facebook
 - Appended logo-fade ending over final frame for 9:16

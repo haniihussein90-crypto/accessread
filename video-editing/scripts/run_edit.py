@@ -128,15 +128,23 @@ def run_edit(brief_path: Path) -> dict:
         if not music_track.exists():
             music_track = Path(music_dir_spec["track"])  # allow absolute/brand-assets path
     mixed = work_dir / "mixed.mp4"
+    target_lufs = music_dir_spec.get("target_lufs")
     mix_audio(
         assembled, mixed,
         music=music_track,
         music_volume=music_dir_spec.get("volume", 0.5),
         original_volume=music_dir_spec.get("original_volume", 1.0),
         duck=music_dir_spec.get("duck", False),
+        target_lufs=target_lufs,
+        target_tp=music_dir_spec.get("target_tp", -1.0),
+        target_lra=music_dir_spec.get("target_lra", 15.0),
     )
-    log.append(f"Mixed audio (music={'yes' if music_track else 'no'}, "
-               f"original_volume={music_dir_spec.get('original_volume', 1.0)})")
+    if target_lufs is not None:
+        log.append(f"Mixed audio (music={'yes' if music_track else 'no'}, "
+                   f"loudness-normalized to {target_lufs} LUFS)")
+    else:
+        log.append(f"Mixed audio (music={'yes' if music_track else 'no'}, "
+                   f"original_volume={music_dir_spec.get('original_volume', 1.0)})")
 
     # 4b. Optional targeted audio swell (emotional lift at specific beats),
     # applied on top of whatever mix_audio already set.

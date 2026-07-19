@@ -1,6 +1,6 @@
 # Edit report — elegant_reveal_v1
 
-Generated: 2026-07-19T12:02:06.900239Z
+Generated: 2026-07-19T13:21:46.536935Z
 Source: `elegant_reveal_raw.mp4`
 Brief hook: Closed box hero opens naturally in the first beat — first ~2 seconds are the hook.
 
@@ -16,7 +16,7 @@ Brief hook: Closed box hero opens naturally in the first beat — first ~2 secon
 - Applied per-scene grade (sharpen=0.0, vignette=True) to scene 'box_open'
 - Applied per-scene grade (sharpen=0.28, vignette=False) to scene 'lid_macro_to_pendant'
 - Assembled 4 scene(s) in order ['box_open', 'lid_macro_to_pendant', 'three_quarter_angle', 'straight_on_return'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}]
-- Mixed audio (music=no, original_volume=1.0)
+- Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
 - Applied global grade (warmth=0.03, contrast=0.02)
 - Resized to 9:16 (blur_pad) for instagram_facebook
 - Appended logo-fade ending over final frame for 9:16
