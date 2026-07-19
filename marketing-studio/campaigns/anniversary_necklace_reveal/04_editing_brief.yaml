@@ -2,8 +2,8 @@ name: anniversary_necklace_reveal
 source_file: PENDING_AI_GENERATION__anniversary_necklace_reveal_raw.mp4
 platform: instagram_facebook
 final_duration:
-  min: 9.0
-  max: 11.0
+  min: 10.0
+  max: 13.6
 hook: The card is what gets her, not the necklace.
 cover_frame: 2.0
 timestamp_cuts:

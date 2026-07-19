@@ -12,6 +12,34 @@ and the deterministic bridge scripts between stages — so that when real
 assets are ready to be generated, every stage already knows exactly what
 shape to hand the next one.
 
+## Status: Version 1.0 — complete
+
+Every stage, schema, and bridge script is built and verified, including a
+full real render through the unmodified Video Editing Agent (using
+synthetic stand-in clips in place of real Higgsfield output, then cleaned
+up — see `campaigns/anniversary_necklace_reveal/campaign_summary.md`).
+Four real bugs were found and fixed in that process; none remain open.
+The one intentionally-failing check in the example campaign
+(`avatar_consistency`) is a governance gate working as designed, not a
+defect — it requires a human to approve a real avatar profile, which is
+correct behavior, not missing functionality.
+
+**Known, deliberate scope boundaries (not defects) for a real campaign:**
+- No tool has actually been called yet — `zaviqu-ai-video-creator`
+  produces real, usable prompts, but generating real assets (e.g. via the
+  live `higgs_field` MCP tools) is a separate, later, explicit action.
+- Only one avatar profile exists, `pending_approval` — a human needs to
+  approve real reference images before any avatar-cast campaign can clear
+  QC.
+- The example campaign covers Instagram/Facebook only; a TikTok campaign
+  needs its own story-paced creative brief (the platform machinery itself
+  already supports it).
+
+Nothing else in this studio is unfinished. **Do not expand this studio
+further (new agents, new stages, new tool integrations) until
+explicitly asked** — the next real work here is running an actual
+campaign, not adding more architecture.
+
 ## The pipeline
 
 ```

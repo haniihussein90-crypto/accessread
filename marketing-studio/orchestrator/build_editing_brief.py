@@ -46,6 +46,8 @@ ASPECTS_BY_PLATFORM = {
     "tiktok": ["9:16"],
 }
 
+CTA_DURATION_DEFAULT = 1.8  # must match the "cta.duration" value set below — kept as one constant so they can't drift apart
+
 
 def _cumulative_cuts(shot_list: list[dict]) -> list[dict]:
     cuts = []
@@ -66,7 +68,13 @@ def build_editing_brief(campaign_id: str, source_file: str | None = None,
     shot_list = creative_brief["shot_list"]
     scene_order = [s["shot_id"] for s in shot_list]
     cuts = real_cuts or _cumulative_cuts(shot_list)
-    total_duration = cuts[-1]["end"] if cuts else 0.0
+    scenes_duration = cuts[-1]["end"] if cuts else 0.0
+    # run_edit.py appends a CTA card AFTER the assembled scenes (see
+    # video-editing/scripts/run_edit.py step 5 / add_cta_ending.py), so the
+    # actual rendered duration is scenes + CTA, not just the scenes total.
+    # Getting this wrong makes the Video Editing Agent's own QC duration
+    # check fail on every real campaign that has a CTA — i.e. all of them.
+    estimated_final_duration = scenes_duration + CTA_DURATION_DEFAULT
 
     export_versions = []
     for platform in strategy["target_platforms"]:
@@ -83,9 +91,12 @@ def build_editing_brief(campaign_id: str, source_file: str | None = None,
         "name": campaign_id,
         "source_file": source_file or f"PENDING_AI_GENERATION__{campaign_id}_raw.mp4",
         "platform": strategy["target_platforms"][0],
-        "final_duration": {"min": round(total_duration * 0.9, 1), "max": round(total_duration * 1.1, 1)},
+        "final_duration": {
+            "min": round(estimated_final_duration * 0.85, 1),
+            "max": round(estimated_final_duration * 1.15, 1),
+        },
         "hook": strategy["hook"],
-        "cover_frame": round(total_duration * 0.2, 1),
+        "cover_frame": round(scenes_duration * 0.2, 1),
         "timestamp_cuts": cuts,
         "scene_order": scene_order,
         "transitions": [{"type": "cut"} for _ in range(max(len(scene_order) - 1, 0))],
@@ -93,7 +104,7 @@ def build_editing_brief(campaign_id: str, source_file: str | None = None,
         "on_screen_text": creative_brief.get("text_overlays", []),
         "captions": creative_brief.get("captions", []),
         "music_direction": {"track": None, "volume": 0.45, "original_volume": 0.9, "duck": True},
-        "cta": {"text": strategy["cta"], "duration": 1.8, "color": brand_memory["colors"]["gold"]},
+        "cta": {"text": strategy["cta"], "duration": CTA_DURATION_DEFAULT, "color": brand_memory["colors"]["gold"]},
         "export_versions": export_versions,
     }
     return brief

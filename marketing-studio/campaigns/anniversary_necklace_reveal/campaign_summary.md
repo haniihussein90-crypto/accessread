@@ -1,9 +1,13 @@
 # Campaign summary — anniversary_necklace_reveal
 
-**Status: synthetic architecture test. No real footage or AI-generated
-assets exist for this campaign — every artifact below exists to prove the
+**Status: synthetic architecture test, used as the Version 1.0
+verification campaign. No real footage or AI-generated assets exist for
+this campaign — every committed artifact below exists to prove the
 Marketing Studio's six-stage pipeline and handoff formats work end to
-end, not to ship anything.**
+end, not to ship anything. The bridge into the Video Editing Agent was
+additionally proven with a real (synthetic-input) render — see "Full
+real-render verification" below — then cleaned up so `video-editing/`
+stays untouched.**
 
 ## What ran
 
@@ -22,8 +26,9 @@ its schema.
 
 ## Bugs this test run actually caught (kept as evidence, not hidden)
 
-Building this test surfaced three real issues before any human review —
-which is the point of having the schemas/QC in the first place:
+Building and then stress-testing this campaign surfaced four real issues
+before any human review — which is the point of having the
+schemas/QC/integration test in the first place:
 
 1. **`build_asset_instructions.py` was injecting the campaign's avatar
    into every shot**, including `card_tuck` (hands only) and
@@ -37,6 +42,14 @@ which is the point of having the schemas/QC in the first place:
    hand while drafting; the `copy_char_limits` check didn't exist yet at
    that point, so it was added to `qc_checks.py` so this class of issue
    is caught automatically from now on, not just this once. Fixed.
+4. **`build_editing_brief.py`'s `final_duration` estimate didn't account
+   for the CTA card `run_edit.py` appends after the assembled scenes** —
+   it computed the range from scene length alone, so the Video Editing
+   Agent's own QC duration check would fail on every real campaign with a
+   CTA (i.e. nearly all of them). Caught by actually running a real
+   render through this brief (see "Full real-render verification" below),
+   not just validating shapes. Fixed — the estimate now adds the CTA
+   duration before computing the range.
 
 ## Final QC state (intentionally not a clean pass)
 
@@ -54,18 +67,42 @@ check by hand. To clear it in a real run: get the avatar's reference
 images approved and flip `status: active` in its profile — not by
 editing the QC script.
 
-## What's genuinely NOT tested here
+## Full real-render verification (done once, then cleaned up)
 
-- No real image/video generation — `03_asset_instructions.json` contains
-  real, usable Higgsfield prompts, but they were never sent anywhere.
-- `04_editing_brief.yaml`'s `source_file` is a placeholder
-  (`PENDING_AI_GENERATION__anniversary_necklace_reveal_raw.mp4`) — this
-  brief cannot be run through `run_edit.py` yet. Once shots are generated
-  and reviewed, `build_editing_brief.prepare_source_from_shots()` produces
-  the real source file and real timestamp cuts.
-- Only one platform (`instagram_facebook`) — a real TikTok version needs
-  its own creative brief with story-paced shots per
-  `.claude/skills/zaviqu-creative-director/SKILL.md`, not a resized copy
-  of this one (see the note in `00_intake.yaml`).
-- The Video Editing Agent's own `quality_check.py` (pixel/codec-level QC)
-  never ran — there's no rendered video for it to check yet.
+To answer "would this actually work on a real campaign" with evidence
+instead of assertion, the full bridge was exercised for real, once,
+using three synthetic stand-in clips (matching `03_asset_instructions.json`'s
+shot durations and 9:16 aspect) in place of real Higgsfield output:
+
+1. `build_editing_brief.prepare_source_from_shots()` concatenated the
+   three stand-in clips into a real source file and computed real
+   timestamp cuts — worked correctly on the first attempt.
+2. The resulting brief was run through the actual, unmodified
+   `video-editing/scripts/run_edit.py` — full render, both 9:16 and 4:5,
+   text overlays, CTA card, no-text copies, contact sheet, edit report.
+   This is where bug #4 above was caught (`automated_pass=False` on
+   duration) and then confirmed fixed (`automated_pass=True` on
+   re-render, both aspect versions).
+3. All test-only files (the stand-in clips, the generated source/working/
+   final/preview/report files, the throwaway brief) were deleted
+   afterward — `video-editing/` has zero diff from its committed state
+   (`git diff --stat -- video-editing` is empty). Only the
+   `build_editing_brief.py` fix and this campaign's own artifacts were
+   kept.
+
+## What's genuinely still NOT exercised
+
+- No real image/video generation was ever sent to Higgsfield or any other
+  tool — `03_asset_instructions.json` contains real, usable prompts, but
+  the verification above used synthetic placeholder clips standing in for
+  what that tool would produce, not actual Higgsfield output.
+- `04_editing_brief.yaml` as committed still has a placeholder
+  `source_file` (`PENDING_AI_GENERATION__...`) — the real-cuts path was
+  proven separately (above) and deleted rather than left half-finished in
+  this campaign's committed artifacts.
+- Only one platform (`instagram_facebook`) has a written creative brief —
+  a real TikTok version needs its own creative brief with story-paced
+  shots per `.claude/skills/zaviqu-creative-director/SKILL.md`, not a
+  resized copy of this one (see the note in `00_intake.yaml`). The
+  platform-coverage machinery itself (schema, config, QC check) supports
+  TikTok; it's just untested by this particular campaign.

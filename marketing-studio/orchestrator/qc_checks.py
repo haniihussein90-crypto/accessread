@@ -25,7 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (  # noqa: E402
-    artifact_path, campaign_dir, load_avatar, load_brand_memory,
+    artifact_path, load_avatar, load_brand_memory,
     load_json, load_platform_config, load_yaml,
 )
 
@@ -205,7 +205,6 @@ def check_text_readability(creative_brief: dict | None) -> dict:
 def run_qc(campaign_id: str) -> dict:
     brand_memory = load_brand_memory()
     platform_config = load_platform_config()
-    cdir = campaign_dir(campaign_id)
 
     def _maybe_load(name, loader):
         path = artifact_path(campaign_id, name)
