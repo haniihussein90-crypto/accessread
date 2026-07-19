@@ -13,12 +13,18 @@ value, so a brief can say "increase warmth by 5%" and mean exactly that.
 - sharpen: unsharp luma strength, 0 = untouched. Use sparingly (e.g. 0.3-0.6)
   for a "sparkle/clarity" boost on a specific close-up — high values look
   fake fast.
+- vignette: subtle corner darkening to draw the eye toward the frame
+  center ("draw attention to the gift"). Uses ffmpeg's own default
+  vignette angle (PI/5) — restrained by design, not a heavy toy-camera
+  effect; this pipeline doesn't expose a stronger setting on purpose.
 
 CLI:
     python3 color_grade.py working/assembled.mp4 --out working/graded.mp4 \
         --warmth 0.05 --contrast 0.03
     python3 color_grade.py working/scene_necklace.mp4 --out working/scene_necklace_sharp.mp4 \
         --sharpen 0.4
+    python3 color_grade.py working/scene_box.mp4 --out working/scene_box_graded.mp4 \
+        --warmth 0.05 --vignette
 """
 from __future__ import annotations
 
@@ -33,7 +39,7 @@ WARM_TARGET_KELVIN = 3000  # warmer than the ~6500K neutral default
 
 
 def grade(src: Path, out: Path, warmth: float = 0.0, contrast: float = 0.0,
-          sharpen: float = 0.0) -> Path:
+          sharpen: float = 0.0, vignette: bool = False) -> Path:
     check_tools()
     ensure_parent(out)
     if not (0.0 <= warmth <= 1.0):
@@ -48,6 +54,8 @@ def grade(src: Path, out: Path, warmth: float = 0.0, contrast: float = 0.0,
         filters.append(f"colortemperature=temperature={WARM_TARGET_KELVIN}:mix={warmth:.4f}:pl=0.5")
     if sharpen:
         filters.append(f"unsharp=luma_amount={sharpen:.4f}")
+    if vignette:
+        filters.append("vignette=PI/5")
 
     if not filters:
         # Nothing requested — just guarantee clean output, same as export_final.
@@ -70,9 +78,10 @@ def main() -> None:
     ap.add_argument("--warmth", type=float, default=0.0, help="0-1 fraction, e.g. 0.05 for +5%%")
     ap.add_argument("--contrast", type=float, default=0.0, help="fraction, e.g. 0.03 for +3%%")
     ap.add_argument("--sharpen", type=float, default=0.0, help="unsharp luma_amount, e.g. 0.4")
+    ap.add_argument("--vignette", action="store_true", help="subtle corner darkening")
     args = ap.parse_args()
 
-    out = grade(args.input, args.out, args.warmth, args.contrast, args.sharpen)
+    out = grade(args.input, args.out, args.warmth, args.contrast, args.sharpen, args.vignette)
     print(f"Graded video written: {out}")
 
 

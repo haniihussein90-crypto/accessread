@@ -1,0 +1,186 @@
+# Real production brief — "VIDEO 005 - Necklace Reveal" client notes,
+# implemented against caa085e1-005__Necklace_Reveal.mp4 (copied in as
+# source/necklace_reveal_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# the two previous source videos.
+#
+# Scene boundaries found via sequential frame-by-frame decode (no seeking
+# — see gift_campaign_shortlist_v1.yaml for why input seeking is
+# unreliable on this project's footage), verified visually at each cut.
+# Four real shots, not six: the client's brief describes six 2-second
+# beats (box opening / full gift presentation / macro pendant / chain
+# detail / message card / return to full gift), but "full gift
+# presentation," "macro pendant close-up," and "chain detail" are ONE
+# continuous 3.917s take in the actual source (pendant macro pulls back
+# and slides along the chain with no real cut) — treated as a single
+# scene below rather than forced into cuts that don't exist in the
+# footage. This exactly mirrors the pattern already found in
+# gift_reveal_v1.yaml's card_to_macro scene.
+
+name: necklace_reveal_v1
+
+source_file: necklace_reveal_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 12.0
+  max: 15.2
+hook: "Box hero shot must read instantly, then the pendant macro (hero shot) pays it off."
+cover_frame: 4.5   # lands inside the pendant macro close-up — the client's named hero shot
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame decode) ---
+#
+# NOTE on the return_to_full trim: unlike the previous two videos, the
+# binding constraint here isn't final_duration headroom — it's that the
+# raw source's own final ~3.2s (from ~11.65s to its natural end at
+# 15.069s) is the OLD baked-in ending the client asked to remove entirely
+# (see the per-scene comment below for how that was confirmed). So
+# return_to_full is trimmed to 8.25-11.25 — the clean footage that exists
+# BEFORE that old ending starts — and our own signature ending is built
+# on top of it from there. This happens to also land comfortably inside
+# the 12-15s target (final total ~13.05s) without any additional trimming
+# for pacing reasons the way gift_reveal_v1 needed.
+#
+# Because clean footage after the 8.25 cut only runs ~3.0s and the ending
+# overlay's fade_in+hold_visible+fade_to_black needs 4.2s, the fade-in
+# begins ~0.175s into message_card (the previous scene) and completes
+# with a 0.2s margin before the cut into return_to_full — so the logo is
+# already at full opacity, not still animating, when the final cut to the
+# complete-gift shot happens. hold_visible and fade_to_black then play
+# entirely within return_to_full's clean window. Timings themselves
+# (fade_in/hold_visible/fade_to_black/black_hold/final_fade_out) are
+# unchanged from gift_reveal_v1 and gift_campaign_shortlist_v1 per the
+# client's explicit "identical branded ending" requirement.
+timestamp_cuts:
+  - id: box_hero            # client: 0:00-0:02 "box opening / first reveal" — true span
+    start: 0.000              # 0.000-2.958, kept in full (already matches the client's ask).
+    end: 2.958
+  - id: pendant_chain       # client: 0:02-0:04 "full gift presentation" + 0:04-0:06 "macro
+    start: 2.958               # pendant close-up" (hero shot) + 0:06-0:08 "chain detail" — ONE
+    end: 6.875                   # continuous pull-back-then-slide take in the source, no real
+                                    # cut exists between them. True span 2.958-6.875 (3.917s).
+  - id: message_card       # client: 0:08-0:10 "message card" — true span 6.875-8.25 (1.375s).
+    start: 6.875              # Kept in full — this is shorter than the client's 2s budget, and
+    end: 8.250                  # they asked to hold it *longer* if timing allows, not trim it.
+  - id: return_to_full     # client: 0:10-0:12 "return to complete gift" — true span 8.25-15.069
+    start: 8.250               # (6.819s natural) — BUT the raw source has its own baked-in old
+    end: 11.250                  # ending starting ~11.65-11.8s: a fade-to-black followed by the
+                                    # old white "ZAVIQU / Made with Love. Made to Last." text the
+                                    # client explicitly said to remove ("the current ending
+                                    # already contains the old white brand name and small white
+                                    # text"). Confirmed via sequential frame decode + brightness
+                                    # sampling (95th-percentile highlight brightness holds flat at
+                                    # ~209 through frame 279/t=11.625s, then collapses to 84 by
+                                    # frame 283/t=11.79s — the real fade-to-black onset). Trimmed
+                                    # to end at 11.25s, ~0.4s before that onset, so every frame
+                                    # this pipeline uses is genuinely clean, then OUR OWN signature
+                                    # ending (identical timings to gift_reveal_v1 and
+                                    # gift_campaign_shortlist_v1) fades in and out on top —
+                                    # replacing the old ending entirely rather than layering over it.
+
+scene_order:
+  - box_hero
+  - pendant_chain
+  - message_card
+  - return_to_full
+
+# All genuine hard cuts in the source — no crossfades requested/needed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+
+# "Slow cinematic push-in" + "very subtle floating camera movement" (box
+# hero) and "slow push-in toward the handwritten message" (message card).
+# pendant_chain and return_to_full already have their own camera movement
+# (pull-back+slide, and a slow zoom-out) baked into the source footage
+# itself — layering an additional zoompan on top would compound into an
+# unnatural double-motion, so those two are left as-is (color grade only),
+# exactly as in gift_reveal_v1's card_to_macro and hero_return_zoomout.
+motion:
+  - scene: box_hero
+    direction: in
+    zoom_end: 1.035           # slow cinematic push-in, restrained
+    drift_x: 0.01               # very subtle floating drift, not a pan
+    drift_y: 0.015
+  - scene: message_card
+    direction: in
+    zoom_end: 1.05              # slow push toward the handwritten message
+
+# Box hero: warm grade + gentle contrast + the client's explicit "slight
+# vignette to draw attention to the gift" (new color_grade.py capability).
+# pendant_chain: micro-contrast + a real sharpen boost for the hero
+# pendant shot, kept moderate (not the higher end) since the same grade
+# also plays under the chain-detail portion of this continuous shot,
+# where the client explicitly said "do not over-sharpen." No synthetic
+# sparkle overlay — "one elegant, natural sparkle" relies on the existing
+# footage, same position taken on every previous video. message_card: a
+# small clarity boost for readability without losing the warm cream tones
+# the client asked to preserve.
+scene_grade:
+  - scene: box_hero
+    warmth: 0.05
+    contrast: 0.03
+    vignette: true
+  - scene: pendant_chain
+    contrast: 0.04
+    sharpen: 0.25
+  - scene: message_card
+    sharpen: 0.2
+    warmth: 0.02
+
+on_screen_text: []
+captions: []
+
+# Same template source as the previous two videos — original embedded
+# music kept as-is, no new track.
+music_direction:
+  track: null
+  volume: 0.0
+  original_volume: 1.0
+  duck: false
+
+# No separate emotional-lift beats requested for this video (as with
+# gift_reveal_v1) — the signature ending's own fade handles the tail.
+audio_swell: []
+
+# "Keep camera movement slower/more luxurious... preserve rich gold tones
+# without oversaturating... maintain a premium cinematic look throughout"
+# — the same restrained global grade used on both previous videos, so
+# every ZAVIQU ad shares one visual language.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — identical parameters to gift_reveal_v1 and
+# gift_campaign_shortlist_v1 per the client's explicit instruction that
+# every ZAVIQU ad should share "the same visual language and identical
+# branded ending." Same lockup, same brand promise, same website, same
+# timings. No freeze frame: real footage (the return_to_full zoom-out)
+# keeps playing and its audio keeps playing while the lockup fades in;
+# picture+audio then fade to black together; a plain black hold (no
+# freeze — there's no frame here) keeps the gold text briefly visible
+# before everything fades out.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

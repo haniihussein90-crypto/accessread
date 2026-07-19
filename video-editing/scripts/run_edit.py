@@ -102,9 +102,11 @@ def run_edit(brief_path: Path) -> dict:
         scene_id = g["scene"]
         grade_path = work_dir / f"scene_{scene_id}_graded.mp4"
         color_grade(scene_files[scene_id], grade_path, warmth=g.get("warmth", 0.0),
-                    contrast=g.get("contrast", 0.0), sharpen=g.get("sharpen", 0.0))
+                    contrast=g.get("contrast", 0.0), sharpen=g.get("sharpen", 0.0),
+                    vignette=g.get("vignette", False))
         scene_files[scene_id] = grade_path
-        log.append(f"Applied per-scene grade (sharpen={g.get('sharpen', 0.0)}) to scene '{scene_id}'")
+        log.append(f"Applied per-scene grade (sharpen={g.get('sharpen', 0.0)}, "
+                    f"vignette={g.get('vignette', False)}) to scene '{scene_id}'")
 
     # 3. Assemble in scene_order with the transitions plan (default: all cuts).
     ordered_clips = [scene_files[s] for s in brief["scene_order"]]
@@ -239,12 +241,14 @@ def run_edit(brief_path: Path) -> dict:
                 extra_text += [end_card["tagline_line1"], end_card["tagline_line2"]]
             if logo_fade_ending:
                 extra_text += [logo_fade_ending["brand_promise"], logo_fade_ending["website"]]
+            vignette_used = any(g.get("vignette") for g in brief.get("scene_grade", []))
             qc = run_quality_check(
                 final_path, aspect,
                 brief.get("final_duration", {}).get("min"),
                 brief.get("final_duration", {}).get("max"),
                 [t.get("text", "") for t in full_text_spec] + extra_text,
                 full_text_spec,
+                vignette_used=vignette_used,
             )
             qc_path = REPORTS_DIR / f"{name}_{slug}_qc.json"
             ensure_parent(qc_path)

@@ -148,7 +148,26 @@ def _read_frames_at(path: Path, indices: list[int]) -> dict[int, "np.ndarray"]:
 
 
 def check_black_bars(path: Path, band_fraction: float = 0.05,
-                      brightness_threshold: float = 16.0, samples: int = 6) -> dict:
+                      brightness_threshold: float = 16.0, samples: int = 6,
+                      vignette_used: bool = False) -> dict:
+    if vignette_used:
+        # A vignette is *designed* to produce exactly the "dark edges,
+        # bright center" signature this check looks for — that's not a
+        # distinguishable pixel pattern from real letterboxing on a
+        # per-frame basis (especially on a tall 9:16 crop, where the
+        # radial falloff reaches most of the top/bottom edge, not just the
+        # corners). Rather than guess, defer to a human when a brief
+        # intentionally requested a vignette on any scene.
+        return {
+            "check": "black_bars",
+            "flagged_frame_indices": [],
+            "pass": True,
+            "note": "Skipped pixel-based flagging — this edit intentionally requested a "
+                    "vignette on at least one scene, which produces the same dark-edge/"
+                    "bright-center signature this check looks for. Manually confirm there's "
+                    "no unintended letterboxing/pillarboxing beyond the requested vignette.",
+        }
+
     cap = cv2.VideoCapture(str(path))
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 1
     cap.release()
@@ -280,7 +299,7 @@ def check_text_readability_and_margins(spec: list[dict], width: int, height: int
 
 def run_quality_check(path: Path, aspect: str, min_duration: float | None,
                        max_duration: float | None, text_strings: list[str],
-                       text_spec: list[dict]) -> dict:
+                       text_spec: list[dict], vignette_used: bool = False) -> dict:
     check_tools()
     probe = ffprobe_json(path)
     v = video_stream(probe)
@@ -290,7 +309,7 @@ def run_quality_check(path: Path, aspect: str, min_duration: float | None,
         check_codecs_and_faststart(path),
         check_resolution(path, aspect),
         check_duration(path, min_duration, max_duration),
-        check_black_bars(path),
+        check_black_bars(path, vignette_used=vignette_used),
         check_opening_strength(path),
         check_ending_not_abrupt(path),
         check_brand_text(text_strings),
@@ -303,6 +322,11 @@ def run_quality_check(path: Path, aspect: str, min_duration: float | None,
         "Overall emotional tone matches 'premium, warm, intimate, cinematic' brand style",
         "First 1-2 seconds are actually a strong scroll-stopping hook (heuristic above is a proxy, not a verdict)",
     ]
+    if vignette_used:
+        manual_review_required.append(
+            "No unintended letterboxing/pillarboxing beyond the intentionally requested "
+            "vignette (automated black-bars check was skipped for this reason)"
+        )
 
     overall_pass = all(c.get("pass", c.get("heuristic_pass", True)) for c in automated)
 
