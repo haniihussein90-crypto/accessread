@@ -1,0 +1,173 @@
+# Real production brief — "VIDEO 006 - Elegant Reveal" client notes,
+# implemented against 6a28010f-006__Elegant_Reveal.mp4 (copied in as
+# source/elegant_reveal_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# the previous three source videos.
+#
+# Scene boundaries found via sequential frame-by-frame decode (no seeking
+# — see gift_campaign_shortlist_v1.yaml for why input seeking is
+# unreliable on this project's footage), verified visually at each cut.
+# Four real shots, not six: the client's brief describes six 2-second
+# beats, but "chain macro" (Scene 3) and "pendant macro hero shot"
+# (Scene 4) are ONE continuous 4.0s take in the actual source (camera
+# pans/pushes from a closed-lid macro detail, through the chain, into the
+# pendant, with no real cut) — same pattern found in every previous video
+# in this campaign. Unlike gift_reveal_v1 and necklace_reveal_v1, this
+# source's final shot has NO baked-in old ending — confirmed clean via
+# brightness sampling all the way to its natural end at 15.069s (brightness
+# only rises, from the zoom-out revealing more of the light backdrop,
+# never drops toward black) — so no contamination-driven trim was needed
+# here, only the usual pacing trim (see note below).
+
+name: elegant_reveal_v1
+
+source_file: elegant_reveal_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 12.0
+  max: 15.2
+hook: "Closed box hero opens naturally in the first beat — first ~2 seconds are the hook."
+cover_frame: 5.0   # lands inside the pendant macro close-up — the client's named hero shot
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame decode) ---
+#
+# NOTE on the straight_on_return trim: kept at its full natural length the
+# body would run 15.027s, and the signature ending's black_hold +
+# final_fade_out (1.8s) is ADDITIVE on top of that (it plays after real
+# footage is exhausted, unlike fade_in/hold_visible/fade_to_black which
+# overlap the body's own last seconds) — pushing the total past 16.8s,
+# outside the client's 12-15s target. Same structural overage found in
+# gift_reveal_v1 and necklace_reveal_v1. Trimmed straight_on_return to
+# 8.917-13.317 (4.4s) so total body + ending tail lands at ~15.1s, while
+# keeping the whole 4.2s (fade_in+hold_visible+fade_to_black) comfortably
+# inside this one continuous shot (overlay starts only ~0.16s into it),
+# so the entire signature ending plays over a single take, never crossing
+# a cut mid-fade.
+timestamp_cuts:
+  - id: box_open           # client: 0:00-0:02 "closed box" + 0:02-0:04 "box opens to reveal" —
+    start: 0.000              # ONE continuous take (the lid opens as a product animation, not
+    end: 2.292                  # a camera cut). True span 0.000-2.292, kept in full.
+  - id: lid_macro_to_pendant  # client: 0:04-0:06 "chain macro" + 0:06-0:08 "pendant macro" (hero
+    start: 2.292                 # shot) — actually ONE continuous 4.0s take that also opens on an
+    end: 6.292                     # unlisted closed-lid macro detail before panning to the chain and
+                                      # pushing into the pendant. True span 2.292-6.292, kept in full —
+                                      # this also satisfies "let this shot breathe slightly longer."
+  - id: three_quarter_angle  # client: 0:08-0:10 "three-quarter angle of complete gift" — true
+    start: 6.292                # span 6.292-8.917, kept in full.
+    end: 8.917
+  - id: straight_on_return  # client: 0:10-0:12 "straight-on full gift presentation" — true span
+    start: 8.917                # 8.917-15.069 (6.152s natural, continuous zoom-out, confirmed
+    end: 13.017                    # clean to the very last frame). Trimmed to 8.917-13.017 (4.1s)
+                                      # per the pacing note above (nudged down slightly from an
+                                      # initial 4.4s after the first render measured 15.4s, just over
+                                      # the 15.2s cap) — still comfortably longer than the 4.2s the
+                                      # ending needs.
+
+scene_order:
+  - box_open
+  - lid_macro_to_pendant
+  - three_quarter_angle
+  - straight_on_return
+
+# All genuine hard cuts in the source — no crossfades requested/needed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+
+# "Slow cinematic push-in" + "subtle floating camera movement" (box_open —
+# camera itself is static here, the box lid animates open as a product
+# animation, so adding our own gentle push-in/drift doesn't compound with
+# anything already baked in) and a gentle push-in on three_quarter_angle
+# (also a fairly static shot in the source). lid_macro_to_pendant and
+# straight_on_return already have their own camera movement (pan-then-push
+# into the pendant; a continuous zoom-out) baked into the source footage
+# itself — layering additional zoompan on top would compound into an
+# unnatural double-motion, so those two are left as-is (color grade only),
+# exactly as in every previous video in this campaign.
+motion:
+  - scene: box_open
+    direction: in
+    zoom_end: 1.04            # slow cinematic push-in
+    drift_x: 0.01               # subtle floating drift, not a pan
+    drift_y: 0.015
+  - scene: three_quarter_angle
+    direction: in
+    zoom_end: 1.03              # gentle push-in per the brief
+
+# box_open: warm grade + gentle contrast + the client's explicit "slight
+# vignette to focus attention on the box." lid_macro_to_pendant:
+# micro-contrast + a real sharpen boost for the chain/pendant hero shot,
+# kept moderate since the same grade also plays under the chain-detail
+# portion of this continuous shot, where the client asked to avoid
+# oversaturating the gold. No synthetic sparkle overlay — "one elegant,
+# natural sparkle" relies on the existing footage, same position taken on
+# every previous video.
+scene_grade:
+  - scene: box_open
+    warmth: 0.05
+    contrast: 0.03
+    vignette: true
+  - scene: lid_macro_to_pendant
+    contrast: 0.04
+    sharpen: 0.28
+
+on_screen_text: []
+captions: []
+
+# Same template source as the previous three videos — original embedded
+# music kept as-is, no new track.
+music_direction:
+  track: null
+  volume: 0.0
+  original_volume: 1.0
+  duck: false
+
+# No separate emotional-lift beats requested for this video (as with the
+# previous two) — the signature ending's own fade handles the tail.
+audio_swell: []
+
+# "Keep movement slow and luxurious... preserve rich gold tones without
+# oversaturating... maintain premium warmth and contrast" — the same
+# restrained global grade used on every previous video, so the whole
+# ZAVIQU ad library shares one visual language.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — identical parameters to gift_campaign_shortlist_v1,
+# gift_reveal_v1, and necklace_reveal_v1 per the client's explicit
+# instruction that the entire ad library should "feel like one cohesive
+# luxury campaign" with "the new official ZAVIQU signature ending." Same
+# lockup, same brand promise, same website, same timings. No freeze
+# frame: real footage (the straight_on_return zoom-out) keeps playing and
+# its audio keeps playing while the lockup fades in; picture+audio then
+# fade to black together; a plain black hold (no freeze — there's no
+# frame here) keeps the gold text briefly visible before everything fades
+# out. This source has no old ending baked in (unlike the previous two),
+# so this is a clean replacement of whatever ending existed in earlier
+# cuts of this asset, not a trim-around-contamination situation.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
