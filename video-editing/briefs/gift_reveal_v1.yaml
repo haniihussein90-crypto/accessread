@@ -1,0 +1,155 @@
+# Real production brief — "VIDEO 002 - Gift Reveal" client notes,
+# implemented against c8070c15-002__Gift_Reveal.mp4 (copied in as
+# source/gift_reveal_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio.
+#
+# Scene boundaries below were found via sequential frame-by-frame decode
+# (no seeking — see gift_campaign_shortlist_v1.yaml for why input seeking
+# is unreliable on this project's footage) and visually confirmed at each
+# cut. Four real shots, not six: the client's brief describes six beats
+# (box hero / necklace front view / pendant close-up / extreme macro /
+# another macro angle / return to full gift) but the middle four of those
+# are ONE continuous 5.916s push-in take in the actual source (hard cuts
+# only exist at 2.375/2.417 and 8.333/8.375) — treated as a single scene
+# below rather than forced into cuts that don't exist in the footage.
+#
+# Kept at full natural length end-to-end (~14.94s, no trims needed) —
+# comfortably inside the client's 12-15s target.
+
+name: gift_reveal_v1
+
+source_file: gift_reveal_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 12.0
+  max: 15.2
+hook: "Box hero shot must read instantly — first 2 seconds are the hook."
+cover_frame: 5.5   # lands inside the pendant/macro push-in, strongest jewelry beat
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame decode) ---
+#
+# NOTE on trims: kept at full natural length, total body runs 14.944s.
+# The signature ending's black_hold + final_fade_out (1.8s) is ADDITIVE on
+# top of the body (it plays after all real footage is exhausted), unlike
+# fade_in/hold_visible/fade_to_black which happen DURING still-playing
+# footage. 14.944 + 1.8 = 16.74s, well past the client's 12-15s target.
+# hero_return_zoomout is kept at its full 4.486s so the entire ending
+# overlay (fade_in 1.0 + hold_visible 2.0 + fade_to_black 1.2 = 4.2s) plays
+# over ONE continuous shot rather than crossing a hard cut mid-fade —
+# trimming it would force the fade-in to start mid box_angle_reveal
+# instead. The needed ~1.74s is trimmed from the other three scenes
+# instead: box_hero and box_angle_reveal brought to the client's own
+# stated ~2s-per-beat timing, and the remainder from the START of
+# card_to_macro (the least emphasized part of that push-in — the client
+# asked to linger on the macro/pendant end of it, not the opening frames).
+timestamp_cuts:
+  - id: box_hero            # client: 0:00-0:02 "box hero shot" — true span 0.000-2.375,
+    start: 0.000              # trimmed to the client's exact 2.0s.
+    end: 2.000
+  - id: card_to_macro       # client: 0:02-0:10, four described beats (necklace front view,
+    start: 3.619               # pendant close-up, extreme macro, another macro angle) that are
+    end: 8.333                  # actually ONE continuous push-in take in the source — no real
+                                   # cut exists between them. True span 2.417-8.333; front trimmed
+                                   # 1.202s so the emphasized macro/pendant end plays in full.
+  - id: box_angle_reveal    # client: part of the macro-angle description — genuine hard cut
+    start: 8.375               # into a distinct angle before the return-to-full shot. True span
+    end: 10.375                  # 8.375-10.542, trimmed to the client's exact 2.0s.
+  - id: hero_return_zoomout # client: 0:10-0:12 "return to full gift presentation" — true span
+    start: 10.583              # 10.583-15.069, kept at its FULL natural length (no trim) so the
+    end: 15.069                  # signature ending's entire overlay plays over one continuous shot.
+
+scene_order:
+  - box_hero
+  - card_to_macro
+  - box_angle_reveal
+  - hero_return_zoomout
+
+# All genuine hard cuts in the source — no crossfades requested/needed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+
+# "Slow push-in 2-4%" + "subtle floating movement" (box_hero). card_to_macro
+# and hero_return_zoomout already have their own camera movement (push-in /
+# zoom-out) baked into the source footage itself — layering an additional
+# zoompan on top of already-moving footage would compound into an unnatural
+# double-motion, so those two are left as-is (color grade only, no motion
+# block). box_angle_reveal gets the requested "slow slide movement."
+motion:
+  - scene: box_hero
+    direction: in
+    zoom_end: 1.035          # within the client's "2-4%" push-in range
+    drift_x: 0.012            # subtle floating drift, not a deliberate pan
+    drift_y: 0.018
+  - scene: box_angle_reveal
+    direction: in
+    zoom_end: 1.02             # minimal zoom — the slide itself carries the shot
+    drift_x: 0.035              # deliberate slow horizontal slide (larger than "floating" range)
+    drift_y: 0.0
+
+# "Increase micro contrast on gold" (pendant close-up) + warm highlights
+# (box hero) — real sharpen/contrast/warmth boosts, not synthetic sparkle.
+scene_grade:
+  - scene: box_hero
+    warmth: 0.04
+  - scene: card_to_macro
+    contrast: 0.04
+    sharpen: 0.3
+  - scene: box_angle_reveal
+    sharpen: 0.2
+
+on_screen_text: []
+captions: []
+
+# Source's own embedded music already has a natural fade-in (confirmed via
+# RMS windowing: 630 -> 2508 -> full by 2.5s) and a natural fade-out near
+# the tail — "let the music begin softly" is already satisfied by the
+# source, so no additional audio shaping at the start. Keep original audio.
+music_direction:
+  track: null
+  volume: 0.0
+  original_volume: 1.0
+  duck: false
+
+# No separate emotional-lift beats requested beyond the source's own
+# natural dynamics for this video (unlike the embrace/reveal beats in the
+# first campaign video) — the signature ending's own fade handles the tail.
+audio_swell: []
+
+# "Maintain the luxury cinematic look" — same restrained global grade as
+# the first video, applied on top of the per-scene grades above.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — per the client's explicit instruction, this exact
+# mechanism (real footage keeps playing, logo fades in over it, picture +
+# audio fade to black together, brief black hold, fade out) is now the
+# standard ending for every Zaviqu advertisement regardless of what the
+# last shot is. Reusing the same lockup/brand promise/website as the first
+# video since this brief doesn't specify different ones.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

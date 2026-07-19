@@ -31,7 +31,7 @@ from add_brand_end_card import add_brand_end_card  # noqa: E402
 from add_captions import build_spec as build_caption_spec  # noqa: E402
 from add_cta_ending import add_cta_ending  # noqa: E402
 from add_logo_fade_ending import add_logo_fade_ending  # noqa: E402
-from add_motion import add_slow_zoom  # noqa: E402
+from add_motion import add_camera_motion  # noqa: E402
 from add_text_overlay import add_overlays  # noqa: E402
 from add_transitions import add_transitions  # noqa: E402
 from audio_swell import apply_swells  # noqa: E402
@@ -80,14 +80,21 @@ def run_edit(brief_path: Path) -> dict:
         scene_files[scene_id] = scene_path
         log.append(f"Trimmed scene '{scene_id}': {cut['start']}–{cut['end']} -> {scene_path.name}")
 
-    # 2. Optional per-scene motion (slow zoom), applied before assembly.
+    # 2. Optional per-scene motion (zoom, optionally combined with a slow
+    # drift/float/slide), applied before assembly.
     for m in brief.get("motion", []):
         scene_id = m["scene"]
         motion_path = work_dir / f"scene_{scene_id}_motion.mp4"
-        add_slow_zoom(scene_files[scene_id], motion_path,
-                       zoom_end=m.get("zoom_end", 1.08), direction=m.get("direction", "in"))
+        drift_x = m.get("drift_x", 0.0)
+        drift_y = m.get("drift_y", 0.0)
+        add_camera_motion(scene_files[scene_id], motion_path,
+                           zoom_end=m.get("zoom_end", 1.08), direction=m.get("direction", "in"),
+                           drift_x=drift_x, drift_y=drift_y)
         scene_files[scene_id] = motion_path
-        log.append(f"Applied slow zoom ({m.get('direction', 'in')}) to scene '{scene_id}'")
+        motion_desc = f"slow zoom ({m.get('direction', 'in')})"
+        if drift_x or drift_y:
+            motion_desc += f" + drift(x={drift_x}, y={drift_y})"
+        log.append(f"Applied {motion_desc} to scene '{scene_id}'")
 
     # 2b. Optional per-scene color grade (e.g. a sharpen/sparkle boost on one
     # close-up shot only), applied before assembly so it doesn't touch other scenes.

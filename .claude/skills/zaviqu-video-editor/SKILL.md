@@ -78,16 +78,45 @@ README.md §3 for exact CLI usage of each:
 | Text overlays | `add_text_overlay.py` |
 | Subtitles/captions from supplied text | `add_captions.py` |
 | Fades and xfade transitions | `add_transitions.py` |
-| Slow zooms / simple motion | `add_motion.py` |
+| Slow zooms / simple motion, incl. drift/float/slide | `add_motion.py` (`add_camera_motion` — `add_slow_zoom` is a thin centered-zoom-only wrapper kept for old briefs) |
 | Music + original audio mixing (incl. ducking) | `mix_audio.py` |
 | Reduce/mute unwanted audio | `mix_audio.py --original-volume 0` |
-| CTA ending | `add_cta_ending.py` |
+| Signature logo-fade ending (default — see below) | `add_logo_fade_ending.py` |
+| Static end card (legacy, non-default) | `add_brand_end_card.py` |
+| CTA ending (legacy, non-default) | `add_cta_ending.py` |
+| Per-scene or global color grade (warmth/contrast/sharpen) | `color_grade.py` |
+| Targeted audio swell at specific beats | `audio_swell.py` |
 | H.264/AAC + faststart export | `export_final.py` |
 | With-text and no-text reusable versions | `run_edit.py` (one pass produces both) |
 
 `run_edit.py` is the orchestrator — it runs all of the above in sequence
 from a single brief file. Use it for full edits; use individual scripts
 for spot fixes.
+
+### Signature ending — the default for every Zaviqu advertisement
+
+Per explicit client direction, **`add_logo_fade_ending.py` is the standard
+ending for every Zaviqu ad, regardless of what the last shot is.** Use it
+in a brief's `logo_fade_ending` block unless the client explicitly asks
+for something else. `add_brand_end_card.py` (static card) and
+`add_cta_ending.py` (frozen-frame CTA) are legacy/non-default — kept for
+older briefs, not the starting point for new ones.
+
+The mechanism (never a freeze frame): real footage and its real audio keep
+playing while the brand lockup fades in over it; the still-playing
+picture and its audio then fade to black/silence *together*; only once
+real footage is genuinely exhausted does a plain black card (no freeze —
+there's no frame to freeze) hold the gold text briefly before everything
+fades out. See the docstring in `add_logo_fade_ending.py` for the full
+step-by-step and the auto-scaling behavior when a source's final shot is
+too short for the requested fade timings.
+
+One planning detail that matters: `black_hold` + `final_fade_out` are
+**additive** on top of the body's natural length (they play after all real
+footage is exhausted), unlike `fade_in`/`hold_visible`/`fade_to_black`
+which overlap the body's own last few seconds. When setting a brief's
+`final_duration`, budget for that addition explicitly rather than assuming
+the exported video will match the raw shot-list length.
 
 ## 5. Creative brief format
 
