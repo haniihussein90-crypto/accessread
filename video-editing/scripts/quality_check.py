@@ -149,23 +149,26 @@ def _read_frames_at(path: Path, indices: list[int]) -> dict[int, "np.ndarray"]:
 
 def check_black_bars(path: Path, band_fraction: float = 0.05,
                       brightness_threshold: float = 16.0, samples: int = 6,
-                      vignette_used: bool = False) -> dict:
-    if vignette_used:
-        # A vignette is *designed* to produce exactly the "dark edges,
-        # bright center" signature this check looks for — that's not a
-        # distinguishable pixel pattern from real letterboxing on a
-        # per-frame basis (especially on a tall 9:16 crop, where the
-        # radial falloff reaches most of the top/bottom edge, not just the
-        # corners). Rather than guess, defer to a human when a brief
-        # intentionally requested a vignette on any scene.
+                      dark_edges_expected: bool = False, dark_edges_reason: str = "") -> dict:
+    if dark_edges_expected:
+        # Some content genuinely produces the same "dark edges, bright
+        # center" signature this check looks for, and it's not
+        # distinguishable from real letterboxing on a per-frame pixel
+        # basis: an intentional vignette (radial falloff reaches most of
+        # a tall 9:16 crop's top/bottom edge, not just the corners), or a
+        # source shot on a black/near-black backdrop (blur_pad's blurred
+        # background layer stays just as dark as the footage it's blurred
+        # from, and can crush toward literal 0 once darkened further).
+        # Rather than guess, defer to a human whenever a brief flags
+        # either case.
+        note = ("Skipped pixel-based flagging — " + dark_edges_reason if dark_edges_reason else
+                "Skipped pixel-based flagging — this edit is expected to have dark edges.")
         return {
             "check": "black_bars",
             "flagged_frame_indices": [],
             "pass": True,
-            "note": "Skipped pixel-based flagging — this edit intentionally requested a "
-                    "vignette on at least one scene, which produces the same dark-edge/"
-                    "bright-center signature this check looks for. Manually confirm there's "
-                    "no unintended letterboxing/pillarboxing beyond the requested vignette.",
+            "note": note + " Manually confirm there's no unintended letterboxing/pillarboxing "
+                    "beyond what's expected.",
         }
 
     cap = cv2.VideoCapture(str(path))
@@ -299,7 +302,8 @@ def check_text_readability_and_margins(spec: list[dict], width: int, height: int
 
 def run_quality_check(path: Path, aspect: str, min_duration: float | None,
                        max_duration: float | None, text_strings: list[str],
-                       text_spec: list[dict], vignette_used: bool = False) -> dict:
+                       text_spec: list[dict], dark_edges_expected: bool = False,
+                       dark_edges_reason: str = "") -> dict:
     check_tools()
     probe = ffprobe_json(path)
     v = video_stream(probe)
@@ -309,7 +313,7 @@ def run_quality_check(path: Path, aspect: str, min_duration: float | None,
         check_codecs_and_faststart(path),
         check_resolution(path, aspect),
         check_duration(path, min_duration, max_duration),
-        check_black_bars(path, vignette_used=vignette_used),
+        check_black_bars(path, dark_edges_expected=dark_edges_expected, dark_edges_reason=dark_edges_reason),
         check_opening_strength(path),
         check_ending_not_abrupt(path),
         check_brand_text(text_strings),
@@ -322,10 +326,10 @@ def run_quality_check(path: Path, aspect: str, min_duration: float | None,
         "Overall emotional tone matches 'premium, warm, intimate, cinematic' brand style",
         "First 1-2 seconds are actually a strong scroll-stopping hook (heuristic above is a proxy, not a verdict)",
     ]
-    if vignette_used:
+    if dark_edges_expected:
         manual_review_required.append(
-            "No unintended letterboxing/pillarboxing beyond the intentionally requested "
-            "vignette (automated black-bars check was skipped for this reason)"
+            "No unintended letterboxing/pillarboxing beyond the expected dark edges "
+            "(automated black-bars check was skipped for this reason)"
         )
 
     overall_pass = all(c.get("pass", c.get("heuristic_pass", True)) for c in automated)

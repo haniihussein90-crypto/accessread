@@ -1,0 +1,145 @@
+# Real production brief — "VIDEO 001 - Pendant Showcase" client notes,
+# implemented against 7e9b4847-001__Pendant_Showcase.mp4 (copied in as
+# source/pendant_showcase_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# the previous four source videos, but structurally different: this one
+# is a SINGLE continuous take from start to finish (push-in from the full
+# necklace on black satin, through a medium close-up, into an extreme
+# macro hero sequence on the center stone, then pulling back out to the
+# same full-necklace framing at the very last frame — frame 360 is
+# visually near-identical to frame 0). Confirmed via sequential frame-by-
+# frame decode: no cut anywhere reaches the magnitude seen in every
+# previous video's real hard cuts (max frame-to-frame diff here is ~42,
+# vs. 100+ for genuine cuts elsewhere) — every "beat" the client describes
+# is a phase of one unbroken push-in/pull-out arc, not a separate shot.
+# So this brief uses ONE scene for the whole edit rather than multiple
+# scenes with cut transitions, since there are no real cuts to make.
+#
+# The pull-back from the extreme macro to a wide, chain-visible framing
+# happens quite fast in real time (roughly source t=10.75-11.0s) — faster
+# than "slow cinematic zoom out" reads, but that's what the actual
+# footage does; there's no way to slow it down without reprocessing the
+# underlying frames, which is out of scope for an edit pass. Confirmed
+# clean via brightness sampling all the way to the natural end at
+# 15.069s — no baked-in old ending on this source (like Videos 002/005,
+# unlike 006).
+
+name: pendant_showcase_v1
+
+source_file: pendant_showcase_raw.mp4
+
+platform: instagram_facebook
+# The product sits on a black satin backdrop throughout (per the brief:
+# "keep the blacks deep," "preserve the rich black satin background") —
+# blur_pad's blurred-background bars stay just as dark as the footage
+# they're blurred from, which can crush toward literal black at the
+# frame edges. That's the same dark-edges/bright-center signature the QC
+# black-bars check watches for as a letterboxing proxy, so this flag
+# tells it to defer to manual review instead of false-flagging genuine
+# black-satin content (see quality_check.py's dark_edges_expected).
+dark_background: true
+final_duration:
+  min: 12.0
+  max: 15.2
+hook: "Full necklace on black satin reads instantly — first ~2 seconds are the hook before the push-in accelerates."
+cover_frame: 6.0   # lands inside the extreme-macro hero sequence (client's named visual highlight)
+
+# --- Single continuous take, trimmed at both ends ---
+#
+# The tail is kept at its FULL natural length (no trim) so the signature
+# ending's overlay — which always starts exactly moving_span (4.2s:
+# fade_in+hold_visible+fade_to_black) before the clip's end, regardless of
+# where the clip starts — lands as late as this source allows, i.e. right
+# at the source's own transition out of extreme-macro into the wide,
+# necklace-and-chain-visible framing (~10.87s), rather than earlier while
+# the frame is still filled edge-to-edge by just the diamond (a poor
+# backdrop for a text/logo lockup). The needed trim to hit the 12-15.2s
+# target instead comes off the FRONT: the client's Scene 1 "build
+# anticipation" open (0-3s) is shortened to its last 1.2s (1.8-3.0s of the
+# source) rather than its full 3s — the necklace is still clearly on
+# screen from the first trimmed frame, just slightly further into the
+# push-in than the source's literal first frame. Every other beat (medium
+# close-up, extreme macro hero, pull-back, full presentation) is kept
+# completely intact.
+timestamp_cuts:
+  - id: pendant_showcase
+    start: 1.800
+    end: 15.069
+
+scene_order:
+  - pendant_showcase
+
+# No cuts — this is one unbroken take start to finish.
+transitions: []
+
+# No added motion: the entire take already has continuous camera
+# movement baked in (push-in through medium close-up into the extreme
+# macro, then pull-back to the wide finish) — layering our own zoompan on
+# top would compound into an unnatural double-motion, the same reasoning
+# applied to every continuous multi-beat shot in the previous four videos.
+motion: []
+
+# One grade for the whole take (there's only one scene): a slight warmth
+# lift and gentle contrast/sharpen for "increase micro-contrast on the
+# gold" and "one elegant natural sparkle," kept conservative per the
+# client's explicit "protect highlights so the diamond never clips" — this
+# is the most restrained scene_grade in the campaign so far by design.
+scene_grade:
+  - scene: pendant_showcase
+    warmth: 0.02
+    contrast: 0.03
+    sharpen: 0.22
+
+on_screen_text: []
+captions: []
+
+# Original embedded audio kept as-is, same as every previous video.
+music_direction:
+  track: null
+  volume: 0.0
+  original_volume: 1.0
+  duck: false
+
+# No separate emotional-lift beats requested — the signature ending's own
+# fade handles the tail, consistent with the previous three videos.
+audio_swell: []
+
+# "Match the color grading... established in Videos 008, 002, 005, and
+# 006" — the identical restrained global grade used on every previous
+# video, layered on top of the scene grade above.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — identical parameters to every previous video in the
+# campaign per the client's explicit "official ZAVIQU signature ending
+# used across every advertisement" / "cohesive luxury collection"
+# requirement. Same lockup, same brand promise, same website, same
+# timings. No freeze frame: real footage (the pull-back/full-presentation
+# tail) keeps playing and its audio keeps playing while the lockup fades
+# in; picture+audio then fade to black together; a plain black hold (no
+# freeze — there's no frame here) keeps the gold text briefly visible
+# before everything fades out.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

@@ -242,13 +242,24 @@ def run_edit(brief_path: Path) -> dict:
             if logo_fade_ending:
                 extra_text += [logo_fade_ending["brand_promise"], logo_fade_ending["website"]]
             vignette_used = any(g.get("vignette") for g in brief.get("scene_grade", []))
+            dark_background = bool(brief.get("dark_background"))
+            dark_edges_expected = vignette_used or dark_background
+            if vignette_used and dark_background:
+                dark_edges_reason = "this edit requested a vignette and is shot on a dark background."
+            elif vignette_used:
+                dark_edges_reason = "this edit intentionally requested a vignette on at least one scene."
+            elif dark_background:
+                dark_edges_reason = "this edit is shot on a black/dark background (brief: dark_background)."
+            else:
+                dark_edges_reason = ""
             qc = run_quality_check(
                 final_path, aspect,
                 brief.get("final_duration", {}).get("min"),
                 brief.get("final_duration", {}).get("max"),
                 [t.get("text", "") for t in full_text_spec] + extra_text,
                 full_text_spec,
-                vignette_used=vignette_used,
+                dark_edges_expected=dark_edges_expected,
+                dark_edges_reason=dark_edges_reason,
             )
             qc_path = REPORTS_DIR / f"{name}_{slug}_qc.json"
             ensure_parent(qc_path)
