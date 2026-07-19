@@ -24,15 +24,15 @@ name: gift_campaign_shortlist_v1
 source_file: gift_campaign_raw.mp4
 
 platform: instagram_facebook
-# Body (through the embrace) is ~11.5-11.7s; the logo_fade_ending below adds
-# a further ~6.0s (fade-in + hold + fade-to-black + black-hold + fade-out)
-# on top of that, per the revised ending brief — total lands ~17.5-17.7s.
-# This supersedes the earlier 12-13s target, which was written for a
-# short crossfaded end card, not a full logo-reveal sequence held over
-# the frozen final frame.
+# v2 ending (no freeze frame): the logo fade-in/hold/fade-to-black all
+# happen DURING the real, still-playing embrace footage (proposal_embrace
+# is 3.708s, restored to its full natural length so there's enough real
+# playing time for that sequence) rather than being appended after a
+# frozen frame. Only black_hold + final_fade_out (1.8s) get added on top
+# once the real footage genuinely runs out. Body ~11.8s + 1.8s = ~13.6s.
 final_duration:
-  min: 17.0
-  max: 18.5
+  min: 13.0
+  max: 14.2
 hook: "Get to the gift faster — first 3 seconds must hook before the reveal."
 cover_frame: 3.9   # lands in the message-card close-up in the final timeline
 
@@ -57,8 +57,9 @@ timestamp_cuts:
     start: 7.500
     end: 9.083
   - id: proposal_embrace    # client: 0:10-0:12 "proposal" (no changes) + 0:12-0:13 "final embrace" (trim slightly) —
-    start: 9.125              # ONE continuous shot, true span 9.125-12.833 (3.708s — longer than the client's nominal
-    end: 12.549                 # 3s estimate). Trimmed 0.284s off the tail per "trim slightly if needed."
+    start: 9.125              # ONE continuous shot, true span 9.125-12.833 (3.708s). Restored to its full natural
+    end: 12.833                 # end (was trimmed 0.284s off the tail in the old freeze-frame ending) because the
+                                  # revised ending needs every second of REAL playing footage — see logo_fade_ending.
 
 scene_order:
   - wide_couple
@@ -111,7 +112,7 @@ music_direction:
 # timeline — cumulative scene durations, not source timestamps:
 #   wide_couple 0.000-0.542 | gift_reveal 0.542-2.001 | box_open 2.001-3.126
 #   message_card 3.126-4.668 | necklace_wear 4.668-6.493 | reaction 6.493-8.076
-#   proposal_embrace 8.076-11.500
+#   proposal_embrace 8.076-11.784 (extended per the restored full embrace above)
 audio_swell:
   - start: 0.542    # gift box opening (gift_reveal + box_open)
     end: 3.126
@@ -121,8 +122,8 @@ audio_swell:
     end: 6.493
     boost: 0.30
     ramp: 0.3
-  - start: 9.60     # final embrace (back portion of proposal_embrace)
-    end: 11.50
+  - start: 9.83     # final embrace (arms wrap in, back portion of proposal_embrace)
+    end: 11.78
     boost: 0.35
     ramp: 0.4
 
@@ -132,23 +133,38 @@ global_grade:
   warmth: 0.05
   contrast: 0.03
 
-# REVISED ending (replaces the earlier separate beige end-card entirely):
-# no cutaway. The embrace plays through, freezes on its last frame, and
-# the brand lockup fades in OVER that frozen footage — logo never moves,
-# only opacity fades. Lockup image is a transparent-background crop of
-# the client's own reference art (brand-assets/logo/zaviqu-lockup-reference.png
-# — see brand-assets/logo/PROVENANCE.md), not a redraw. Two lines are
-# added below the reference crop (brand promise + website) in matching
+# REVISED ending, v2 (no freeze frame — client feedback on v1 was explicit:
+# "do not pause the couple hugging"). The embrace keeps PLAYING (real
+# footage, real audio) while the brand lockup fades in over it; then the
+# still-playing picture and its original audio fade to black/silence
+# TOGETHER over the last fade_to_black seconds. Only once the real
+# footage genuinely runs out does a plain black card (not a freeze — there
+# is no frame here, just black) hold the text briefly before it fades out.
+#
+# fade_in + hold_visible + fade_to_black must fit inside the real,
+# still-playing footage available at the tail — proposal_embrace is
+# 3.708s long (see timestamp_cuts above), so: 0.7 + 2.0 + 1.0 = 3.7s,
+# using effectively all of it. hold_visible stays at the client's exact
+# "about 2 seconds"; fade_in/fade_to_black were sized to fit around it
+# rather than the other way around. (If a future source clip is shorter
+# than fade_in+hold_visible+fade_to_black, add_logo_fade_ending.py scales
+# all three down proportionally so the sequence still fits entirely
+# within real playing footage instead of inventing extra time somehow.)
+#
+# Lockup image is a transparent-background crop of the client's own
+# reference art (brand-assets/logo/zaviqu-lockup-reference.png — see
+# brand-assets/logo/PROVENANCE.md), not a redraw. Two lines are added
+# below the reference crop (brand promise + website) in matching
 # gold/serif styling since they weren't part of the reference art itself.
 logo_fade_ending:
   lockup: brand-assets/logo/zaviqu-lockup-reference.png
   brand_promise: "The Gift That Says What Words Can't."
   website: "zaviqu.com"
-  fade_in: 1.0          # logo/text fades in over the still-hugging frozen frame
-  hold_visible: 2.0      # hold frozen footage + full-opacity text (client: "about 2 seconds")
-  fade_to_black: 1.2       # footage fades to black; text opacity untouched, stays fully readable
-  black_hold: 1.0            # hold on black + text (client: "about 1 second")
-  final_fade_out: 0.8          # everything (text, now on pure black) fades out together
+  fade_in: 0.7          # logo/text fades in while the hug is still playing, in real time
+  hold_visible: 2.0      # hold full-opacity text over the still-playing hug (client: "about 2 seconds")
+  fade_to_black: 1.0       # picture AND original audio fade to black/silence together; footage runs out here
+  black_hold: 1.0            # hold on plain black + text — no frame to freeze, footage has ended (client: "about 1 second")
+  final_fade_out: 0.8          # text (on black) fades out
   gold_color: "#D4AF37"
 
 export_versions:

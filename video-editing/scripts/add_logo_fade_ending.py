@@ -1,23 +1,33 @@
 #!/usr/bin/env python3
 """
 Premium "logo reveal over the final shot" ending — NOT a separate end
-card. Keeps the video's actual last frame (e.g. the couple hugging),
-freezes it, and fades the brand lockup in over it while it holds, then
-fades the picture to black under the still-visible gold text, holds on
-black, then fades everything out together. No cut away, no motion on the
-logo — only opacity fades.
+card, and NOT a freeze frame. The real footage keeps playing (and its
+real audio keeps playing) while the brand lockup fades in over it, then
+the moving footage and its audio fade to black/silence TOGETHER. Only
+once there's no more real footage left does a plain black card (still no
+freeze — there's simply nothing to show) hold the gold text briefly
+before everything fades out.
 
 Sequence (all durations configurable):
-  1. Real footage plays through to its natural last frame.
-  2. That frame freezes. The lockup (+ brand promise + website) fades in
-     over `fade_in` seconds.
-  3. Hold the fully-visible composition (frozen footage + full-opacity
-     text) for `hold_visible` seconds.
-  4. The FOOTAGE fades to black over `fade_to_black` seconds — the text
-     layer's opacity is untouched, so it stays fully readable throughout.
-  5. Once black, hold `black_hold` seconds with text still visible.
-  6. Fade the (now all-gold-text-on-black) frame out over `final_fade_out`
-     seconds, ending on solid black.
+  1. Real footage plays through normally.
+  2. Over the LAST `fade_in + hold_visible + fade_to_black` seconds of
+     that real footage (still playing, never paused), the lockup
+     (+ brand promise + website) fades in over `fade_in` seconds.
+  3. Hold full-opacity text over the still-playing footage for
+     `hold_visible` seconds.
+  4. Over the final `fade_to_black` seconds of the real footage, the
+     PICTURE fades to black and the ORIGINAL AUDIO fades to silence at
+     the same time — text opacity is untouched, so it stays fully
+     readable throughout. This is where the real footage runs out.
+  5. Hold `black_hold` seconds on solid black with the text still visible
+     (there's no frame to freeze here — the picture is already black).
+  6. Fade the gold text out over `final_fade_out` seconds, ending on
+     solid black.
+
+If the source clip is shorter than fade_in + hold_visible + fade_to_black,
+all three are scaled down proportionally so the sequence still fits
+entirely within real, still-playing footage rather than inventing extra
+time some other way.
 
 The lockup image (icon + ZAVIQU + divider/heart + "Made with love...")
 should be a pre-extracted, transparent-background PNG matching the
@@ -39,7 +49,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -53,8 +62,6 @@ SERIF_FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf",
     "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
 ]
-
-AUDIO_TAIL_FADE_SEC = 0.8  # fade the real clip's own audio out before the freeze, so silence isn't a hard cut
 
 
 def _find_font(size: int) -> ImageFont.FreeTypeFont:
@@ -119,6 +126,32 @@ def build_text_group(frame_width: int, frame_height: int, lockup_path: Path,
     return canvas
 
 
+def _solid_text_clip(text_group_png: Path, width: int, height: int, fps: float,
+                      duration: float, alpha_fade: str | None, tmp: Path, name: str) -> Path:
+    """A clip of solid black with the (optionally alpha-fading) text group
+    on top — used for the tail once real footage has run out. Not a
+    freeze frame: there is no footage here at all, just the brand mark."""
+    overlay = tmp / f"{name}_overlay.mov"
+    vf = alpha_fade if alpha_fade else "null"
+    run([
+        "ffmpeg", "-y", "-loop", "1", "-i", str(text_group_png),
+        "-t", str(duration), "-vf", vf, "-r", str(fps), "-c:v", "qtrle", str(overlay),
+    ])
+    out = tmp / f"{name}_solid_text_clip.mp4"
+    run([
+        "ffmpeg", "-y",
+        "-f", "lavfi", "-i", f"color=c=black:s={width}x{height}:r={fps}",
+        "-i", str(overlay),
+        "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+        "-t", str(duration),
+        "-filter_complex", "[0:v][1:v]overlay=0:0:format=auto[v]",
+        "-map", "[v]", "-map", "2:a",
+        *H264_EXPORT_ARGS,
+        str(out),
+    ])
+    return out
+
+
 def add_logo_fade_ending(
     src: Path,
     out: Path,
@@ -141,69 +174,69 @@ def add_logo_fade_ending(
     fps = float(num) / float(den) if float(den) else 30.0
     src_duration = get_duration(src)
 
-    total_hold = fade_in + hold_visible + fade_to_black + black_hold + final_fade_out
-    black_starts_at = fade_in + hold_visible
+    requested_moving = fade_in + hold_visible + fade_to_black
+    if requested_moving > src_duration:
+        # Not enough real footage for the numbers as given — scale all
+        # three down proportionally rather than inventing extra time
+        # (freezing, padding) that isn't real, still-playing footage.
+        scale = src_duration / requested_moving
+        fade_in, hold_visible, fade_to_black = fade_in * scale, hold_visible * scale, fade_to_black * scale
+    moving_span = fade_in + hold_visible + fade_to_black
+    overlay_start = max(src_duration - moving_span, 0)
 
     with tempfile.TemporaryDirectory() as tmp:
-        # 1. Smoothly fade the real clip's own audio to silence before the freeze —
-        # avoids a hard audio cut at the moment it stops being live footage.
-        faded_src = Path(tmp) / "faded_src.mp4"
-        fade_start = max(src_duration - AUDIO_TAIL_FADE_SEC, 0)
-        run([
-            "ffmpeg", "-y", "-i", str(src),
-            "-af", f"afade=t=out:st={fade_start}:d={AUDIO_TAIL_FADE_SEC}",
-            "-c:v", "copy", "-c:a", "aac",
-            str(faded_src),
-        ])
-
-        # 2. Freeze the last frame as the background for the whole ending sequence.
-        last_frame = Path(tmp) / "last_frame.png"
-        run(["ffmpeg", "-y", "-sseof", "-0.1", "-i", str(src), "-vframes", "1", str(last_frame)])
-
-        # 3. Build the transparent text-group (lockup + brand promise + website).
         text_group_png = Path(tmp) / "text_group.png"
         build_text_group(width, height, lockup, brand_promise, website, gold_color).save(text_group_png)
 
-        # 4. Background: frozen frame, held for total_hold, fading to black partway through.
-        bg_clip = Path(tmp) / "bg_clip.mp4"
-        run([
-            "ffmpeg", "-y", "-loop", "1", "-i", str(last_frame),
-            "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
-            "-t", str(total_hold),
-            "-vf", f"fade=t=out:st={black_starts_at}:d={fade_to_black}:color=black",
-            "-r", str(fps),
-            *H264_EXPORT_ARGS,
-            str(bg_clip),
-        ])
+        segments = []
 
-        # 5. Overlay: text group, alpha-faded in then out, held fully opaque between.
+        # 1. Untouched real footage before the logo starts fading in.
+        if overlay_start > 0.01:
+            seg_before = Path(tmp) / "seg_before.mp4"
+            run(["ffmpeg", "-y", "-to", str(overlay_start), "-i", str(src), *H264_EXPORT_ARGS, str(seg_before)])
+            segments.append(seg_before)
+
+        # 2. The moving tail: real footage keeps playing while the logo
+        # fades in, holds, then the picture+audio fade to black together.
+        seg_tail_raw = Path(tmp) / "seg_tail_raw.mp4"
+        run(["ffmpeg", "-y", "-ss", str(overlay_start), "-i", str(src), *H264_EXPORT_ARGS, str(seg_tail_raw)])
+        tail_dur = get_duration(seg_tail_raw)
+
         overlay_clip = Path(tmp) / "overlay_clip.mov"
-        fade_out_start = total_hold - final_fade_out
         run([
             "ffmpeg", "-y", "-loop", "1", "-i", str(text_group_png),
-            "-t", str(total_hold),
-            "-vf", (
-                f"fade=t=in:st=0:d={fade_in}:alpha=1,"
-                f"fade=t=out:st={fade_out_start}:d={final_fade_out}:alpha=1"
-            ),
-            "-r", str(fps),
-            "-c:v", "qtrle",
+            "-t", str(tail_dur),
+            "-vf", f"fade=t=in:st=0:d={fade_in}:alpha=1",
+            "-r", str(fps), "-c:v", "qtrle",
             str(overlay_clip),
         ])
 
-        # 6. Composite overlay onto background.
-        ending_clip = Path(tmp) / "ending_clip.mp4"
+        fade_to_black_start = max(tail_dur - fade_to_black, 0)
+        seg_tail_final = Path(tmp) / "seg_tail_final.mp4"
         run([
-            "ffmpeg", "-y", "-i", str(bg_clip), "-i", str(overlay_clip),
-            "-filter_complex", "[0:v][1:v]overlay=0:0:format=auto[v]",
+            "ffmpeg", "-y", "-i", str(seg_tail_raw), "-i", str(overlay_clip),
+            "-filter_complex",
+            f"[0:v]fade=t=out:st={fade_to_black_start}:d={fade_to_black}:color=black[bgv];"
+            f"[bgv][1:v]overlay=0:0:format=auto[v]",
             "-map", "[v]", "-map", "0:a",
+            "-af", f"afade=t=out:st={fade_to_black_start}:d={fade_to_black}",
             *H264_EXPORT_ARGS,
-            str(ending_clip),
+            str(seg_tail_final),
         ])
+        segments.append(seg_tail_final)
 
-        # 7. Concat — seamless, since the ending clip's first frame IS the
-        # source's last frame, just frozen; no crossfade needed.
-        plain_concat([faded_src, ending_clip], out, width=width, height=height, fps=int(round(fps)))
+        # 3. Real footage has now run out and the picture is already black.
+        # Hold the text on plain black (no frame here to freeze), then
+        # fade the text out over solid black.
+        if black_hold > 0:
+            segments.append(_solid_text_clip(text_group_png, width, height, fps, black_hold,
+                                              alpha_fade=None, tmp=Path(tmp), name="black_hold"))
+        if final_fade_out > 0:
+            fade_out_vf = f"fade=t=out:st=0:d={final_fade_out}:alpha=1"
+            segments.append(_solid_text_clip(text_group_png, width, height, fps, final_fade_out,
+                                              alpha_fade=fade_out_vf, tmp=Path(tmp), name="final_fadeout"))
+
+        plain_concat(segments, out, width=width, height=height, fps=int(round(fps)))
 
     return out
 

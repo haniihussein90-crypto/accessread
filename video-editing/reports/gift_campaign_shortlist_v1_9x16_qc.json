@@ -24,10 +24,10 @@
     },
     {
       "check": "duration",
-      "duration_sec": 17.74,
+      "duration_sec": 13.86,
       "expected_range": [
-        17.0,
-        18.5
+        13.0,
+        14.2
       ],
       "pass": true
     },
@@ -47,7 +47,7 @@
     {
       "check": "ending_not_abrupt",
       "tail_rms": 0.0,
-      "overall_rms": 3474.2,
+      "overall_rms": 4007.1,
       "tail_to_overall_ratio": 0.0,
       "pass": true,
       "note": "If audio hasn't faded out by the last frames, ratio stays high \u2014 consider a fade-out or CTA card (add_cta_ending.py)."

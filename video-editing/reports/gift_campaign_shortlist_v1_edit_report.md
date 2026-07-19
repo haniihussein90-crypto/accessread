@@ -1,6 +1,6 @@
 # Edit report — gift_campaign_shortlist_v1
 
-Generated: 2026-07-19T08:49:50.653741Z
+Generated: 2026-07-19T09:07:47.245185Z
 Source: `gift_campaign_raw.mp4`
 Brief hook: Get to the gift faster — first 3 seconds must hook before the reveal.
 
@@ -13,7 +13,7 @@ Brief hook: Get to the gift faster — first 3 seconds must hook before the reve
 - Trimmed scene 'message_card': 3.75–5.292 -> scene_message_card.mp4
 - Trimmed scene 'necklace_wear': 5.333–7.158 -> scene_necklace_wear.mp4
 - Trimmed scene 'reaction': 7.5–9.083 -> scene_reaction.mp4
-- Trimmed scene 'proposal_embrace': 9.125–12.549 -> scene_proposal_embrace.mp4
+- Trimmed scene 'proposal_embrace': 9.125–12.833 -> scene_proposal_embrace.mp4
 - Applied slow zoom (in) to scene 'wide_couple'
 - Applied slow zoom (in) to scene 'message_card'
 - Applied per-scene grade (sharpen=0.35) to scene 'necklace_wear'
