@@ -37,3 +37,32 @@ coverage/
 # Python
 __pycache__/
 *.pyc
+
+# Zaviqu video-editing pipeline — raw/working/exported media stays local,
+# only scripts/briefs/brand-assets/reports/README are committed (see
+# video-editing/README.md).
+video-editing/source/*
+!video-editing/source/.gitkeep
+video-editing/working/*
+!video-editing/working/.gitkeep
+video-editing/previews/*
+!video-editing/previews/.gitkeep
+video-editing/final/*
+!video-editing/final/.gitkeep
+!video-editing/final/no-text/
+!video-editing/final/instagram-facebook/
+!video-editing/final/tiktok/
+video-editing/final/no-text/*
+!video-editing/final/no-text/.gitkeep
+video-editing/final/instagram-facebook/*
+!video-editing/final/instagram-facebook/.gitkeep
+video-editing/final/tiktok/*
+!video-editing/final/tiktok/.gitkeep
+video-editing/brand-assets/logo/*
+!video-editing/brand-assets/logo/.gitkeep
+video-editing/brand-assets/music/*
+!video-editing/brand-assets/music/.gitkeep
+video-editing/**/*.mp4
+video-editing/**/*.mov
+video-editing/**/*.mkv
+video-editing/**/*.avi

@@ -1,0 +1,78 @@
+# Zaviqu creative brief — TIKTOK TEMPLATE / EXAMPLE
+# Emotional storytelling pacing, brand reveal near the end. See
+# EXAMPLE_brief.yaml for full field-by-field comments.
+
+name: gift_moment_story_tiktok
+
+source_file: zaviqu_raw_01.mp4
+
+platform: tiktok
+final_duration:
+  min: 12
+  max: 25
+hook: >
+  Open on a relatable moment (searching for the "right" gift) before
+  cutting to the Zaviqu box arriving — curiosity, not a commercial open.
+cover_frame: 2.0
+
+timestamp_cuts:
+  - id: searching
+    start: "00:00:00.000"
+    end: "00:00:04.000"
+  - id: box_arrives
+    start: "00:00:05.000"
+    end: "00:00:09.000"
+  - id: card
+    start: "00:00:09.500"
+    end: "00:00:12.000"
+  - id: reveal
+    start: "00:00:12.500"
+    end: "00:00:17.000"
+
+scene_order: [searching, box_arrives, card, reveal]
+
+transitions:
+  - type: cut
+  - type: cut
+  - type: xfade
+    style: fade
+    duration: 0.35
+
+motion:
+  - scene: reveal
+    direction: in
+    zoom_end: 1.07
+
+# Natural, story-paced text — not a commercial caption block.
+on_screen_text: []
+
+captions:
+  - text: "I didn't know what to get her..."
+    start: 0.2
+    end: 3.5
+  - text: "then this showed up."
+    start: 5.0
+    end: 8.0
+  - text: "ZAVIQU"
+    start: 15.5
+    end: 17.5
+    size: 60
+    color: gold
+
+music_direction:
+  track: null
+  volume: 0.35
+  original_volume: 1.0
+  duck: true
+
+cta:
+  text: "Shop now at ZAVIQU"
+  duration: 2.0
+  color: "#D4AF37"
+
+export_versions:
+  - platform: tiktok
+    aspect: "9:16"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

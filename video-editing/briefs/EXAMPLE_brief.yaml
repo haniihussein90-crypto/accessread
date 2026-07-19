@@ -1,0 +1,99 @@
+# Zaviqu creative brief — TEMPLATE / EXAMPLE
+#
+# Copy this file, rename it (e.g. briefs/necklace_launch_v1.yaml), fill in
+# every field for your edit, then run:
+#
+#   python3 video-editing/scripts/run_edit.py --brief video-editing/briefs/necklace_launch_v1.yaml
+#
+# All timestamps are "HH:MM:SS.ms", "MM:SS.ms", or plain seconds — pick
+# whichever is easiest to read off your source footage.
+# All on-screen text / caption / transition timings are relative to the
+# ASSEMBLED edit (after trim + reorder), not the raw source file.
+
+name: necklace_gift_reveal_ig            # used as the output filename base
+
+source_file: zaviqu_raw_01.mp4           # must exist in video-editing/source/
+
+# --- Brief format fields (see CLAUDE agent instructions, section 5) ---
+platform: instagram_facebook             # documentation only; see export_versions below for what actually renders
+final_duration:
+  min: 8
+  max: 15
+hook: >
+  Close on the message card being tucked into the box in the first frame —
+  curiosity hook before the necklace is even seen.
+cover_frame: 3.0                          # seconds into the FINAL edit to grab as the thumbnail
+
+# --- Timestamp cuts: name every scene you want to keep from the source ---
+timestamp_cuts:
+  - id: card
+    start: "00:00:01.000"
+    end: "00:00:03.000"
+  - id: reveal
+    start: "00:00:08.000"
+    end: "00:00:12.500"
+  - id: closeup
+    start: "00:00:20.000"
+    end: "00:00:23.000"
+
+# --- Scene order: sequence the scenes above however the brief calls for ---
+scene_order: [card, reveal, closeup]
+
+# --- Transitions: one entry per junction (len(scene_order) - 1). Omit this
+# key entirely for all clean cuts (the Zaviqu default). ---
+transitions:
+  - type: cut
+  - type: xfade
+    style: fade
+    duration: 0.4
+
+# --- Optional slow zoom on specific scenes (brand style: gentle motion only) ---
+motion:
+  - scene: reveal
+    direction: in
+    zoom_end: 1.06
+
+# --- On-screen text (minimal, per IG/FB style rules) ---
+on_screen_text:
+  - text: "ZAVIQU"
+    start: 0.0
+    end: 1.8
+    position: top
+    size: 72
+    color: gold
+    box: false
+  - text: "Create yours at ZAVIQU"
+    start: 6.0
+    end: 8.5
+    position: bottom
+    size: 68
+    color: white
+
+# --- Captions (leave empty list for IG/FB reveal-style edits with no story text) ---
+captions: []
+
+# --- Music direction ---
+music_direction:
+  track: null                             # path under source/ or brand-assets/music/; null = no music bed
+  volume: 0.45
+  original_volume: 0.9
+  duck: true
+
+# --- CTA ending card ---
+cta:
+  text: "Create yours at ZAVIQU"
+  duration: 1.8
+  color: "#D4AF37"
+
+# --- Export versions: every combination you want rendered ---
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

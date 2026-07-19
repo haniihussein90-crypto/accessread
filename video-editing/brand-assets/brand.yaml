@@ -1,0 +1,36 @@
+# Zaviqu brand constants used by the editing pipeline.
+# scripts/common.py currently hardcodes these same values — when the
+# official brand guide is available, update BOTH this file (source of
+# truth / human reference) and the constants at the top of
+# video-editing/scripts/common.py (what the code actually reads).
+
+brand_name: "ZAVIQU"          # exact spelling/casing — always all caps
+
+colors:
+  gold: "#D4AF37"              # PLACEHOLDER warm gold — replace with exact brand hex
+  white: "#FFFFFF"
+
+style_keywords:
+  - premium
+  - emotional
+  - warm
+  - intimate
+  - cinematic
+
+avoid:
+  - cheap or flashy effects
+  - overly dramatic transitions
+  - dark, gloomy, candle-heavy visuals
+  - busy/heavy on-screen text
+
+logo:
+  # Drop the official logo file(s) here, e.g.:
+  #   video-editing/brand-assets/logo/zaviqu-logo-gold.png
+  #   video-editing/brand-assets/logo/zaviqu-wordmark.svg
+  path: null
+
+fonts:
+  # Fill in once the brand guide specifies a typeface. Until then,
+  # scripts fall back to the system default font available to ffmpeg's
+  # drawtext filter.
+  primary: null
