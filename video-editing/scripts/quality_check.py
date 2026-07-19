@@ -125,16 +125,38 @@ def check_duration(path: Path, min_dur: float | None, max_dur: float | None) -> 
     }
 
 
+def _read_frames_at(path: Path, indices: list[int]) -> dict[int, "np.ndarray"]:
+    """Sequential decode to the requested frame indices — NOT
+    cap.set(CAP_PROP_POS_FRAMES, ...), which is unreliable on many H.264
+    files (silently lands several frames off). QC correctness depends on
+    actually inspecting the frame it claims to, so this always reads
+    forward instead of seeking."""
+    cap = cv2.VideoCapture(str(path))
+    wanted = sorted(set(indices))
+    found: dict[int, "np.ndarray"] = {}
+    frame_idx = 0
+    while wanted:
+        ok, frame = cap.read()
+        if not ok:
+            break
+        if frame_idx == wanted[0]:
+            found[frame_idx] = frame
+            wanted.pop(0)
+        frame_idx += 1
+    cap.release()
+    return found
+
+
 def check_black_bars(path: Path, band_fraction: float = 0.05,
                       brightness_threshold: float = 16.0, samples: int = 6) -> dict:
     cap = cv2.VideoCapture(str(path))
     total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 1
+    cap.release()
+    indices = np.linspace(0, max(total - 1, 0), num=samples, dtype=int).tolist()
+    frames = _read_frames_at(path, indices)
+
     flagged_frames = []
-    for idx in np.linspace(0, max(total - 1, 0), num=samples, dtype=int):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
-        ok, frame = cap.read()
-        if not ok:
-            continue
+    for idx, frame in frames.items():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         h, w = gray.shape
         band_h, band_w = int(h * band_fraction), int(w * band_fraction)
@@ -142,11 +164,10 @@ def check_black_bars(path: Path, band_fraction: float = 0.05,
         left, right = gray[:, :band_w], gray[:, -band_w:]
         means = [top.mean(), bottom.mean(), left.mean(), right.mean()]
         if max(means) < brightness_threshold:
-            flagged_frames.append(int(idx))
-    cap.release()
+            flagged_frames.append(idx)
     return {
         "check": "black_bars",
-        "flagged_frame_indices": flagged_frames,
+        "flagged_frame_indices": sorted(flagged_frames),
         "pass": len(flagged_frames) == 0,
         "note": "Flags literal black borders only; intentional blurred-background "
                 "padding (resize mode=blur_pad) will not trigger this.",
@@ -156,19 +177,19 @@ def check_black_bars(path: Path, band_fraction: float = 0.05,
 def check_opening_strength(path: Path, at_sec: float = 0.5) -> dict:
     cap = cv2.VideoCapture(str(path))
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
-    cap.set(cv2.CAP_PROP_POS_FRAMES, int(at_sec * fps))
-    ok, frame = cap.read()
     cap.release()
-    if not ok:
+    frames = _read_frames_at(path, [int(at_sec * fps)])
+    frame = next(iter(frames.values()), None)
+    if frame is None:
         return {"check": "opening_strength", "pass": False, "note": "Could not read frame"}
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    sharpness = cv2.Laplacian(gray, cv2.CV_64F).var()
+    sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
     contrast = float(gray.std())
     return {
         "check": "opening_strength",
-        "sharpness_laplacian_var": round(float(sharpness), 1),
+        "sharpness_laplacian_var": round(sharpness, 1),
         "contrast_stddev": round(contrast, 1),
-        "heuristic_pass": sharpness > 15 and contrast > 20,
+        "heuristic_pass": bool(sharpness > 15 and contrast > 20),
         "note": "HEURISTIC ONLY — a static/blank/low-contrast opening frame will fail this; "
                 "'strong hook' is a creative judgment call for the director either way.",
     }

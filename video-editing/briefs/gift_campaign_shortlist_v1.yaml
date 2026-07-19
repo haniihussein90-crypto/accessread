@@ -1,0 +1,153 @@
+# Real production brief — "Video 003-008 Editing Shortlist" client notes,
+# implemented against 53812b06-008__Gift_Campaign.mp4 (copied in as
+# source/gift_campaign_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps.
+#
+# IMPORTANT — how these boundaries were found: the first pass at this brief
+# used seek-based sampling (ffmpeg -ss / OpenCV CAP_PROP_POS_FRAMES) to
+# locate cuts, and it was WRONG — input seeking on this file lands on the
+# wrong frame. Every boundary below was re-verified by decoding the
+# source sequentially frame-by-frame (no seeking) and visually confirming
+# the exact frame where each cut happens. See the edit report's boundary
+# notes for the corrected vs. originally-assumed timestamps.
+#
+# This also revealed the source has 7 real shots, not 9 — "necklace
+# close-up" and "putting on the necklace" in the client's notes are the
+# SAME continuous take (lift -> lower onto chest -> fasten clasp), and
+# "wide establishing" + "couple together" are also the same continuous
+# shot. Both are handled as one scene each below rather than forced into
+# two, since there's no actual cut to make between them.
+
+name: gift_campaign_shortlist_v1
+
+source_file: gift_campaign_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 12.0
+  max: 13.0
+hook: "Get to the gift faster — first 3 seconds must hook before the reveal."
+cover_frame: 3.9   # lands in the message-card close-up in the final timeline
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame decode) ---
+timestamp_cuts:
+  - id: wide_couple       # client: 0:00-0:02 "wide establishing" + "couple together" — ONE continuous shot, true span 0.000-1.042
+    start: 0.500           # trimmed 0.5s off the front per "trim 0.4-0.6s, start with movement not a static frame"
+    end: 1.042
+  - id: gift_reveal        # client: 0:02-0:03 "gift box appears" — kept exactly, no trim. True span 1.083-2.542
+    start: 1.083
+    end: 2.542
+  - id: box_open           # client: 0:03-0:05 "opening the gift box" — protected, not shortened. True span 2.583-3.708
+    start: 2.583
+    end: 3.708
+  - id: message_card       # continuation of the box-open reveal where the ZAVIQU card is fully legible. True span 3.750-5.292
+    start: 3.750
+    end: 5.292
+  - id: necklace_wear      # client: 0:05-0:06 "necklace close-up" + 0:07-0:09 "putting on the necklace" — ONE continuous
+    start: 5.333            # shot (lift out of box -> lower onto chest -> fasten clasp). True span 5.333-7.458.
+    end: 7.158                # Trimmed ~0.3s off the tail — within the client's "~0.2s if it helps pacing" allowance.
+  - id: reaction            # client: 0:09-0:10 "reaction shot" — kept exactly, strongest emotional moment. True span 7.500-9.083
+    start: 7.500
+    end: 9.083
+  - id: proposal_embrace    # client: 0:10-0:12 "proposal" (no changes) + 0:12-0:13 "final embrace" (trim slightly) —
+    start: 9.125              # ONE continuous shot, true span 9.125-12.833 (3.708s — longer than the client's nominal
+    end: 12.549                 # 3s estimate). Trimmed 0.284s off the tail per "trim slightly if needed."
+
+scene_order:
+  - wide_couple
+  - gift_reveal
+  - box_open
+  - message_card
+  - necklace_wear
+  - reaction
+  - proposal_embrace
+
+# All hard cuts — every boundary above is a trim within one continuous
+# take or a genuine hard cut in the source; a crossfade would look like
+# an unmotivated dissolve either way. No xfade requested.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# "Add a subtle slow push-in if it feels natural" (couple) + "add a very
+# subtle zoom" (message card) — both restrained, brand-style gentle motion only.
+motion:
+  - scene: wide_couple
+    direction: in
+    zoom_end: 1.03
+  - scene: message_card
+    direction: in
+    zoom_end: 1.045
+
+# "Slightly increase sparkle and sharpness, but keep it realistic. No
+# artificial sparkle effects." — a real unsharp boost, not a synthetic glint overlay.
+scene_grade:
+  - scene: necklace_wear
+    sharpen: 0.35
+
+on_screen_text: []
+captions: []
+
+# "Current music works. Keep it." — no new track, original embedded audio only.
+music_direction:
+  track: null
+  volume: 0.0
+  original_volume: 1.0
+  duck: false
+
+# "Slightly increase the emotional lift during: gift box opening, necklace
+# reveal, final embrace." Times below are in the ASSEMBLED (post-trim)
+# timeline — cumulative scene durations, not source timestamps:
+#   wide_couple 0.000-0.542 | gift_reveal 0.542-2.001 | box_open 2.001-3.126
+#   message_card 3.126-4.668 | necklace_wear 4.668-6.493 | reaction 6.493-8.076
+#   proposal_embrace 8.076-11.500
+audio_swell:
+  - start: 0.542    # gift box opening (gift_reveal + box_open)
+    end: 3.126
+    boost: 0.30
+    ramp: 0.4
+  - start: 4.668    # necklace reveal (necklace_wear)
+    end: 6.493
+    boost: 0.30
+    ramp: 0.3
+  - start: 9.60     # final embrace (back portion of proposal_embrace)
+    end: 11.50
+    boost: 0.35
+    ramp: 0.4
+
+# "Increase warmth by about 5%. Increase contrast by about 3%. Maintain
+# the luxury cinematic look. Avoid over-saturation or heavy effects."
+global_grade:
+  warmth: 0.05
+  contrast: 0.03
+
+# Full end-screen replacement: real extracted logo image (see
+# brand-assets/logo/PROVENANCE.md), not drawtext, per "do not recreate or
+# redesign the logo." Goes straight from the embrace into the card —
+# no separate necklace-bridge cutaway (that shot wasn't requested and
+# the runtime budget doesn't have room for it after honoring every
+# explicit "keep"/"do not shorten" instruction above).
+end_card:
+  logo: brand-assets/logo/zaviqu-logo-gold-extracted.png
+  tagline_line1: "The Gift That Says"
+  tagline_line2: "What Words Can't."
+  duration: 1.5
+  bg_color: "#B7956D"    # sampled directly from the card's own parchment tone
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the couple out of a wide shot
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

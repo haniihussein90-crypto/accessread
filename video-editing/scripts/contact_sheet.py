@@ -37,26 +37,38 @@ def make_contact_sheet(
     if total_frames <= 0:
         raise RuntimeError(f"Video reports 0 frames: {video_path}")
 
-    indices = np.linspace(0, max(total_frames - 1, 0), num=num_frames, dtype=int)
+    indices = sorted(set(np.linspace(0, max(total_frames - 1, 0), num=num_frames, dtype=int).tolist()))
 
+    # Sequential decode, NOT cap.set(CAP_PROP_POS_FRAMES, ...) — OpenCV's
+    # frame-index seek is unreliable on many H.264 files (it can land
+    # several frames off, silently). That's not a cosmetic problem: this
+    # contact sheet is what a human/agent uses to pick exact cut points
+    # for trim_clip.py, so a wrong preview frame produces a wrong edit.
+    # Reading every frame once is slower but always accurate, and these
+    # are short social clips (seconds to low tens of seconds) where the
+    # cost is negligible.
     thumbs = []
-    for idx in indices:
-        cap.set(cv2.CAP_PROP_POS_FRAMES, int(idx))
+    wanted = list(indices)
+    frame_idx = 0
+    while wanted:
         ok, frame = cap.read()
         if not ok:
-            continue
-        h, w = frame.shape[:2]
-        thumb_h = int(thumb_width * h / w)
-        thumb = cv2.resize(frame, (thumb_width, thumb_h))
+            break
+        if frame_idx == wanted[0]:
+            wanted.pop(0)
+            h, w = frame.shape[:2]
+            thumb_h = int(thumb_width * h / w)
+            thumb = cv2.resize(frame, (thumb_width, thumb_h))
 
-        timestamp_sec = idx / fps
-        label = f"{int(timestamp_sec // 60):02d}:{timestamp_sec % 60:05.2f}"
-        cv2.rectangle(thumb, (0, thumb_h - 22), (thumb_width, thumb_h), (0, 0, 0), -1)
-        cv2.putText(
-            thumb, label, (4, thumb_h - 6),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA,
-        )
-        thumbs.append(thumb)
+            timestamp_sec = frame_idx / fps
+            label = f"{int(timestamp_sec // 60):02d}:{timestamp_sec % 60:05.2f}"
+            cv2.rectangle(thumb, (0, thumb_h - 22), (thumb_width, thumb_h), (0, 0, 0), -1)
+            cv2.putText(
+                thumb, label, (4, thumb_h - 6),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA,
+            )
+            thumbs.append(thumb)
+        frame_idx += 1
     cap.release()
 
     if not thumbs:

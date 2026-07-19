@@ -25,13 +25,16 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (  # noqa: E402
     BRIEFS_DIR, FINAL_DIR, FINAL_NO_TEXT_DIR, PREVIEWS_DIR, REPORTS_DIR,
-    SOURCE_DIR, WORKING_DIR, ensure_parent,
+    ROOT, SOURCE_DIR, WORKING_DIR, ensure_parent,
 )
+from add_brand_end_card import add_brand_end_card  # noqa: E402
 from add_captions import build_spec as build_caption_spec  # noqa: E402
 from add_cta_ending import add_cta_ending  # noqa: E402
 from add_motion import add_slow_zoom  # noqa: E402
 from add_text_overlay import add_overlays  # noqa: E402
 from add_transitions import add_transitions  # noqa: E402
+from audio_swell import apply_swells  # noqa: E402
+from color_grade import grade as color_grade  # noqa: E402
 from contact_sheet import make_contact_sheet  # noqa: E402
 from export_final import export_final  # noqa: E402
 from mix_audio import mix_audio  # noqa: E402
@@ -85,6 +88,16 @@ def run_edit(brief_path: Path) -> dict:
         scene_files[scene_id] = motion_path
         log.append(f"Applied slow zoom ({m.get('direction', 'in')}) to scene '{scene_id}'")
 
+    # 2b. Optional per-scene color grade (e.g. a sharpen/sparkle boost on one
+    # close-up shot only), applied before assembly so it doesn't touch other scenes.
+    for g in brief.get("scene_grade", []):
+        scene_id = g["scene"]
+        grade_path = work_dir / f"scene_{scene_id}_graded.mp4"
+        color_grade(scene_files[scene_id], grade_path, warmth=g.get("warmth", 0.0),
+                    contrast=g.get("contrast", 0.0), sharpen=g.get("sharpen", 0.0))
+        scene_files[scene_id] = grade_path
+        log.append(f"Applied per-scene grade (sharpen={g.get('sharpen', 0.0)}) to scene '{scene_id}'")
+
     # 3. Assemble in scene_order with the transitions plan (default: all cuts).
     ordered_clips = [scene_files[s] for s in brief["scene_order"]]
     plan = brief.get("transitions") or [{"type": "cut"} for _ in range(len(ordered_clips) - 1)]
@@ -115,10 +128,31 @@ def run_edit(brief_path: Path) -> dict:
     log.append(f"Mixed audio (music={'yes' if music_track else 'no'}, "
                f"original_volume={music_dir_spec.get('original_volume', 1.0)})")
 
+    # 4b. Optional targeted audio swell (emotional lift at specific beats),
+    # applied on top of whatever mix_audio already set.
+    swells = brief.get("audio_swell", [])
+    if swells:
+        swelled = work_dir / "swelled.mp4"
+        apply_swells(mixed, swells, swelled)
+        mixed = swelled
+        log.append(f"Applied {len(swells)} audio swell window(s)")
+
+    # 4c. Optional global color grade (warmth/contrast), applied once so
+    # every export version shares the same look.
+    global_grade_spec = brief.get("global_grade") or {}
+    if global_grade_spec:
+        graded_master = work_dir / "graded_master.mp4"
+        color_grade(mixed, graded_master, warmth=global_grade_spec.get("warmth", 0.0),
+                    contrast=global_grade_spec.get("contrast", 0.0))
+        mixed = graded_master
+        log.append(f"Applied global grade (warmth={global_grade_spec.get('warmth', 0.0)}, "
+                   f"contrast={global_grade_spec.get('contrast', 0.0)})")
+
     on_screen_text = brief.get("on_screen_text", [])
     captions = build_caption_spec(brief.get("captions", []))
     full_text_spec = on_screen_text + captions
     cta = brief.get("cta")
+    end_card = brief.get("end_card")
 
     outputs = []
     qc_reports = []
@@ -141,7 +175,23 @@ def run_edit(brief_path: Path) -> dict:
                 add_overlays(current, full_text_spec, texted)
                 current = texted
                 log.append(f"Burned in {len(full_text_spec)} text/caption overlay(s) for {aspect}")
-            if cta:
+            if end_card:
+                card_out = work_dir / f"{name}_{slug}_endcard.mp4"
+                logo_path = Path(end_card["logo"])
+                if not logo_path.is_absolute() and not logo_path.exists():
+                    logo_path = ROOT / logo_path
+                add_brand_end_card(
+                    current, card_out,
+                    logo=logo_path,
+                    tagline_line1=end_card["tagline_line1"],
+                    tagline_line2=end_card["tagline_line2"],
+                    duration=end_card.get("duration", 1.6),
+                    bg_color=end_card.get("bg_color", "#D8C9A8"),
+                    gold_color=end_card.get("gold_color", "#D4AF37"),
+                )
+                current = card_out
+                log.append(f"Appended branded end card ({end_card.get('duration', 1.6)}s) for {aspect}")
+            elif cta:
                 cta_out = work_dir / f"{name}_{slug}_cta.mp4"
                 add_cta_ending(current, cta_out, text=cta["text"],
                                 duration=cta.get("duration", 2.0), color=cta.get("color", "#D4AF37"))
@@ -154,11 +204,16 @@ def run_edit(brief_path: Path) -> dict:
             log.append(f"Exported final: {final_path}")
             outputs.append(final_path)
 
+            extra_text = []
+            if cta:
+                extra_text.append(cta["text"])
+            if end_card:
+                extra_text += [end_card["tagline_line1"], end_card["tagline_line2"]]
             qc = run_quality_check(
                 final_path, aspect,
                 brief.get("final_duration", {}).get("min"),
                 brief.get("final_duration", {}).get("max"),
-                [t.get("text", "") for t in full_text_spec] + ([cta["text"]] if cta else []),
+                [t.get("text", "") for t in full_text_spec] + extra_text,
                 full_text_spec,
             )
             qc_path = REPORTS_DIR / f"{name}_{slug}_qc.json"
