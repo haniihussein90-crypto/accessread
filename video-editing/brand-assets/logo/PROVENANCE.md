@@ -1,10 +1,33 @@
-# zaviqu-logo-gold-extracted.png — provenance
+# Logo assets — provenance
 
-No standalone Zaviqu logo file (vector or otherwise) exists anywhere in
-this repository — confirmed by a full search before this asset was
-created. This PNG was extracted directly from the actual message-card
-artwork visible on screen in `53812b06-008__Gift_Campaign.mp4` (the frame
-at 00:04.75), not redrawn or recreated:
+## zaviqu-lockup-reference.png (current, preferred)
+
+The client later supplied `zaviqu-lockup-reference-original.png` — an
+actual brand reference image (dark background, metallic-gold icon +
+"ZAVIQU" wordmark + line–heart–line divider + "Made with love. Made to
+last.") — as "the exact visual reference for logo styling, metallic gold
+color, spacing, proportions, and typography." This supersedes
+`zaviqu-logo-gold-extracted.png` below for any new work: it's a much
+higher-quality source (crisp edges, real metallic gradient) than
+anything extractable from the video.
+
+`zaviqu-lockup-reference.png` is the cropped, transparent-background
+version actually used by the pipeline (`add_logo_fade_ending.py`):
+cropped to just the icon/wordmark/divider/tagline group (excluding the
+reference image's decorative corner flourishes and border frame, which
+weren't part of what was asked for), background keyed out via a
+luminance threshold (the reference has a near-black background, gold
+ink — opposite polarity from the card-based extraction below, and a much
+cleaner key as a result).
+
+## zaviqu-logo-gold-extracted.png (superseded, kept for history)
+
+Before the reference image above was supplied, no standalone Zaviqu logo
+file (vector or otherwise) existed anywhere in this repository —
+confirmed by a full search before this asset was created. This PNG was
+extracted directly from the actual message-card artwork visible on
+screen in `53812b06-008__Gift_Campaign.mp4` (the frame at 00:04.75), not
+redrawn or recreated:
 
 1. Extracted the cleanest, most front-on frame showing the physical
    message card (icon + "ZAVIQU" wordmark + divider line + heart).
@@ -25,9 +48,7 @@ letter-spaced "ZAVIQU" wordmark, a horizontal rule, and a small heart) —
 not a redesign. It's lower-resolution than true vector artwork would be
 because it was sourced from a 960×960 video frame, not a print file.
 
-**If a real vector or high-resolution logo file exists** (brand
-guidelines, packaging print source, etc.), replace this file with that
-one — it will look sharper at any size and should be used in preference
-to this video-extracted version. Until then, this is the only real
-Zaviqu logo artwork available to the pipeline, and every script that
-references a logo image should point at this file.
+**Use `zaviqu-lockup-reference.png` instead of this file** for any new
+work — it's higher quality and is the client's own reference art. This
+file is kept only because `briefs/gift_campaign_shortlist_v1.yaml`'s
+history references it via the (now-unused) `end_card` brief section.

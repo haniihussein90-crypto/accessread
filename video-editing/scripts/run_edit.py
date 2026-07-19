@@ -30,6 +30,7 @@ from common import (  # noqa: E402
 from add_brand_end_card import add_brand_end_card  # noqa: E402
 from add_captions import build_spec as build_caption_spec  # noqa: E402
 from add_cta_ending import add_cta_ending  # noqa: E402
+from add_logo_fade_ending import add_logo_fade_ending  # noqa: E402
 from add_motion import add_slow_zoom  # noqa: E402
 from add_text_overlay import add_overlays  # noqa: E402
 from add_transitions import add_transitions  # noqa: E402
@@ -153,6 +154,7 @@ def run_edit(brief_path: Path) -> dict:
     full_text_spec = on_screen_text + captions
     cta = brief.get("cta")
     end_card = brief.get("end_card")
+    logo_fade_ending = brief.get("logo_fade_ending")
 
     outputs = []
     qc_reports = []
@@ -175,7 +177,26 @@ def run_edit(brief_path: Path) -> dict:
                 add_overlays(current, full_text_spec, texted)
                 current = texted
                 log.append(f"Burned in {len(full_text_spec)} text/caption overlay(s) for {aspect}")
-            if end_card:
+            if logo_fade_ending:
+                fade_out_path = work_dir / f"{name}_{slug}_logofade.mp4"
+                logo_path = Path(logo_fade_ending["lockup"])
+                if not logo_path.is_absolute() and not logo_path.exists():
+                    logo_path = ROOT / logo_path
+                add_logo_fade_ending(
+                    current, fade_out_path,
+                    lockup=logo_path,
+                    brand_promise=logo_fade_ending["brand_promise"],
+                    website=logo_fade_ending["website"],
+                    fade_in=logo_fade_ending.get("fade_in", 1.0),
+                    hold_visible=logo_fade_ending.get("hold_visible", 2.0),
+                    fade_to_black=logo_fade_ending.get("fade_to_black", 1.2),
+                    black_hold=logo_fade_ending.get("black_hold", 1.0),
+                    final_fade_out=logo_fade_ending.get("final_fade_out", 0.8),
+                    gold_color=logo_fade_ending.get("gold_color", "#D4AF37"),
+                )
+                current = fade_out_path
+                log.append(f"Appended logo-fade ending over final frame for {aspect}")
+            elif end_card:
                 card_out = work_dir / f"{name}_{slug}_endcard.mp4"
                 logo_path = Path(end_card["logo"])
                 if not logo_path.is_absolute() and not logo_path.exists():
@@ -209,6 +230,8 @@ def run_edit(brief_path: Path) -> dict:
                 extra_text.append(cta["text"])
             if end_card:
                 extra_text += [end_card["tagline_line1"], end_card["tagline_line2"]]
+            if logo_fade_ending:
+                extra_text += [logo_fade_ending["brand_promise"], logo_fade_ending["website"]]
             qc = run_quality_check(
                 final_path, aspect,
                 brief.get("final_duration", {}).get("min"),

@@ -24,10 +24,10 @@
     },
     {
       "check": "duration",
-      "duration_sec": 12.71,
+      "duration_sec": 17.74,
       "expected_range": [
-        12.0,
-        13.0
+        17.0,
+        18.5
       ],
       "pass": true
     },
@@ -35,11 +35,11 @@
       "check": "black_bars",
       "flagged_frame_indices": [],
       "pass": true,
-      "note": "Flags literal black borders only; intentional blurred-background padding (resize mode=blur_pad) will not trigger this."
+      "note": "Flags literal black borders around visibly brighter content only; intentional blurred-background padding (resize mode=blur_pad) and a deliberate fade-to-black ending (uniformly dark center too) will not trigger this."
     },
     {
       "check": "opening_strength",
-      "sharpness_laplacian_var": 18.5,
+      "sharpness_laplacian_var": 18.6,
       "contrast_stddev": 75.2,
       "heuristic_pass": true,
       "note": "HEURISTIC ONLY \u2014 a static/blank/low-contrast opening frame will fail this; 'strong hook' is a creative judgment call for the director either way."
@@ -47,7 +47,7 @@
     {
       "check": "ending_not_abrupt",
       "tail_rms": 0.0,
-      "overall_rms": 4269.0,
+      "overall_rms": 3474.2,
       "tail_to_overall_ratio": 0.0,
       "pass": true,
       "note": "If audio hasn't faded out by the last frames, ratio stays high \u2014 consider a fade-out or CTA card (add_cta_ending.py)."

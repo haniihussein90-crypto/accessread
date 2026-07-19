@@ -1,6 +1,6 @@
 # Edit report — gift_campaign_shortlist_v1
 
-Generated: 2026-07-19T08:13:02.344025Z
+Generated: 2026-07-19T08:49:50.653741Z
 Source: `gift_campaign_raw.mp4`
 Brief hook: Get to the gift faster — first 3 seconds must hook before the reveal.
 
@@ -22,12 +22,12 @@ Brief hook: Get to the gift faster — first 3 seconds must hook before the reve
 - Applied 3 audio swell window(s)
 - Applied global grade (warmth=0.05, contrast=0.03)
 - Resized to 9:16 (blur_pad) for instagram_facebook
-- Appended branded end card (1.5s) for 9:16
+- Appended logo-fade ending over final frame for 9:16
 - Exported final: /home/user/accessread/video-editing/final/instagram-facebook/gift_campaign_shortlist_v1_9x16.mp4
 - QC report written: /home/user/accessread/video-editing/reports/gift_campaign_shortlist_v1_9x16_qc.json (automated_pass=True)
 - Exported no-text version: /home/user/accessread/video-editing/final/no-text/gift_campaign_shortlist_v1_9x16_no-text.mp4
 - Resized to 4:5 (blur_pad) for instagram_facebook
-- Appended branded end card (1.5s) for 4:5
+- Appended logo-fade ending over final frame for 4:5
 - Exported final: /home/user/accessread/video-editing/final/instagram-facebook/gift_campaign_shortlist_v1_4x5.mp4
 - QC report written: /home/user/accessread/video-editing/reports/gift_campaign_shortlist_v1_4x5_qc.json (automated_pass=True)
 - Exported no-text version: /home/user/accessread/video-editing/final/no-text/gift_campaign_shortlist_v1_4x5_no-text.mp4

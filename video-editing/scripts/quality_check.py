@@ -163,14 +163,21 @@ def check_black_bars(path: Path, band_fraction: float = 0.05,
         top, bottom = gray[:band_h, :], gray[-band_h:, :]
         left, right = gray[:, :band_w], gray[:, -band_w:]
         means = [top.mean(), bottom.mean(), left.mean(), right.mean()]
-        if max(means) < brightness_threshold:
+        # A frame that's dark everywhere (a deliberate fade-to-black
+        # ending, a night scene) isn't "letterboxing" — that specifically
+        # means bright real content with dark bars cropped around it. Only
+        # flag when the center is clearly brighter than the edges.
+        center = gray[band_h:h - band_h, band_w:w - band_w]
+        center_mean = center.mean() if center.size else 0.0
+        if max(means) < brightness_threshold and center_mean > brightness_threshold * 2:
             flagged_frames.append(idx)
     return {
         "check": "black_bars",
         "flagged_frame_indices": sorted(flagged_frames),
         "pass": len(flagged_frames) == 0,
-        "note": "Flags literal black borders only; intentional blurred-background "
-                "padding (resize mode=blur_pad) will not trigger this.",
+        "note": "Flags literal black borders around visibly brighter content only; "
+                "intentional blurred-background padding (resize mode=blur_pad) and a "
+                "deliberate fade-to-black ending (uniformly dark center too) will not trigger this.",
     }
 
 
@@ -233,8 +240,15 @@ def check_brand_text(text_strings: list[str]) -> dict:
     issues = []
     for text in text_strings:
         for match in MISSPELL_PATTERN.finditer(text):
-            if match.group(0) != BRAND_NAME:
-                issues.append({"text": text, "found": match.group(0), "expected": BRAND_NAME})
+            found = match.group(0)
+            if found == BRAND_NAME:
+                continue
+            # A domain/URL is correctly all-lowercase by convention
+            # (zaviqu.com, not ZAVIQU.COM) — that's not a misspelling.
+            tail = text[match.end():match.end() + 5]
+            if found.lower() == BRAND_NAME.lower() and tail.startswith("."):
+                continue
+            issues.append({"text": text, "found": found, "expected": BRAND_NAME})
     return {
         "check": "brand_name_spelling",
         "issues": issues,

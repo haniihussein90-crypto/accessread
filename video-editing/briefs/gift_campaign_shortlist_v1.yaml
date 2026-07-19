@@ -24,9 +24,15 @@ name: gift_campaign_shortlist_v1
 source_file: gift_campaign_raw.mp4
 
 platform: instagram_facebook
+# Body (through the embrace) is ~11.5-11.7s; the logo_fade_ending below adds
+# a further ~6.0s (fade-in + hold + fade-to-black + black-hold + fade-out)
+# on top of that, per the revised ending brief — total lands ~17.5-17.7s.
+# This supersedes the earlier 12-13s target, which was written for a
+# short crossfaded end card, not a full logo-reveal sequence held over
+# the frozen final frame.
 final_duration:
-  min: 12.0
-  max: 13.0
+  min: 17.0
+  max: 18.5
 hook: "Get to the gift faster — first 3 seconds must hook before the reveal."
 cover_frame: 3.9   # lands in the message-card close-up in the final timeline
 
@@ -126,18 +132,23 @@ global_grade:
   warmth: 0.05
   contrast: 0.03
 
-# Full end-screen replacement: real extracted logo image (see
-# brand-assets/logo/PROVENANCE.md), not drawtext, per "do not recreate or
-# redesign the logo." Goes straight from the embrace into the card —
-# no separate necklace-bridge cutaway (that shot wasn't requested and
-# the runtime budget doesn't have room for it after honoring every
-# explicit "keep"/"do not shorten" instruction above).
-end_card:
-  logo: brand-assets/logo/zaviqu-logo-gold-extracted.png
-  tagline_line1: "The Gift That Says"
-  tagline_line2: "What Words Can't."
-  duration: 1.5
-  bg_color: "#B7956D"    # sampled directly from the card's own parchment tone
+# REVISED ending (replaces the earlier separate beige end-card entirely):
+# no cutaway. The embrace plays through, freezes on its last frame, and
+# the brand lockup fades in OVER that frozen footage — logo never moves,
+# only opacity fades. Lockup image is a transparent-background crop of
+# the client's own reference art (brand-assets/logo/zaviqu-lockup-reference.png
+# — see brand-assets/logo/PROVENANCE.md), not a redraw. Two lines are
+# added below the reference crop (brand promise + website) in matching
+# gold/serif styling since they weren't part of the reference art itself.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0          # logo/text fades in over the still-hugging frozen frame
+  hold_visible: 2.0      # hold frozen footage + full-opacity text (client: "about 2 seconds")
+  fade_to_black: 1.2       # footage fades to black; text opacity untouched, stays fully readable
+  black_hold: 1.0            # hold on black + text (client: "about 1 second")
+  final_fade_out: 0.8          # everything (text, now on pure black) fades out together
   gold_color: "#D4AF37"
 
 export_versions:
