@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "zaviqu/campaign_intake.schema.json",
+  "title": "Campaign Intake",
+  "description": "The starting input for a campaign — what the human/creative director hands the studio before Stage 1 (Strategy) runs.",
+  "type": "object",
+  "required": ["campaign_id", "product_facts", "launch_context"],
+  "properties": {
+    "campaign_id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "product_facts": {
+      "type": "array",
+      "description": "The ONLY facts agents are allowed to state about the product. Nothing outside this list may be invented (brand rule: do not invent product features).",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "product_name": { "type": "string", "default": "Signature Box" },
+    "launch_context": { "type": "string" },
+    "voiceover_requested": { "type": "boolean", "default": false },
+    "avatar_requested": { "type": "boolean", "default": false },
+    "avatar_id": { "type": ["string", "null"] },
+    "target_platforms": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["instagram_facebook", "tiktok"] },
+      "minItems": 1
+    },
+    "notes": { "type": "string" }
+  }
+}

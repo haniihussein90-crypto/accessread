@@ -1,0 +1,60 @@
+{
+  "campaign_id": "anniversary_necklace_reveal",
+  "derived_from_creative_brief": "anniversary_necklace_reveal",
+  "tool": "higgsfield",
+  "prompt_format": "higgsfield_v1",
+  "shots": [
+    {
+      "shot_id": "card_tuck",
+      "prompt": "Close-up of a man's hands tucking a handwritten message card into the Signature Box, gold ribbon visible at the frame edge. Setting: warm home interior, kitchen counter, morning. Lighting: soft natural window light, warm tone. Camera: static with gentle handheld micro-motion. Product placement: Signature Box centered in frame, message card mid-tuck, gold foil detail catching the light. Wardrobe: n/a (hands only). Style: warm, intimate, premium, emotionally meaningful, cinematic; warm gold accents on any logo/brand moment; never cheap or flashy.",
+      "negative_prompt": "cheap or flashy effects; overly dramatic delivery; dark, gloomy, candle-heavy visuals; generic template-message positioning (do not sell this as \"just add a custom message\" \u2014 the Signature Box + message-card mechanism is the specific, singular differentiator, not a generic personalization add-on); inventing product features that were not supplied in the campaign intake's product_facts list; multi-message concepts \u2014 every concept must solve exactly ONE buyer problem, not several at once",
+      "aspect_ratio": "9:16",
+      "duration_seconds": 2.5,
+      "avatar_ref_id": null,
+      "reference_image_refs": [],
+      "tool_params": {
+        "style_preset": "cinematic-warm-premium",
+        "motion_strength": 0.2
+      },
+      "output_filename": "card_tuck.mp4"
+    },
+    {
+      "shot_id": "reveal",
+      "prompt": "She opens the Signature Box and reads the message card first; her expression softens into genuine emotion before she notices the necklace beneath it. Setting: same warm home interior, seated at the counter. Lighting: soft natural window light, warm tone. Camera: slow push in. Product placement: message card in sharp focus first, necklace visible in the box beneath it, slightly soft. Wardrobe: soft knit sweater, neutral cream tone. Subject: Warm, natural look \u2014 soft window light flatters her features. No exaggerated styling. Reads as someone's real girlfriend/wife, not a stock-ad model. Consistent hair color/length and general build across every generation using this profile's approved_references.\n (27-32). Style: warm, intimate, premium, emotionally meaningful, cinematic; warm gold accents on any logo/brand moment; never cheap or flashy.",
+      "negative_prompt": "cheap or flashy effects; overly dramatic delivery; dark, gloomy, candle-heavy visuals; generic template-message positioning (do not sell this as \"just add a custom message\" \u2014 the Signature Box + message-card mechanism is the specific, singular differentiator, not a generic personalization add-on); inventing product features that were not supplied in the campaign intake's product_facts list; multi-message concepts \u2014 every concept must solve exactly ONE buyer problem, not several at once",
+      "aspect_ratio": "9:16",
+      "duration_seconds": 4.5,
+      "avatar_ref_id": "recipient_woman_late20s",
+      "reference_image_refs": [
+        "PENDING: no approved reference images yet"
+      ],
+      "tool_params": {
+        "style_preset": "cinematic-warm-premium",
+        "motion_strength": 0.2
+      },
+      "output_filename": "reveal.mp4"
+    },
+    {
+      "shot_id": "necklace_closeup",
+      "prompt": "Macro close-up of the necklace resting in the Signature Box beside the now-read message card. Setting: same counter, shallow depth of field. Lighting: soft natural window light, warm tone. Camera: slow zoom in. Product placement: necklace and message card sharing the frame, card still legible but out of focus. Wardrobe: n/a. Style: warm, intimate, premium, emotionally meaningful, cinematic; warm gold accents on any logo/brand moment; never cheap or flashy.",
+      "negative_prompt": "cheap or flashy effects; overly dramatic delivery; dark, gloomy, candle-heavy visuals; generic template-message positioning (do not sell this as \"just add a custom message\" \u2014 the Signature Box + message-card mechanism is the specific, singular differentiator, not a generic personalization add-on); inventing product features that were not supplied in the campaign intake's product_facts list; multi-message concepts \u2014 every concept must solve exactly ONE buyer problem, not several at once",
+      "aspect_ratio": "9:16",
+      "duration_seconds": 3.0,
+      "avatar_ref_id": null,
+      "reference_image_refs": [],
+      "tool_params": {
+        "style_preset": "cinematic-warm-premium",
+        "motion_strength": 0.2
+      },
+      "output_filename": "necklace_closeup.mp4"
+    }
+  ],
+  "workflow_steps": [
+    "Generate each shot with Higgsfield using the prompt/params below",
+    "Review each generated clip against its shot_id in the creative brief",
+    "Upscale if source resolution is below 1080p on the short edge",
+    "Reframe/crop to 9:16 at generation time if the tool supports it; otherwise leave to the Video Editing Agent's resize_video.py",
+    "Drop accepted clips into video-editing/source/ using output_naming_convention"
+  ],
+  "output_naming_convention": "anniversary_necklace_reveal__<shot_id>.mp4"
+}

@@ -1,0 +1,66 @@
+{
+  "campaign_id": "anniversary_necklace_reveal",
+  "platforms": {
+    "instagram_reels": {
+      "headline_variants": [
+        "The card is what gets her.",
+        "Not another 'nice necklace.'"
+      ],
+      "primary_text_variants": [
+        "He wrote the message. She read it before she even saw the necklace. That's the ZAVIQU Signature Box.",
+        "The necklace is beautiful. The message you write is why she'll actually cry. Create yours at ZAVIQU."
+      ],
+      "hook_variants": [
+        "She opened the box and read the card first.",
+        "This isn't about the necklace.",
+        "He didn't just buy a gift. He wrote one."
+      ],
+      "cta_variants": [
+        "Create yours at ZAVIQU",
+        "Write yours at ZAVIQU"
+      ],
+      "caption": "The message card comes first. The necklace comes second. That's the point. Create yours at ZAVIQU.",
+      "hashtags": ["#ZAVIQU", "#AnniversaryGift", "#GiftForHer"]
+    },
+    "instagram_feed": {
+      "headline_variants": [
+        "The card is what gets her.",
+        "A gift that's actually about her."
+      ],
+      "primary_text_variants": [
+        "Every ZAVIQU Signature Box opens to your handwritten message first — the necklace comes second. Create yours today.",
+        "Skip the generic gift. Write the message that makes this one hers. Create yours at ZAVIQU."
+      ],
+      "hook_variants": [
+        "The necklace isn't the gift. Your words are.",
+        "She'll remember what you wrote, not what you bought."
+      ],
+      "cta_variants": [
+        "Create yours at ZAVIQU",
+        "Shop now at ZAVIQU"
+      ],
+      "caption": "Every Signature Box starts with your words. Create yours at ZAVIQU.",
+      "hashtags": ["#ZAVIQU", "#MeaningfulGifts"]
+    },
+    "facebook_feed": {
+      "headline_variants": [
+        "The card is what gets her.",
+        "Give a gift that's actually about her."
+      ],
+      "primary_text_variants": [
+        "Most gifts feel like they could be for anyone. Yours opens with a message only you could write. Create yours at ZAVIQU.",
+        "You already know what you want to say to her. The Signature Box makes sure she reads it first. Create yours at ZAVIQU."
+      ],
+      "hook_variants": [
+        "It's not about the necklace.",
+        "She'll read your words before she sees the necklace."
+      ],
+      "cta_variants": [
+        "Create yours at ZAVIQU",
+        "Shop now at ZAVIQU"
+      ],
+      "caption": "The message comes first. That's what makes it hers. Create yours at ZAVIQU.",
+      "hashtags": ["#ZAVIQU"]
+    }
+  }
+}

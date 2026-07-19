@@ -1,0 +1,48 @@
+# Platform specs the Content & Ads Agent, Creative Director, and QC Agent
+# all read from — one source of truth so nobody hard-codes a duration or
+# character limit that drifts from what the Video Editing Agent actually
+# supports (see .claude/skills/zaviqu-video-editor/SKILL.md §2-3, which
+# these numbers intentionally match).
+
+platforms:
+  instagram_reels:
+    parent: instagram_facebook
+    aspects: ["9:16"]
+    duration_sec: { min: 8, max: 15 }
+    primary_text_max_chars: 125
+    headline_max_chars: 40
+    hook_window_sec: 2
+
+  instagram_feed:
+    parent: instagram_facebook
+    aspects: ["4:5"]
+    duration_sec: { min: 8, max: 15 }
+    primary_text_max_chars: 125
+    headline_max_chars: 40
+    hook_window_sec: 2
+
+  facebook_feed:
+    parent: instagram_facebook
+    aspects: ["4:5", "9:16"]
+    duration_sec: { min: 8, max: 15 }
+    primary_text_max_chars: 125
+    headline_max_chars: 40
+    hook_window_sec: 2
+
+  tiktok:
+    parent: tiktok
+    aspects: ["9:16"]
+    duration_sec: { min: 12, max: 25 }
+    caption_max_chars: 150
+    hook_window_sec: 2
+
+# Minimum export coverage a campaign must produce to be considered
+# platform-complete (checked by the Quality-Control Agent).
+required_coverage:
+  instagram_facebook: ["9:16", "4:5"]
+  tiktok: ["9:16"]
+
+ad_variation_defaults:
+  hook_variants: 3
+  cta_variants: 2
+  headline_variants: 2

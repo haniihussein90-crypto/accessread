@@ -1,0 +1,68 @@
+{
+  "campaign_id": "anniversary_necklace_reveal",
+  "derived_from_strategy": "anniversary_necklace_reveal",
+  "concept_summary": "A warm, unhurried home moment: his hands tuck the message card into the Signature Box, she opens it and reads the card first — her reaction is genuine, not performed — and only then does the necklace come into focus. The card, not the jewelry, is the visual and emotional center of every frame it shares.",
+  "shot_list": [
+    {
+      "shot_id": "card_tuck",
+      "description": "Close-up of a man's hands tucking a handwritten message card into the Signature Box, gold ribbon visible at the frame edge",
+      "setting": "warm home interior, kitchen counter, morning",
+      "lighting": "soft natural window light, warm tone",
+      "camera_movement": "static with gentle handheld micro-motion",
+      "product_placement": "Signature Box centered in frame, message card mid-tuck, gold foil detail catching the light",
+      "wardrobe": "n/a (hands only)",
+      "casting": "hands only",
+      "duration_seconds": 2.5
+    },
+    {
+      "shot_id": "reveal",
+      "description": "She opens the Signature Box and reads the message card first; her expression softens into genuine emotion before she notices the necklace beneath it",
+      "setting": "same warm home interior, seated at the counter",
+      "lighting": "soft natural window light, warm tone",
+      "camera_movement": "slow push in",
+      "product_placement": "message card in sharp focus first, necklace visible in the box beneath it, slightly soft",
+      "wardrobe": "soft knit sweater, neutral cream tone",
+      "casting": "recipient_woman_late20s",
+      "duration_seconds": 4.5
+    },
+    {
+      "shot_id": "necklace_closeup",
+      "description": "Macro close-up of the necklace resting in the Signature Box beside the now-read message card",
+      "setting": "same counter, shallow depth of field",
+      "lighting": "soft natural window light, warm tone",
+      "camera_movement": "slow zoom in",
+      "product_placement": "necklace and message card sharing the frame, card still legible but out of focus",
+      "wardrobe": "n/a",
+      "casting": "none",
+      "duration_seconds": 3.0
+    }
+  ],
+  "text_overlays": [
+    {
+      "text": "ZAVIQU",
+      "start": 0.0,
+      "end": 1.6,
+      "position": "top",
+      "size": 72,
+      "color": "gold",
+      "box": false
+    },
+    {
+      "text": "Create yours at ZAVIQU",
+      "start": 7.0,
+      "end": 9.3,
+      "position": "bottom",
+      "size": 68,
+      "color": "white",
+      "box": true
+    }
+  ],
+  "captions": [],
+  "reference_requirements": [
+    "Approved reference images for avatar 'recipient_woman_late20s' (PENDING — profile status is pending_approval, none exist yet; see Avatar Director)",
+    "Product photography of the actual Signature Box + necklace for generation-tool reference conditioning",
+    "Placeholder handwritten message-card mockup — generic text only, never a real customer's message"
+  ],
+  "style_notes": "Premium, warm, intimate, cinematic throughout. No dramatic lighting, no dark/candle-heavy visuals. Motion stays gentle (push-in, slow zoom) — no whip pans or punch zooms. Gold text only for the brand mark and CTA; everything else white and minimal.",
+  "avatar_id": "recipient_woman_late20s"
+}

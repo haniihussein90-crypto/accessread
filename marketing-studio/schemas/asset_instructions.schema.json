@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "zaviqu/asset_instructions.schema.json",
+  "title": "Asset Instructions (AI Video Creator output)",
+  "description": "Stage 3 output. Production-ready prompts/workflow for whichever tool is active in config/tools.yaml — never hard-codes a specific tool's API shape into the studio.",
+  "type": "object",
+  "required": ["campaign_id", "derived_from_creative_brief", "tool", "prompt_format", "shots"],
+  "properties": {
+    "campaign_id": { "type": "string" },
+    "derived_from_creative_brief": { "type": "string" },
+    "tool": { "type": "string", "description": "Must match active_video_tool/active_image_tool in config/tools.yaml at generation time" },
+    "prompt_format": { "type": "string", "description": "Which adapter in build_asset_instructions.py produced this" },
+    "shots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "prompt", "aspect_ratio", "duration_seconds"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "prompt": { "type": "string" },
+          "negative_prompt": { "type": "string" },
+          "aspect_ratio": { "type": "string" },
+          "duration_seconds": { "type": "number" },
+          "avatar_ref_id": { "type": ["string", "null"] },
+          "reference_image_refs": { "type": "array", "items": { "type": "string" } },
+          "tool_params": { "type": "object" },
+          "output_filename": { "type": "string" }
+        }
+      }
+    },
+    "workflow_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered human/agent steps to actually produce the assets (generate, upscale, reframe, etc.)"
+    },
+    "output_naming_convention": { "type": "string" }
+  }
+}

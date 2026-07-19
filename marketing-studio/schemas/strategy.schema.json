@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "zaviqu/strategy.schema.json",
+  "title": "Strategy (Marketing Strategist output)",
+  "description": "Stage 1 output. Chooses the audience, buyer problem, emotional angle, offer, campaign objective, hook, and CTA. Everything downstream derives from this.",
+  "type": "object",
+  "required": [
+    "campaign_id", "audience", "buyer_problem", "emotional_angle",
+    "offer", "campaign_objective", "hook", "cta", "target_platforms"
+  ],
+  "properties": {
+    "campaign_id": { "type": "string" },
+    "audience": { "type": "string" },
+    "buyer_problem": {
+      "type": "string",
+      "description": "Exactly ONE buyer problem this campaign solves (brand rule)."
+    },
+    "emotional_angle": { "type": "string" },
+    "offer": { "type": "string" },
+    "campaign_objective": {
+      "type": "string",
+      "enum": ["awareness", "consideration", "conversion", "retargeting"]
+    },
+    "hook": {
+      "type": "string",
+      "description": "The idea that has to land in the first 1-2 seconds."
+    },
+    "cta": { "type": "string" },
+    "target_platforms": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["instagram_facebook", "tiktok"] },
+      "minItems": 1
+    },
+    "voiceover_requested": { "type": "boolean", "default": false },
+    "rationale": { "type": "string" }
+  }
+}

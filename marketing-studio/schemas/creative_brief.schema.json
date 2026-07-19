@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "zaviqu/creative_brief.schema.json",
+  "title": "Creative Brief (Creative Director output)",
+  "description": "Stage 2 output. Turns the strategy into a complete visual concept: shot list, setting, lighting, casting, wardrobe, product placement, text overlays, and reference requirements.",
+  "type": "object",
+  "required": ["campaign_id", "derived_from_strategy", "concept_summary", "shot_list", "text_overlays"],
+  "properties": {
+    "campaign_id": { "type": "string" },
+    "derived_from_strategy": { "type": "string", "description": "campaign_id of the strategy this brief implements" },
+    "concept_summary": { "type": "string" },
+    "shot_list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "description", "setting", "lighting", "duration_seconds"],
+        "properties": {
+          "shot_id": { "type": "string" },
+          "description": { "type": "string" },
+          "setting": { "type": "string" },
+          "lighting": { "type": "string" },
+          "camera_movement": { "type": "string" },
+          "product_placement": { "type": "string" },
+          "wardrobe": { "type": "string" },
+          "casting": {
+            "type": "string",
+            "description": "'none' | 'hands only' | an avatar_id from avatars/profiles/"
+          },
+          "duration_seconds": { "type": "number", "minimum": 0.5 }
+        }
+      }
+    },
+    "text_overlays": {
+      "type": "array",
+      "description": "Timed text overlays, in the same shape the Video Editing Agent's add_text_overlay.py spec expects.",
+      "items": {
+        "type": "object",
+        "required": ["text", "start", "end", "position"],
+        "properties": {
+          "text": { "type": "string" },
+          "start": { "type": "number" },
+          "end": { "type": "number" },
+          "position": { "type": "string", "enum": ["top", "center", "bottom", "custom"] },
+          "size": { "type": "number" },
+          "color": { "type": "string" },
+          "box": { "type": "boolean" }
+        }
+      }
+    },
+    "captions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["text", "start", "end"],
+        "properties": {
+          "text": { "type": "string" },
+          "start": { "type": "number" },
+          "end": { "type": "number" }
+        }
+      }
+    },
+    "reference_requirements": {
+      "type": "array",
+      "description": "What reference assets must exist before generation (product photos, avatar refs, location refs).",
+      "items": { "type": "string" }
+    },
+    "style_notes": { "type": "string" },
+    "avatar_id": { "type": ["string", "null"] }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "zaviqu/marketing_copy.schema.json",
+  "title": "Marketing Copy (Content & Ads Agent output)",
+  "description": "Stage 5 output. Platform-specific captions, hooks, headlines, primary ad text, CTAs, and testing variations.",
+  "type": "object",
+  "required": ["campaign_id", "platforms"],
+  "properties": {
+    "campaign_id": { "type": "string" },
+    "platforms": {
+      "type": "object",
+      "description": "Keyed by platform key from config/platforms.yaml (instagram_reels, instagram_feed, facebook_feed, tiktok).",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["headline_variants", "primary_text_variants", "hook_variants", "cta_variants"],
+        "properties": {
+          "headline_variants": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "primary_text_variants": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "hook_variants": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "cta_variants": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "caption": { "type": "string" },
+          "hashtags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

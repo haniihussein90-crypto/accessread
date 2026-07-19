@@ -1,0 +1,67 @@
+{
+  "campaign_id": "anniversary_necklace_reveal",
+  "automated_checks": [
+    {
+      "check": "brand_name_spelling",
+      "pass": true,
+      "details": []
+    },
+    {
+      "check": "banned_terminology",
+      "pass": true,
+      "details": []
+    },
+    {
+      "check": "invented_features_heuristic",
+      "pass": true,
+      "details": [],
+      "note": "Keyword heuristic only \u2014 always cross-check product claims against product_facts by hand too."
+    },
+    {
+      "check": "single_buyer_problem",
+      "pass": true,
+      "details": {
+        "buyer_problem": "He's afraid the gift will feel generic, like he didn't put real thought into it.",
+        "and_or_semicolon_count": 0,
+        "sentence_count": 1
+      },
+      "note": "HEURISTIC \u2014 flags likely multi-problem phrasing; a human call either way."
+    },
+    {
+      "check": "voiceover_rule",
+      "pass": true,
+      "details": []
+    },
+    {
+      "check": "avatar_consistency",
+      "pass": false,
+      "details": [
+        "avatar 'recipient_woman_late20s' status is 'pending_approval', not 'active'"
+      ]
+    },
+    {
+      "check": "platform_format_coverage",
+      "pass": true,
+      "details": []
+    },
+    {
+      "check": "text_readability_and_margins",
+      "pass": true,
+      "details": []
+    },
+    {
+      "check": "copy_char_limits",
+      "pass": true,
+      "details": []
+    }
+  ],
+  "overall_automated_pass": false,
+  "manual_review_required": [
+    "Product and message-card accuracy in the actual rendered frame (once real assets exist)",
+    "Whether the emotional angle genuinely lands, not just whether it's stated",
+    "Whether the concept feels premium/warm/intimate rather than merely claiming to",
+    "Avatar likeness consistency in generated footage (this only checks brief/prompt references)",
+    "Overall marketing strength / competitive differentiation"
+  ],
+  "approval_status": "blocked_automated_failure"
+}

@@ -1,0 +1,50 @@
+# Pluggable production-tool configuration.
+#
+# The AI Video Creator agent NEVER hard-codes "Higgsfield" into its logic —
+# it reads active_* below and dispatches to the matching adapter in
+# orchestrator/build_asset_instructions.py's ADAPTERS dict. To replace
+# Higgsfield with another tool (a new image/video/avatar model), add a
+# block under `tools:` with a new prompt_format, write one adapter
+# function for it, and flip the active_* pointer below — nothing else in
+# the studio changes.
+
+active_video_tool: higgsfield
+active_image_tool: higgsfield
+active_avatar_tool: higgsfield
+
+tools:
+  higgsfield:
+    display_name: "Higgsfield"
+    status: active
+    capabilities:
+      - image_generation
+      - video_generation
+      - avatar_motion_control
+      - upscaling
+      - reframe
+      - background_removal
+    # Which adapter function (in build_asset_instructions.py) formats
+    # prompts/workflow steps for this tool.
+    prompt_format: higgsfield_v1
+    # Accessed live via the higgs_field MCP tools when connected in an
+    # interactive session (generate_image, generate_video, motion_control,
+    # reframe, etc.) — this config only defines prompt/parameter shape,
+    # it does not itself call any API.
+    param_schema:
+      aspect_ratio: { type: enum, values: ["9:16", "4:5", "1:1", "16:9"] }
+      duration_seconds: { type: number }
+      style_preset: { type: string, optional: true }
+      reference_images: { type: list, optional: true }
+      negative_prompt: { type: string, optional: true }
+      motion_strength: { type: number, optional: true }
+
+  # Placeholder for a future replacement tool. Not active. Copy this block,
+  # fill in a real prompt_format + param_schema, write its adapter, then
+  # change active_video_tool (and/or active_image_tool /
+  # active_avatar_tool) above to point at it.
+  future_tool_template:
+    display_name: "(unconfigured)"
+    status: inactive
+    capabilities: []
+    prompt_format: generic_v1
+    param_schema: {}

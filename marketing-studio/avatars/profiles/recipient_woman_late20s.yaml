@@ -1,0 +1,48 @@
+# Avatar profile — persistent across campaigns. Referenced by avatar_id
+# "recipient_woman_late20s" from creative briefs / asset instructions.
+# Status starts pending_approval; a human must flip it to active before
+# campaigns are allowed to treat it as consistency-verified.
+
+avatar_id: recipient_woman_late20s
+display_name: "Recipient — Woman, late 20s"
+
+appearance: >
+  Warm, natural look — soft window light flatters her features. No
+  exaggerated styling. Reads as someone's real girlfriend/wife, not a
+  stock-ad model. Consistent hair color/length and general build across
+  every generation using this profile's approved_references.
+
+age_range: "27-32"
+
+wardrobe:
+  - "soft knit sweater, neutral cream tone"
+  - "simple button-down shirt, warm taupe"
+  - "cozy loungewear, evening-at-home setting"
+
+personality: >
+  Genuine, unguarded emotional reactions — not performative. Warmth over
+  drama. Her reaction to the message card is the emotional centerpiece of
+  any shot she's in; she should never upstage the card/box.
+
+voice:
+  used_by_default: false
+  description: null
+  voice_id_ref: null
+
+approved_references:
+  # Populate once real reference images are captured/approved. Left empty
+  # intentionally — this is a synthetic profile for architecture testing,
+  # no real reference photography exists yet.
+  - "PENDING: no approved reference images yet"
+
+usage_rules:
+  - "No voiceover unless the campaign intake explicitly requests it"
+  - "Hands, torso, and natural candid framing preferred over posed
+     face-forward close-ups — keep it intimate, not commercial-looking"
+  - "Never shown in dark/gloomy/candle-heavy lighting (brand rule)"
+  - "Wardrobe must be picked from the list above — no new outfits invented
+     per campaign"
+  - "The Signature Box / message card stays the visual focus in any shot
+     featuring this avatar — she reacts to it, she doesn't compete with it"
+
+status: pending_approval

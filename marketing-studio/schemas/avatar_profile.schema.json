@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "zaviqu/avatar_profile.schema.json",
+  "title": "Avatar Profile (Avatar Director record)",
+  "description": "A persistent, cross-campaign identity record. Not campaign-specific — lives in marketing-studio/avatars/profiles/ and is referenced by avatar_id from creative briefs and asset instructions.",
+  "type": "object",
+  "required": ["avatar_id", "appearance", "age_range", "wardrobe", "personality", "usage_rules"],
+  "properties": {
+    "avatar_id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "display_name": { "type": "string" },
+    "appearance": { "type": "string" },
+    "age_range": { "type": "string" },
+    "wardrobe": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Approved wardrobe options only — creative briefs must pick from this list, not invent new outfits."
+    },
+    "personality": { "type": "string" },
+    "voice": {
+      "type": "object",
+      "properties": {
+        "used_by_default": { "type": "boolean", "default": false },
+        "description": { "type": "string" },
+        "voice_id_ref": { "type": ["string", "null"] }
+      }
+    },
+    "approved_references": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Paths/IDs of approved reference images for this avatar (for consistency across generations)."
+    },
+    "usage_rules": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "e.g. 'no voiceover unless requested', 'hands/torso only, no face close-ups', platform restrictions."
+    },
+    "status": { "type": "string", "enum": ["active", "retired", "pending_approval"], "default": "pending_approval" }
+  }
+}

@@ -1,0 +1,62 @@
+name: anniversary_necklace_reveal
+source_file: PENDING_AI_GENERATION__anniversary_necklace_reveal_raw.mp4
+platform: instagram_facebook
+final_duration:
+  min: 9.0
+  max: 11.0
+hook: The card is what gets her, not the necklace.
+cover_frame: 2.0
+timestamp_cuts:
+- id: card_tuck
+  start: 0.0
+  end: 2.5
+- id: reveal
+  start: 2.5
+  end: 7.0
+- id: necklace_closeup
+  start: 7.0
+  end: 10.0
+scene_order:
+- card_tuck
+- reveal
+- necklace_closeup
+transitions:
+- type: cut
+- type: cut
+motion: []
+on_screen_text:
+- text: ZAVIQU
+  start: 0.0
+  end: 1.6
+  position: top
+  size: 72
+  color: gold
+  box: false
+- text: Create yours at ZAVIQU
+  start: 7.0
+  end: 9.3
+  position: bottom
+  size: 68
+  color: white
+  box: true
+captions: []
+music_direction:
+  track: null
+  volume: 0.45
+  original_volume: 0.9
+  duck: true
+cta:
+  text: Create yours at ZAVIQU
+  duration: 1.8
+  color: '#D4AF37'
+export_versions:
+- platform: instagram_facebook
+  aspect: '9:16'
+  resize_mode: blur_pad
+  with_text: true
+  no_text_copy: true
+- platform: instagram_facebook
+  aspect: '4:5'
+  resize_mode: blur_pad
+  with_text: true
+  no_text_copy: true

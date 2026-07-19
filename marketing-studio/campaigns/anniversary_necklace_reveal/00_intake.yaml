@@ -1,0 +1,37 @@
+# SYNTHETIC TEST CAMPAIGN — architecture/handoff validation only.
+# No real footage or AI-generated assets exist for this campaign; every
+# downstream artifact is either hand-authored (creative-writing stages)
+# or produced by the deterministic bridge scripts (asset_instructions,
+# editing_brief) against this synthetic input. See campaign_summary.md.
+
+campaign_id: anniversary_necklace_reveal
+
+product_facts:
+  - "Zaviqu Signature Box holds a necklace and a customer-written message card"
+  - "The message card is written by the customer at checkout"
+  - "The Signature Box opens to reveal the message card before the necklace"
+  - "Packaging uses warm gold-tone finishing"
+
+product_name: "Signature Box"
+
+launch_context: >
+  Anniversary gifting push aimed at the primary launch audience: men
+  buying meaningful gifts for girlfriends or wives. Single hero edit for
+  Instagram/Facebook (Reels 9:16 + feed 4:5). A TikTok-specific edit is
+  intentionally out of scope for this test campaign — TikTok's
+  story-paced, curiosity-hook style (see
+  .claude/skills/zaviqu-creative-director/SKILL.md §Platform framing)
+  needs its own shot list, not a resized copy of this one; that would be
+  a second creative_brief in a real production run.
+
+voiceover_requested: false
+avatar_requested: true
+avatar_id: recipient_woman_late20s
+
+target_platforms:
+  - instagram_facebook
+
+notes: >
+  Built to exercise every stage of the pipeline once, including a
+  pending-approval avatar reference (intentional — see qc_report for how
+  that gate behaves) and the message-card-first differentiator.

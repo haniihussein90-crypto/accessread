@@ -1,0 +1,95 @@
+# ZAVIQU BRAND MEMORY — canonical, permanent rules.
+#
+# Every specialist agent in the Marketing Studio (strategist, creative
+# director, AI video creator, avatar director, content/ads, QC, and the
+# orchestrator) reads this file before doing any work. Nothing here is
+# campaign-specific — campaign-specific facts (product name in use, this
+# quarter's offer, etc.) live in each campaign's intake file instead.
+#
+# This file does NOT replace or modify video-editing/brand-assets/brand.yaml
+# — that file belongs to the existing, unchanged Video Editing Agent. The
+# two are kept conceptually in sync by hand; if the official brand hex
+# changes, update BOTH files (and video-editing/scripts/common.py's
+# BRAND_GOLD constant) since the video-editing agent is intentionally not
+# touched by this expansion.
+
+brand_name: "ZAVIQU"                 # exact spelling/casing, always. Never "Zaviqu", "ZAVIQ", etc.
+
+colors:
+  gold: "#D4AF37"                     # PLACEHOLDER — must match video-editing/scripts/common.py BRAND_GOLD
+  white: "#FFFFFF"
+
+tone:
+  - warm
+  - intimate
+  - premium
+  - emotionally meaningful
+  - cinematic
+
+avoid:
+  - cheap or flashy effects
+  - overly dramatic delivery
+  - dark, gloomy, candle-heavy visuals
+  - generic template-message positioning (do not sell this as "just add a
+    custom message" — the Signature Box + message-card mechanism is the
+    specific, singular differentiator, not a generic personalization add-on)
+  - inventing product features that were not supplied in the campaign
+    intake's product_facts list
+  - multi-message concepts — every concept must solve exactly ONE buyer
+    problem, not several at once
+
+# --- Product terminology -----------------------------------------------
+product_terminology:
+  approved_names:
+    - "Signature Box"
+  banned_terms:
+    # Case-insensitive substring matches the QC agent checks for in every
+    # piece of copy and every creative brief.
+    - "LED box"
+  rule: >
+    Only use product names/features explicitly listed in the campaign
+    intake's product_facts. If a term isn't in product_facts or
+    approved_names, do not use it — ask, don't invent.
+
+# --- Audience -------------------------------------------------------------
+primary_audience:
+  description: "Men buying meaningful gifts for girlfriends or wives"
+  buyer_problem_frame: >
+    He wants to give something that proves he was paying attention — not
+    another generic jewelry purchase. The anxiety is "will this actually
+    mean something to her," not "can I afford jewelry."
+
+differentiator: >
+  The customer-written message is the main differentiator — not the
+  necklace, not the box mechanism in isolation, but the fact that HER
+  words (or his words to her) are the centerpiece of the gift. Every
+  strategy and creative concept should be built around making that
+  message the emotional payload.
+
+# --- Audio rule -------------------------------------------------------------
+audio:
+  voiceover_default: false
+  rule: "No voiceover unless the brief specifically requests it."
+
+# --- Platform support (mirrors video-editing capabilities; see
+# marketing-studio/config/platforms.yaml for exact specs) -----------------
+platform_support:
+  instagram_facebook:
+    aspects: ["4:5", "9:16"]
+  tiktok:
+    aspects: ["9:16"]
+  ad_variations_required: true
+
+# --- QC gates (every campaign must clear these before approval) ----------
+qc_gates:
+  - "ZAVIQU spelled correctly everywhere"
+  - "Logo/brand name renders in gold wherever shown"
+  - "Product and message-card accuracy verified against product_facts"
+  - "No banned terminology (e.g. 'LED box')"
+  - "No invented product features"
+  - "Emotional clarity — the message-card differentiator is legible"
+  - "Text readable on mobile, inside safe margins"
+  - "Avatar consistency, if an avatar is used"
+  - "Platform format coverage matches platform_support above"
+  - "Concept solves exactly one buyer problem"
+  - "Voiceover only present if explicitly requested in the intake"
