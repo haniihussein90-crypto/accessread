@@ -1,20 +1,22 @@
 # Edit report — pendant_detail_v1
 
-Generated: 2026-07-20T07:43:00.050632Z
+Generated: 2026-07-20T07:59:25.892146Z
 Source: `pendant_detail_raw.mp4`
-Brief hook: Silver pendant macro reads instantly — first ~2 seconds are the hook.
+Brief hook: Silver pendant macro reads instantly — first ~2 seconds are the hook, then the silver-to-gold transition pays it off.
 
 ## Steps taken
 
 - Loaded brief 'pendant_detail_v1' — source: /home/user/accessread/video-editing/source/pendant_detail_raw.mp4
-- Trimmed scene 'opening_pendant_macro': 0.0–5.042 -> scene_opening_pendant_macro.mp4
+- Trimmed scene 'opening_pendant_macro': 1.3–5.042 -> scene_opening_pendant_macro.mp4
+- Trimmed scene 'gold_reveal': 5.042–6.333 -> scene_gold_reveal.mp4
 - Trimmed scene 'pendant_hero_macro': 6.333–8.458 -> scene_pendant_hero_macro.mp4
 - Trimmed scene 'chain_full_reveal': 8.458–14.458 -> scene_chain_full_reveal.mp4
 - Applied slow zoom (in) to scene 'chain_full_reveal'
 - Applied per-scene grade (sharpen=0.15, vignette=False) to scene 'opening_pendant_macro'
+- Applied per-scene grade (sharpen=0.25, vignette=False) to scene 'gold_reveal'
 - Applied per-scene grade (sharpen=0.25, vignette=False) to scene 'pendant_hero_macro'
 - Applied per-scene grade (sharpen=0.0, vignette=False) to scene 'chain_full_reveal'
-- Assembled 3 scene(s) in order ['opening_pendant_macro', 'pendant_hero_macro', 'chain_full_reveal'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}]
+- Assembled 4 scene(s) in order ['opening_pendant_macro', 'gold_reveal', 'pendant_hero_macro', 'chain_full_reveal'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}]
 - Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
 - Applied global grade (warmth=0.03, contrast=0.02)
 - Resized to 9:16 (blur_pad) for instagram_facebook

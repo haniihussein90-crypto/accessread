@@ -7,28 +7,30 @@
 # the metal is SILVER/white-gold for essentially the entire clip (measured
 # via per-frame color sampling across the whole timeline, not just
 # visual spot checks), with only a ~1.29s gold-toned segment in the
-# middle (source t=5.042-6.333s). The client's brief describes a gold
-# piece throughout ("warm the gold tones," "do not oversaturate the
-# gold," "richer luxury feel") and every other campaign video (001, 002,
-# 005, 006, 007, 008) features gold jewelry. Flagged this to the client
-# directly; their explicit instruction was to edit this as a genuine
-# silver/white-gold piece — apply warmth grading for richness per the
-# brief's spirit, without trying to force the metal to visually read as
-# gold (which would require pushing warmth far enough to look unnatural/
-# oversaturated, directly against the brief's own "do not oversaturate"
-# instruction). Consequently the brief brief's ~1.29s gold-toned segment
-# is CUT OUT of the final edit entirely (not featured) — it reads as an
-# inconsistent, unexplained color shift against an otherwise-consistent
-# silver piece, which conflicts with "keep the edit clean, premium, and
-# minimal."
+# middle (source t=5.042-6.333s).
 #
-# Three real segments (verified via sequential frame decode + diff
-# analysis): a continuous silver macro push-in (0.000-5.042s) that hard-
-# cuts to the gold-toned segment (5.042-6.333s, excluded), hard-cuts back
-# to a continuation of the same silver macro push-in style (6.333-8.458s),
-# then hard-cuts to a wide, mostly-static full-pendant reveal
-# (8.458-15.069s, confirmed clean to the natural end — no old baked-in
-# ending on this source, unlike Videos 002/005/007).
+# REVISION: an earlier pass cut the gold segment out entirely (treating it
+# as an inconsistent glitch against an otherwise-silver piece). The client
+# corrected this — the silver-to-gold transition is meant to be a featured
+# moment, not removed: "the color change is one of the most visually
+# engaging moments... the ad should showcase both finishes." Restored the
+# gold segment in full and kept the actual hard cut into it (the
+# transition itself), and — per the client's explicit priority order when
+# something has to give ("remove repetitive silver shots instead of
+# cutting the gold reveal") — trimmed the somewhat-redundant opening
+# silver macro (which is stylistically very similar to the silver macro
+# that continues right after the gold segment) rather than touching the
+# gold at all.
+#
+# Four real segments (verified via sequential frame decode + diff
+# analysis): a continuous silver macro push-in that hard-cuts to the
+# gold-toned segment (the transition — kept intact), hard-cuts back to a
+# continuation of the same silver macro push-in style, then hard-cuts to
+# a wide, mostly-static full-pendant reveal (8.458-15.069s, confirmed
+# clean to the natural end — no old baked-in ending on this source,
+# unlike Videos 002/005/007). The branded ending only attaches after all
+# of this — both finishes are fully shown well before the signature
+# ending begins (~9s in, per the trim math below).
 
 name: pendant_detail_v1
 
@@ -38,48 +40,60 @@ platform: instagram_facebook
 final_duration:
   min: 12.0
   max: 15.2
-hook: "Silver pendant macro reads instantly — first ~2 seconds are the hook."
-cover_frame: 3.0   # lands inside the opening macro push-in
+hook: "Silver pendant macro reads instantly — first ~2 seconds are the hook, then the silver-to-gold transition pays it off."
+cover_frame: 4.3   # lands inside the restored gold segment — the campaign's featured transition moment
 
-# --- Scenes: two silver macro segments (gold flash cut out between them), then the wide reveal ---
+# --- Scenes: silver macro (shortened) -> gold transition (kept in full) -> silver macro continuation -> wide reveal ---
 #
-# NOTE on the wide-reveal trim: kept close to its full natural length —
-# unlike the fully static-ending sources in this campaign, this one's
-# tail needed only a modest trim (0.611s off ~6.6s of natural footage) to
-# land the body + the signature ending's additive 1.8s tail (black_hold +
-# final_fade_out, which plays after real footage is exhausted) inside the
-# 12-15s target. The ending overlay's moving_span (fade_in 1.0 +
-# hold_visible 2.0 + fade_to_black 1.2 = 4.2s) starts ~0.5s into this
-# scene, comfortably clear of the cut from the pendant-hero macro, so the
-# whole signature ending plays over one continuous, mostly-static shot.
+# Trim budget: restoring the full 1.291s gold segment plus the signature
+# ending's additive 1.8s tail (black_hold + final_fade_out, which plays
+# after real footage is exhausted) meant something had to give to land in
+# the 12-15s target. Per the client's explicit priority order, the cut
+# came entirely out of the opening silver macro (trimmed 1.3s off its
+# front — still keeps the bulk of it, and the actual cut into gold stays
+# exactly where it was filmed) rather than the gold segment or the wide
+# reveal. pendant_hero_macro (the silver continuation right after gold)
+# and chain_full_reveal both stay at the same lengths as before. The
+# ending overlay's moving_span (fade_in 1.0 + hold_visible 2.0 +
+# fade_to_black 1.2 = 4.2s) starts ~1.8s into chain_full_reveal,
+# comfortably clear of the cut before it, so the whole signature ending
+# plays over one continuous, mostly-static shot — well after both
+# finishes have already been shown.
 timestamp_cuts:
   - id: opening_pendant_macro   # client: 0:00-0:02 "opening macro" + 0:02-0:05 "pendant detail" —
-    start: 0.000                   # ONE continuous silver macro push-in, no real cut between them.
-    end: 5.042                       # True span 0.000-5.042.
+    start: 1.300                   # ONE continuous silver macro push-in, no real cut within it.
+    end: 5.042                       # True span 0.000-5.042, trimmed to 1.300-5.042 (3.742s) — see
+                                        # the trim-budget note above. The cut into gold is unchanged.
+  - id: gold_reveal            # THE TRANSITION — restored in full per the client's correction:
+    start: 5.042                  # "the color change is one of the most visually engaging
+    end: 6.333                      # moments... showcase both finishes." True span 5.042-6.333
+                                       # (1.291s), kept completely intact, not trimmed at all.
   - id: pendant_hero_macro     # client: 0:05-0:08 "hero jewelry shot" — continuation of the same
-    start: 6.333                  # silver macro push-in style after the excluded gold segment.
-    end: 8.458                      # True span 6.333-8.458 (the gold segment 5.042-6.333 is cut out).
+    start: 6.333                  # silver macro push-in style after the gold segment.
+    end: 8.458                      # True span 6.333-8.458 (2.125s), kept in full.
   - id: chain_full_reveal      # client: 0:08-0:11 "chain & craftsmanship" + 0:11-13/15 "final
     start: 8.458                  # product reveal" — ONE continuous wide, mostly-static shot. True
-    end: 14.458                     # span 8.458-15.069 (6.611s), trimmed to 8.458-14.458 (6.0s) per
-                                       # the pacing note above.
+    end: 14.458                     # span 8.458-15.069 (6.611s), trimmed to 8.458-14.458 (6.0s),
+                                       # unchanged from the previous pass.
 
 scene_order:
   - opening_pendant_macro
+  - gold_reveal
   - pendant_hero_macro
   - chain_full_reveal
 
-# All genuine hard cuts in the source (the middle one intentionally skips
-# past the excluded gold-toned segment rather than including it).
+# All genuine hard cuts in the source, including the silver-to-gold
+# transition itself — the whole point of restoring this segment.
 transitions:
   - type: cut
   - type: cut
+  - type: cut
 
-# opening_pendant_macro and pendant_hero_macro already have continuous
-# push-in camera movement baked in (they're two pieces of what was
-# originally one continuous macro push before the gold segment was cut
-# out) — layering additional zoompan on top would compound into an
-# unnatural double-motion, so both are left as-is (color grade only).
+# opening_pendant_macro, gold_reveal, and pendant_hero_macro already have
+# continuous push-in camera movement baked in (they're three pieces of
+# what was originally one continuous macro push, including the color
+# transition) — layering additional zoompan on top would compound into an
+# unnatural double-motion, so all three are left as-is (color grade only).
 # chain_full_reveal is different: the wide reveal shot is close to static
 # in the source (frame-diff analysis shows minimal motion throughout), so
 # a gentle push-in is added here to satisfy "maintain slow cinematic
@@ -94,20 +108,29 @@ motion:
 # tones slightly... increase clarity only enough to enhance the metal
 # without making it look artificial," restrained per the client's own
 # "do not oversaturate" instruction and the silver/gold discrepancy noted
-# above. pendant_hero_macro: the explicit "slight sharpening on the
+# above. gold_reveal: the featured transition moment — a hero-level
+# sharpen/micro-contrast treatment (matching pendant_hero_macro) since
+# this is explicitly "one of the most visually engaging moments," with
+# warmth kept light since the segment is already gold-toned (piling on
+# more warmth risks the oversaturation the brief explicitly warns
+# against). pendant_hero_macro: the explicit "slight sharpening on the
 # pendant only" ask for the hero shot, sharpen kept moderate (matching
 # this campaign's restrained hero-shot values elsewhere, e.g.
 # pendant_showcase_v1 and studio_campaign_v1's 0.22). No synthetic
-# sparkle added — "one tasteful sparkle... only once" relies on whatever
-# the existing footage's own reflections show, same position taken
-# throughout this campaign. chain_full_reveal: "add slight warmth to
-# create a richer luxury feel" for the chain/craftsmanship + final-reveal
-# portion.
+# sparkle added anywhere — "one tasteful sparkle... only once" relies on
+# whatever the existing footage's own reflections show, same position
+# taken throughout this campaign. chain_full_reveal: "add slight warmth
+# to create a richer luxury feel" for the chain/craftsmanship + final-
+# reveal portion.
 scene_grade:
   - scene: opening_pendant_macro
     warmth: 0.04
     contrast: 0.03
     sharpen: 0.15
+  - scene: gold_reveal
+    warmth: 0.02
+    contrast: 0.03
+    sharpen: 0.25
   - scene: pendant_hero_macro
     warmth: 0.03
     contrast: 0.03
