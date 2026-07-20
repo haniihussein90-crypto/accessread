@@ -1,0 +1,191 @@
+# Real production brief — "VIDEO 009 - Necklace Reveal 2" client notes,
+# implemented against eb4fe2a2-009__Necklace_Reveal_2.mp4 (copied in as
+# source/necklace_reveal_2_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# the previous eight source videos.
+#
+# Five real segments (verified via sequential frame decode + diff
+# analysis, all genuine hard cuts, magnitudes 50-99): box opening/first
+# reveal (static camera, gift box + card visible) -> pendant close-up
+# macro (static) -> chain macro (static) -> a box-edge macro (card +
+# chain diagonal across the box lid, static — an extra beat not named in
+# the client's shot list, same pattern seen throughout this campaign) ->
+# a hero close-up on the card that pulls back into the full box view (the
+# only segment with real baked-in camera motion — a zoom-out).
+#
+# This source has the same old baked-in ending as Videos 002/005/007: a
+# white italic tagline ("Made to be Tresured" — note the source's own
+# spelling, not ours) fading in over the box near the tail. Confirmed the
+# exact onset via frame-by-frame inspection: still completely clean at
+# frame 284 (t=11.833s), faint text already visible by frame 290
+# (t=12.083s). Trimmed the final scene to end at 11.7s, safely before
+# that onset, so the misspelled old tagline never appears in this edit at
+# all — replaced entirely by the new signature ending.
+
+name: necklace_reveal_2_v1
+
+source_file: necklace_reveal_2_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 13.0
+  max: 15.2
+hook: "Existing box-opening reveal reads instantly — keep it, first ~3 seconds are the hook."
+cover_frame: 9.8   # lands in the hero close-up on the card, before the pull-back begins
+
+# --- Five scenes, trimmed only at the very end (contamination-driven) ---
+#
+# Every scene here is kept at its full natural length except the last —
+# body (11.7s) + the signature ending's additive 1.8s tail (black_hold +
+# final_fade_out, which plays after real footage is exhausted) lands the
+# total at 13.5s, comfortably inside the 13-15s target, so no pacing trim
+# was needed anywhere else. Because hero_full_reveal alone (2.367s clean)
+# is shorter than the ending overlay's moving_span (fade_in 1.0 +
+# hold_visible 2.0 + fade_to_black 1.2 = 4.2s), the fade-in begins ~0.4s
+# into the preceding box_edge_macro scene and completes before that cut —
+# the logo is already at full opacity, not still animating, when the cut
+# to the final full-box view happens. Same kind of minor cross-cut
+# compromise used in necklace_reveal_v1 when a source's clean tail
+# footage is shorter than the standard ending needs.
+timestamp_cuts:
+  - id: box_reveal          # client: 0:00-0:03 "box opening / first reveal" — true span 0.000-2.958.
+    start: 0.000
+    end: 2.958
+  - id: pendant_closeup     # client: 0:03-0:06 "pendant close-up" — true span 2.958-5.458.
+    start: 2.958
+    end: 5.458
+  - id: chain_macro         # client: 0:06-0:09 "chain & craftsmanship" (first beat of it) — true
+    start: 5.458               # span 5.458-7.125.
+    end: 7.125
+  - id: box_edge_macro      # unlisted extra beat (card + chain diagonal across the box lid) —
+    start: 7.125               # true span 7.125-9.333.
+    end: 9.333
+  - id: hero_full_reveal    # client: 0:09-0:12 "hero product shot" + 0:12-0:15 "final gift
+    start: 9.333                # presentation" — ONE continuous shot (hero close-up pulling back
+    end: 11.700                   # to the full box), true span 9.333-15.069, trimmed to 9.333-11.7
+                                     # to land before the old ending's onset (see note above).
+
+scene_order:
+  - box_reveal
+  - pendant_closeup
+  - chain_macro
+  - box_edge_macro
+  - hero_full_reveal
+
+# All genuine hard cuts in the source.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# box_reveal, pendant_closeup, chain_macro, and box_edge_macro are all
+# essentially static in the source (frame-diff analysis shows minimal
+# motion throughout each) — safe to add the client's requested camera
+# movement without compounding anything. hero_full_reveal already has
+# real baked-in motion (a pull-back/zoom-out, confirmed via diff
+# analysis) — left as-is, color grade only, same reasoning applied to
+# every continuous-motion shot throughout this campaign.
+motion:
+  - scene: box_reveal
+    direction: in
+    zoom_end: 1.03               # "very subtle slow push-in"
+  - scene: pendant_closeup
+    direction: in
+    zoom_end: 1.025               # "gentle floating camera movement"
+    drift_x: 0.01
+    drift_y: 0.012
+  - scene: chain_macro
+    direction: in
+    zoom_end: 1.025               # "slow cinematic movement"
+  - scene: box_edge_macro
+    direction: in
+    zoom_end: 1.02               # subtle, consistent with the surrounding static scenes
+
+# box_reveal: "slightly warm the wood and cream tones." pendant_closeup:
+# "increase micro-contrast slightly... subtle sharpening only on the
+# jewelry," sharpen kept light per "subtle." chain_macro: "enhance gold
+# tones slightly without oversaturating." box_edge_macro: matches the
+# light, consistent grade of its static neighbors (no explicit client ask
+# for this unlisted beat). hero_full_reveal: covers both the hero moment
+# (moderate sharpen, natural-sparkle reliance — "one tasteful sparkle...
+# only once" relies on the footage's own reflections, same position taken
+# throughout this campaign, no synthetic sparkle added) and the final
+# wide presentation (kept warm, restrained sharpen since a wide shot
+# oversharpened would look odd).
+scene_grade:
+  - scene: box_reveal
+    warmth: 0.04
+    contrast: 0.03
+  - scene: pendant_closeup
+    contrast: 0.03
+    sharpen: 0.2
+  - scene: chain_macro
+    warmth: 0.04
+    contrast: 0.02
+  - scene: box_edge_macro
+    warmth: 0.03
+    contrast: 0.02
+  - scene: hero_full_reveal
+    warmth: 0.04
+    contrast: 0.03
+    sharpen: 0.2
+
+on_screen_text: []
+captions: []
+
+# "Keep the current music level... if the opening feels slightly abrupt,
+# soften only the first 1-2 seconds." Measured the source's own opening
+# RMS envelope (0-3s, 0.3s windows) before deciding: it stays within a
+# fairly consistent -22 to -28dB band with no sharp jump at t=0 relative
+# to what follows, i.e. no abrupt full-volume hit — so no opening dip
+# applied here, matching the client's "after that, keep the music exactly
+# as it is" default. Same consistent campaign-wide loudness target as
+# every previous video.
+music_direction:
+  track: null
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# Same restrained global grade as every previous video, so the whole
+# ZAVIQU ad library shares one visual language.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — identical parameters to every previous video in the
+# campaign per the client's "official ZAVIQU ending" requirement. Same
+# lockup, same brand promise, same website, same timings. No freeze
+# frame: real footage (the pulled-back full-box view) keeps playing and
+# its audio keeps playing while the lockup fades in; picture+audio then
+# fade to black together; a plain black hold (no freeze — there's no
+# frame here) keeps the gold text briefly visible before everything fades
+# out. Replaces the old misspelled white-text ending entirely (it never
+# appears in this edit — see the timestamp_cuts note above).
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
