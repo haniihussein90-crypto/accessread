@@ -24,7 +24,7 @@
     },
     {
       "check": "duration",
-      "duration_sec": 13.68,
+      "duration_sec": 13.61,
       "expected_range": [
         13.0,
         15.2
@@ -39,15 +39,15 @@
     },
     {
       "check": "opening_strength",
-      "sharpness_laplacian_var": 61.8,
-      "contrast_stddev": 69.8,
+      "sharpness_laplacian_var": 63.0,
+      "contrast_stddev": 68.3,
       "heuristic_pass": true,
       "note": "HEURISTIC ONLY \u2014 a static/blank/low-contrast opening frame will fail this; 'strong hook' is a creative judgment call for the director either way."
     },
     {
       "check": "ending_not_abrupt",
       "tail_rms": 0.0,
-      "overall_rms": 4063.3,
+      "overall_rms": 4021.6,
       "tail_to_overall_ratio": 0.0,
       "pass": true,
       "note": "If audio hasn't faded out by the last frames, ratio stays high \u2014 consider a fade-out or CTA card (add_cta_ending.py)."
