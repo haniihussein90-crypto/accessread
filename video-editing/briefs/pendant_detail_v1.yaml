@@ -1,0 +1,172 @@
+# Real production brief — "VIDEO 003 - Pendant Detail" client notes,
+# implemented against 7796688f-003__Pendant_Detail.mp4 (copied in as
+# source/pendant_detail_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# the previous six source videos, but with a real content discrepancy:
+# the metal is SILVER/white-gold for essentially the entire clip (measured
+# via per-frame color sampling across the whole timeline, not just
+# visual spot checks), with only a ~1.29s gold-toned segment in the
+# middle (source t=5.042-6.333s). The client's brief describes a gold
+# piece throughout ("warm the gold tones," "do not oversaturate the
+# gold," "richer luxury feel") and every other campaign video (001, 002,
+# 005, 006, 007, 008) features gold jewelry. Flagged this to the client
+# directly; their explicit instruction was to edit this as a genuine
+# silver/white-gold piece — apply warmth grading for richness per the
+# brief's spirit, without trying to force the metal to visually read as
+# gold (which would require pushing warmth far enough to look unnatural/
+# oversaturated, directly against the brief's own "do not oversaturate"
+# instruction). Consequently the brief brief's ~1.29s gold-toned segment
+# is CUT OUT of the final edit entirely (not featured) — it reads as an
+# inconsistent, unexplained color shift against an otherwise-consistent
+# silver piece, which conflicts with "keep the edit clean, premium, and
+# minimal."
+#
+# Three real segments (verified via sequential frame decode + diff
+# analysis): a continuous silver macro push-in (0.000-5.042s) that hard-
+# cuts to the gold-toned segment (5.042-6.333s, excluded), hard-cuts back
+# to a continuation of the same silver macro push-in style (6.333-8.458s),
+# then hard-cuts to a wide, mostly-static full-pendant reveal
+# (8.458-15.069s, confirmed clean to the natural end — no old baked-in
+# ending on this source, unlike Videos 002/005/007).
+
+name: pendant_detail_v1
+
+source_file: pendant_detail_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 12.0
+  max: 15.2
+hook: "Silver pendant macro reads instantly — first ~2 seconds are the hook."
+cover_frame: 3.0   # lands inside the opening macro push-in
+
+# --- Scenes: two silver macro segments (gold flash cut out between them), then the wide reveal ---
+#
+# NOTE on the wide-reveal trim: kept close to its full natural length —
+# unlike the fully static-ending sources in this campaign, this one's
+# tail needed only a modest trim (0.611s off ~6.6s of natural footage) to
+# land the body + the signature ending's additive 1.8s tail (black_hold +
+# final_fade_out, which plays after real footage is exhausted) inside the
+# 12-15s target. The ending overlay's moving_span (fade_in 1.0 +
+# hold_visible 2.0 + fade_to_black 1.2 = 4.2s) starts ~0.5s into this
+# scene, comfortably clear of the cut from the pendant-hero macro, so the
+# whole signature ending plays over one continuous, mostly-static shot.
+timestamp_cuts:
+  - id: opening_pendant_macro   # client: 0:00-0:02 "opening macro" + 0:02-0:05 "pendant detail" —
+    start: 0.000                   # ONE continuous silver macro push-in, no real cut between them.
+    end: 5.042                       # True span 0.000-5.042.
+  - id: pendant_hero_macro     # client: 0:05-0:08 "hero jewelry shot" — continuation of the same
+    start: 6.333                  # silver macro push-in style after the excluded gold segment.
+    end: 8.458                      # True span 6.333-8.458 (the gold segment 5.042-6.333 is cut out).
+  - id: chain_full_reveal      # client: 0:08-0:11 "chain & craftsmanship" + 0:11-13/15 "final
+    start: 8.458                  # product reveal" — ONE continuous wide, mostly-static shot. True
+    end: 14.458                     # span 8.458-15.069 (6.611s), trimmed to 8.458-14.458 (6.0s) per
+                                       # the pacing note above.
+
+scene_order:
+  - opening_pendant_macro
+  - pendant_hero_macro
+  - chain_full_reveal
+
+# All genuine hard cuts in the source (the middle one intentionally skips
+# past the excluded gold-toned segment rather than including it).
+transitions:
+  - type: cut
+  - type: cut
+
+# opening_pendant_macro and pendant_hero_macro already have continuous
+# push-in camera movement baked in (they're two pieces of what was
+# originally one continuous macro push before the gold segment was cut
+# out) — layering additional zoompan on top would compound into an
+# unnatural double-motion, so both are left as-is (color grade only).
+# chain_full_reveal is different: the wide reveal shot is close to static
+# in the source (frame-diff analysis shows minimal motion throughout), so
+# a gentle push-in is added here to satisfy "maintain slow cinematic
+# movement... don't rush the final reveal" — there's no existing motion
+# to compound with.
+motion:
+  - scene: chain_full_reveal
+    direction: in
+    zoom_end: 1.025             # very subtle — "slow cinematic," not a dramatic push
+
+# opening_pendant_macro: light warmth + clarity for "warm the gold [metal]
+# tones slightly... increase clarity only enough to enhance the metal
+# without making it look artificial," restrained per the client's own
+# "do not oversaturate" instruction and the silver/gold discrepancy noted
+# above. pendant_hero_macro: the explicit "slight sharpening on the
+# pendant only" ask for the hero shot, sharpen kept moderate (matching
+# this campaign's restrained hero-shot values elsewhere, e.g.
+# pendant_showcase_v1 and studio_campaign_v1's 0.22). No synthetic
+# sparkle added — "one tasteful sparkle... only once" relies on whatever
+# the existing footage's own reflections show, same position taken
+# throughout this campaign. chain_full_reveal: "add slight warmth to
+# create a richer luxury feel" for the chain/craftsmanship + final-reveal
+# portion.
+scene_grade:
+  - scene: opening_pendant_macro
+    warmth: 0.04
+    contrast: 0.03
+    sharpen: 0.15
+  - scene: pendant_hero_macro
+    warmth: 0.03
+    contrast: 0.03
+    sharpen: 0.25
+  - scene: chain_full_reveal
+    warmth: 0.05
+    contrast: 0.03
+
+on_screen_text: []
+captions: []
+
+# "Keep the current music level. Do not reduce it." — same consistent
+# campaign-wide loudness target as every previous video (this is what
+# "current level" means across a campaign that's already been rebalanced
+# for consistency), no opening dip this time since none was requested.
+music_direction:
+  track: null
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# Same restrained global grade as every previous video, so the whole
+# ZAVIQU ad library shares one visual language.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — identical parameters to every previous video in the
+# campaign per the client's "official ZAVIQU ending" requirement. Same
+# lockup, same brand promise, same website, same timings. No freeze
+# frame: real footage (the wide reveal, still gently pushing in) keeps
+# playing and its audio keeps playing while the lockup fades in;
+# picture+audio then fade to black together; a plain black hold (no
+# freeze — there's no frame here) keeps the gold text briefly visible
+# before everything fades out. "Fade naturally into the official branded
+# ending" per the client's audio note — this is exactly what the ending's
+# built-in synchronized picture+audio fade already does.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
