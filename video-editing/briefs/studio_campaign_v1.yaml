@@ -1,0 +1,163 @@
+# Real production brief — "VIDEO 007 - Studio Campaign" client notes,
+# implemented against 4e9a5597-007__Studio_Campaign.mp4 (copied in as
+# source/studio_campaign_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# the previous five source videos. Client note: "This video already has a
+# premium luxury feel. Preserve the pacing and story. Do not redesign the
+# edit—polish it."
+#
+# Structurally this is like pendant_showcase_v1: ONE continuous take start
+# to finish (push-in from the full box, through the pendant hero macro,
+# pulling back out to the box again) — confirmed via frame-diff analysis,
+# no cut anywhere reaches hard-cut magnitude (max ~20 here vs. 100+ for a
+# genuine cut elsewhere in this campaign). The client's five timed
+# sections (opening hook / box presentation / pendant hero / card & gift
+# / final presentation) are phases of this one unbroken arc, not separate
+# shots, so — same reasoning as every other continuous multi-beat shot in
+# this campaign — no additional zoompan is layered on top of the existing
+# push-in/pull-back (that would compound into unnatural double-motion),
+# and no artificial cut is introduced to "reach" per-phase treatments
+# that the source doesn't actually have cut points for.
+#
+# The source also has the same old baked-in ending as gift_reveal_v1 and
+# necklace_reveal_v1: a fade-to-black to the old white "ZAVIQU / Made with
+# Love. Made to Last." logo, confirmed via brightness sampling — the
+# 95th-percentile highlight brightness holds flat (~186-189) through
+# t=11.5s, then declines gradually, reaching black by ~14.7s. Trimmed the
+# tail to end at 11.5s, safely on the plateau, so every frame this
+# pipeline uses is genuinely clean before the new signature ending
+# replaces the old one entirely.
+
+name: studio_campaign_v1
+
+source_file: studio_campaign_raw.mp4
+
+platform: instagram_facebook
+# Same false-positive reasoning as pendant_showcase_v1: the box shots at
+# the start and end of this take sit on a black backdrop, and blur_pad's
+# blurred-background bars stay just as dark as the footage they're
+# blurred from during those frames — the same dark-edge/bright-center
+# signature the black-bars QC check watches for. See quality_check.py's
+# dark_edges_expected.
+dark_background: true
+final_duration:
+  min: 13.0
+  max: 15.2
+hook: "Existing opening box view reads instantly — keep it, first ~2 seconds are the hook."
+cover_frame: 4.0   # lands right on the natural sparkle flash across the center stone
+
+# --- Single continuous take, trimmed only at the tail ---
+#
+# Clean footage runs the full 0-11.5s with no trim needed at the front
+# (unlike gift_reveal_v1/elegant_reveal_v1, this source's clean runway
+# already lands the total in range without sacrificing any of the
+# opening). Body 11.5s + signature-ending tail 1.8s = 13.3s, comfortably
+# inside the client's 13-15s target. The ending overlay's moving_span
+# (fade_in 1.0 + hold_visible 2.0 + fade_to_black 1.2 = 4.2s) starts at
+# 11.5-4.2=7.3s, landing on the already-pulled-back, well-composed part
+# of the shot (past the extreme-macro hero moment) — same design goal as
+# pendant_showcase_v1's ending placement.
+timestamp_cuts:
+  - id: studio_campaign
+    start: 0.000
+    end: 11.500
+
+scene_order:
+  - studio_campaign
+
+# No cuts — this is one unbroken take start to finish.
+transitions: []
+
+# No added motion: the entire take already has continuous camera
+# movement baked in (push-in through the pendant hero macro, then
+# pull-back to the box again) — see the note at the top of this file.
+motion: []
+
+# One grade for the whole take (there's only one scene, and the source
+# has no real cut points to split per-phase treatments across). Chosen to
+# reasonably serve the client's phase-by-phase asks without contradicting
+# any of them: warmth for "warmer... richer wood tones... warm the cream
+# card," moderate contrast for "increase contrast carefully without
+# crushing shadows... protect highlights," and a restrained sharpen for
+# "subtle sharpening and micro-contrast" on the pendant hero portion —
+# kept conservative (matching pendant_showcase_v1's 0.22) since the same
+# grade also plays under the softer box/card portions, where the client
+# did not ask for extra sharpening. No synthetic sparkle added — the
+# source already has one natural sparkle flash on the center stone during
+# the push-in (~t=4s), matching "one tasteful sparkle... only once"
+# exactly without needing anything added.
+scene_grade:
+  - scene: studio_campaign
+    warmth: 0.05
+    contrast: 0.035
+    sharpen: 0.22
+
+on_screen_text: []
+captions: []
+
+# Original embedded music kept as-is — no new track. See audio_swell
+# below for the opening-only volume dip the client requested.
+music_direction:
+  track: null
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+# "Reduce the music volume slightly during only the first 1-2 seconds...
+# Let the music naturally return to its current level after the opening."
+# This reuses the existing swell mechanism's linear ramp, just aimed at a
+# ONE-SIDED shape instead of a symmetric bump: `start` is set far before
+# t=0 so the window's rise phase is already long finished (irrelevant) by
+# the time the clip begins, leaving only the fall phase active — a window
+# that's already at full effect (1.0) at t=0 and ramps linearly down to 0
+# (i.e. back to the normal, already-loudness-normalized level) by
+# end=1.6s, then stays at the normal level for the rest of the video.
+# boost=-0.3 is a ~30% (~3dB) reduction at its peak (t=0) — "slightly,"
+# not a hard duck. Verified the resulting ffmpeg volume expression
+# numerically (0.70 at t=0 -> 1.00 at t=1.6, holds at 1.00 after) and
+# confirmed the filter runs cleanly before using it here.
+audio_swell:
+  - start: -100
+    end: 1.6
+    boost: -0.3
+    ramp: 1.6
+
+# Same restrained global grade as every previous video, so the whole
+# ZAVIQU ad library shares one visual language.
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — identical parameters to every previous video in the
+# campaign per the client's "official ZAVIQU ending" / cohesive-campaign
+# requirement. Same lockup, same brand promise, same website, same
+# timings. No freeze frame: real footage (the pulled-back tail) keeps
+# playing and its audio keeps playing while the lockup fades in;
+# picture+audio then fade to black together; a plain black hold (no
+# freeze — there's no frame here) keeps the gold text briefly visible
+# before everything fades out. Replaces the old white-branding ending
+# entirely (see the timestamp_cuts note above) rather than layering over it.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  fade_in: 1.0
+  hold_visible: 2.0
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
