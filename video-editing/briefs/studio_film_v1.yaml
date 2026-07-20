@@ -1,0 +1,134 @@
+# Real production brief — "VIDEO 004 - Studio Film (How It Works)" client
+# notes, implemented against 43b10ef4-004__Studio_Film.mp4 (copied in as
+# source/studio_film_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source, BUT this one is structurally different from all
+# eight before it: it's not raw product b-roll, it's a self-contained
+# "How It Works" 3-step piece with its own permanent baked-in captions
+# ("1. Choose Your Necklesse" [source's own spelling] / "2. Add Your
+# Personal Message" / "3. We Create It Beautifully") AND its own fully
+# baked-in branded ending — a black "Midnight Luxe" card with the ZAVIQU
+# wordmark, gold heart dividers, tagline, and website, dissolving in over
+# the last ~2.7s (confirmed via sequential frame-diff: no hard cut here,
+# a genuine crossfade — diff magnitudes stay in the 2-5 range through
+# 12.0-12.5s vs. 50+ for this source's real hard cuts, and visual
+# inspection of frames 296-300 shows the card physically dissolving in
+# over the box footage).
+#
+# Client review: keep the whole "How It Works" body exactly as filmed —
+# no complaint about the numbered captions, the message-card content, or
+# the box-closing/reopening beat. The ONLY change requested, after two
+# rounds of clarifying what "the black end card" meant, was explicit:
+# remove the baked-in Midnight Luxe end card completely and replace it
+# with the campaign's standard signature ending (the same
+# add_logo_fade_ending.py treatment used on 001/002/003/005/006/007/008/
+# 009), not a color tweak to anything on the baked-in card itself.
+#
+# So: ONE untouched scene for the entire real body (0.000-12.292), same
+# "preserve as filmed, don't split into scenes" treatment used for 009's
+# revert, trimmed only where the baked-in card visibly starts bleeding in
+# (frame 296/t=12.333 is the first frame with any card ghosting per
+# pixel-diff; frame 295/t=12.292 is the last clean frame — trimmed there
+# for a clean margin). The signature ending's 4.2s moving-footage window
+# then lands on the box-reopening-to-full-reveal motion (~8.09-12.292s),
+# which is real, still-moving footage — exactly what the signature ending
+# wants behind the logo.
+
+name: studio_film_v1
+
+source_file: studio_film_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 13.5
+  max: 14.5
+hook: "Box opening into 'Choose Your Necklace' reads instantly — keep it, first ~2 seconds are the hook."
+cover_frame: 10.5   # lands in the "3. We Create It Beautifully" full reveal — necklace + personalized card together
+
+# --- ONE scene: the entire "How It Works" body, untouched, minus the baked-in end card ---
+timestamp_cuts:
+  - id: studio_film_full
+    start: 0.000
+    end: 12.292
+
+scene_order:
+  - studio_film_full
+
+# No cuts introduced — this source's own internal hard cuts (e.g. the
+# angle change at 2.667s within step 1) are preserved exactly as filmed
+# inside one untouched clip, same treatment as necklace_reveal_2_v1.
+transitions: []
+
+# No added motion anywhere — nothing about the ending swap calls for
+# touching the body's own pacing, and the client's original direction for
+# this video was "preserve the original pacing and structure."
+motion: []
+
+# One light, restrained grading pass for the whole piece — same
+# consistency treatment as necklace_reveal_2_v1, kept subtle since the
+# client already said the video looks great as shot.
+scene_grade:
+  - scene: studio_film_full
+    warmth: 0.03
+    contrast: 0.02
+    sharpen: 0.1
+
+on_screen_text: []
+captions: []
+
+# Raw source measured at -21.17 LUFS — noticeably quieter than the rest
+# of the campaign's rebalanced -15 LUFS standard, which itself is a
+# standing cross-campaign requirement ("keep audio levels consistent
+# across every exported video"). Normalized to the same target as every
+# other video. No opening dip: RMS-sampled the first 3s in 0.3s windows
+# and found no sharp abrupt-hit pattern to soften.
+music_direction:
+  track: null
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — same reasoning as necklace_reveal_2_v1:
+# avoid compounding on top of the already-light scene_grade above.
+global_grade: {}
+
+# Large stretches of this source are shot on a black/near-black
+# background (the message cards, the box interior against dark
+# surroundings) — same false-positive risk as pendant_showcase_v1's black
+# satin background. Flagged for manual QC review instead of guessing.
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own baked-in Midnight Luxe
+# black card completely, per explicit client instruction. Same lockup,
+# brand promise, website as every other video. Uses the NEW pre_fade_delay
+# timing (client: "apply this same timing adjustment consistently to all
+# future ZAVIQU videos" — 004 is the first video built after that
+# instruction, so it gets the new defaults; 001-003/005-009 explicitly
+# stay on the old timing per the client's "no, future videos only" answer).
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the product out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
