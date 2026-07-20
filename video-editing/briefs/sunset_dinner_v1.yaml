@@ -1,0 +1,212 @@
+# Real production brief — "VIDEO 010 - Sunset Dinner Necklace Reveal"
+# client notes, implemented against
+# 18d27fef-010__Sunset_Dinner_Necklace_Reveal.mp4 (copied in as
+# source/sunset_dinner_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. "Polish it, but do not restructure it" — verified
+# real cut points via sequential frame-diff (never trusted the client's
+# assumed timestamps) before writing anything below.
+#
+# Real hard cuts found (magnitude 50-88, vs. 2-25 for continuous-shot
+# noise elsewhere): 2.208s, 3.875s, 4.708s, 5.5s, 7.875s, 11.583s, 12.125s
+# — 7 cuts, 8 real segments, all within ~0.1-0.3s of the client's assumed
+# boundaries EXCEPT one: the client described separate "second necklace
+# close-up" (7.9-9.4) and "woman wearing the necklace" (9.4-11.6) beats,
+# but there is no real cut there (diff stays under 23 through that whole
+# region, climbing smoothly rather than spiking) — it's one continuous
+# take: hands clasping the necklace pulling back naturally into the
+# reveal of her wearing it. Treated as one scene, not split, per "do not
+# add unnecessary cuts."
+#
+# The client's segment 2 ("closer dinner shot," warm light/skin tones) and
+# segment 3 ("close-up of the man," sharpen face/suit) content
+# descriptions don't line up 1:1 with the real segments either — the real
+# cut at 2.208s goes straight from the wide shot into a tight close-up of
+# the man (not a "closer/medium" shot), and the real cut at 3.875s is a
+# close-up of the woman (not separately described in the client's list).
+# Applied the shared spirit of both blocks (warm golden light, skin tone,
+# subtle sharpening, no speed changes) across both real close-ups rather
+# than forcing a mapping that doesn't match the footage.
+#
+# Tail: no foreign "old ending" contamination (no baked-in tagline/logo
+# like 002/005/007/009, no ornate end-card like 004) — this source just
+# fades to black naturally on its own in the last ~0.9s (brightness holds
+# steady ~88 through frame 338/t=14.083s, then declines smoothly to 0 by
+# frame 360/t=15.0). Trimmed at the last stable-brightness frame (14.083s)
+# so our own signature ending owns the entire fade-to-black cleanly,
+# rather than stacking two independent fades on top of each other.
+#
+# Two client asks this pipeline can't literally execute, applied as the
+# closest available approximation and flagged rather than silently
+# skipped: (1) "slightly brighten her skin and the necklace" / "brighten
+# skin and necklace" — color_grade.py has no exposure/brightness lever,
+# only warmth/contrast/sharpen/vignette, so approximated with a touch of
+# warmth+contrast instead of a literal brightness lift. (2) "slightly
+# soften the background while keeping her hand and necklace clear" on the
+# hand-to-chest shot — no selective/masked region grading capability
+# exists in this pipeline, so left as a general (whole-frame) grade only,
+# no background-specific softening applied. (3) "one very small, tasteful
+# sparkle on the center stone" — same position as every prior video in
+# this campaign: no synthetic sparkle VFX exists here, so this relies
+# entirely on whatever specular highlight the real footage already shows.
+
+name: sunset_dinner_v1
+
+source_file: sunset_dinner_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 15.5
+  max: 16.3
+hook: "Wide sunset-dinner establishing shot reads instantly as premium and romantic — first ~2.2 seconds are the hook before the close-ups begin."
+cover_frame: 6.5   # lands in the first necklace macro — the hero pendant moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: dinner_wide            # client: 0:00-2.2 "sunset dinner opening" — wide shot, couple by window. True span 0.000-2.208.
+    start: 0.000
+    end: 2.208
+  - id: man_closeup            # real content: tight close-up of the man (bow tie, natural expression). True span 2.208-3.875.
+    start: 2.208
+    end: 3.875
+  - id: woman_closeup          # real content: close-up of the woman at the table. True span 3.875-4.708.
+    start: 3.875
+    end: 4.708
+  - id: gift_box_detail        # client: "dinner detail" — hand holding the ZAVIQU box. True span 4.708-5.5.
+    start: 4.708
+    end: 5.5
+  - id: necklace_macro1        # client: "first necklace macro" — pendant/center stone, essentially static in source
+    start: 5.5                    # (no existing zoom trend, verified via side-by-side frame comparison). True span 5.5-7.875.
+    end: 7.875
+  - id: necklace_continuous    # client: "second necklace close-up" (7.9-9.4) + "woman wearing the necklace" (9.4-11.6) —
+    start: 7.875                  # ONE continuous shot (clasping the necklace, pulling back into the reveal), no real cut
+    end: 11.583                     # between them. True span 7.875-11.583.
+  - id: hand_to_chest           # client: "hand-to-chest reaction" — kept in full, strongest emotional beat. True span 11.583-12.125.
+    start: 11.583
+    end: 12.125
+  - id: final_portrait          # client: "final portrait" — let it breathe before the ending. True span 12.125-15.069,
+    start: 12.125                   # trimmed to 12.125-14.083 (see tail note above — source's own natural fade starts
+    end: 14.083                       # right after 14.083, trimmed so our signature ending owns the fade cleanly).
+
+scene_order:
+  - dinner_wide
+  - man_closeup
+  - woman_closeup
+  - gift_box_detail
+  - necklace_macro1
+  - necklace_continuous
+  - hand_to_chest
+  - final_portrait
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two segments the client explicitly asked to have movement
+# added to, and only where the source doesn't already have that movement
+# baked in (verified via frame comparison first, so nothing doubles up).
+motion:
+  - scene: dinner_wide
+    direction: in
+    zoom_end: 1.03              # "very slow, subtle push-in"
+  - scene: necklace_macro1
+    direction: in
+    zoom_end: 1.025              # "subtle floating or slow push-in movement" — source itself is static here
+
+# Per-scene grading following the client's own descriptions for each real
+# segment (see header note on the two close-ups that don't map 1:1).
+# gift_box_detail deliberately has no entry — "keep this transition brief
+# and smooth... do not add another cut" reads as minimal-intervention.
+scene_grade:
+  - scene: dinner_wide
+    warmth: 0.04
+    contrast: 0.03
+  - scene: man_closeup
+    warmth: 0.035
+    sharpen: 0.15
+  - scene: woman_closeup
+    warmth: 0.035
+    contrast: 0.02
+  - scene: necklace_macro1
+    warmth: 0.03                 # "richer gold without turning it orange" — restrained
+    sharpen: 0.25                # hero shot, matches this campaign's other necklace-macro sharpen values
+  - scene: necklace_continuous
+    warmth: 0.03
+    contrast: 0.02
+    sharpen: 0.2
+  - scene: hand_to_chest
+    warmth: 0.03
+    contrast: 0.02
+  - scene: final_portrait
+    warmth: 0.035
+    sharpen: 0.15
+
+on_screen_text: []
+captions: []
+
+# Raw source measured at -20.74 LUFS — brought up to the campaign's -15
+# LUFS standard like every other video. This RAISES the volume, it never
+# lowers it, so it doesn't conflict with "do not lower the music" — it's
+# the same standing cross-campaign consistency requirement applied
+# throughout. No opening dip: not requested, and "do not interrupt the
+# musical rhythm with new cuts" argues against adding one.
+music_direction:
+  track: null
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment except
+# gift_box_detail already has an explicit per-scene grade above; a global
+# layer on top would compound past what was actually asked for.
+global_grade: {}
+
+# The necklace macro shot (necklace_macro1) is on a dark burgundy velvet
+# backdrop — same false-positive risk as the black-bars heuristic has
+# flagged on other genuinely-dark product shots in this campaign
+# (necklace_reveal_v1's vignette, pendant_showcase_v1's black satin
+# background). Confirmed via direct frame inspection: this is real
+# content, not letterboxing. Flagged for manual QC review instead.
+dark_background: true
+
+# SIGNATURE ENDING — same lockup/brand promise/website as every other
+# video, using the NEW pre_fade_delay timing (client explicitly requested
+# ~0.3-0.5s delay here, matching the standing default applied to every
+# video built since that change). Real, still-moving footage (spanning
+# the tail of necklace_continuous, hand_to_chest, and final_portrait)
+# keeps playing under the logo; picture+audio fade to black together;
+# black hold; final fade out. Replaces the source's own natural
+# fade-to-black entirely.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/necklace out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
