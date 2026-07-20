@@ -103,20 +103,34 @@ for something else. `add_brand_end_card.py` (static card) and
 older briefs, not the starting point for new ones.
 
 The mechanism (never a freeze frame): real footage and its real audio keep
-playing while the brand lockup fades in over it; the still-playing
-picture and its audio then fade to black/silence *together*; only once
-real footage is genuinely exhausted does a plain black card (no freeze —
-there's no frame to freeze) hold the gold text briefly before everything
-fades out. See the docstring in `add_logo_fade_ending.py` for the full
-step-by-step and the auto-scaling behavior when a source's final shot is
-too short for the requested fade timings.
+playing — for `pre_fade_delay` seconds (default 0.4s) with no logo at all,
+so the final product shot gets genuine uninterrupted screen time and the
+brand mark reads as the natural conclusion rather than an interruption —
+then the brand lockup fades in over the still-playing footage; the
+still-playing picture and its audio then fade to black/silence *together*;
+only once real footage is genuinely exhausted does a plain black card (no
+freeze — there's no frame to freeze) hold the gold text briefly before
+everything fades out. See the docstring in `add_logo_fade_ending.py` for
+the full step-by-step and the auto-scaling behavior when a source's final
+shot is too short for the requested timings.
+
+`pre_fade_delay` (client-requested, applies to every video going forward)
+and `hold_visible` are sized so their sum with `fade_in`+`fade_to_black`
+stays at the same 4.2s total this ending has always reserved from the
+tail of real footage — defaults are `pre_fade_delay=0.4`, `fade_in=1.0`,
+`hold_visible=1.6`, `fade_to_black=1.2`. Adding the pre-fade delay this
+way doesn't change a video's total output duration; it just spends 0.4s
+less on "hold after the logo appears" and 0.4s more on "quiet before it
+appears." Don't reintroduce the old defaults (`pre_fade_delay=0`/
+`hold_visible=2.0`) even for a "quick" edit — the delay is meant to be
+consistent across the whole ad library.
 
 One planning detail that matters: `black_hold` + `final_fade_out` are
 **additive** on top of the body's natural length (they play after all real
-footage is exhausted), unlike `fade_in`/`hold_visible`/`fade_to_black`
-which overlap the body's own last few seconds. When setting a brief's
-`final_duration`, budget for that addition explicitly rather than assuming
-the exported video will match the raw shot-list length.
+footage is exhausted), unlike `pre_fade_delay`/`fade_in`/`hold_visible`/
+`fade_to_black` which overlap the body's own last few seconds. When
+setting a brief's `final_duration`, budget for that addition explicitly
+rather than assuming the exported video will match the raw shot-list length.
 
 ## 5. Creative brief format
 

@@ -10,24 +10,36 @@ before everything fades out.
 
 Sequence (all durations configurable):
   1. Real footage plays through normally.
-  2. Over the LAST `fade_in + hold_visible + fade_to_black` seconds of
-     that real footage (still playing, never paused), the lockup
-     (+ brand promise + website) fades in over `fade_in` seconds.
-  3. Hold full-opacity text over the still-playing footage for
+  2. `pre_fade_delay` more seconds of that same real footage, still with
+     no logo at all — this is the final product shot getting genuine
+     uninterrupted screen time immediately before the brand mark appears,
+     not an instant cut to branding. (Added after client feedback that
+     the logo felt like it interrupted the shot rather than concluding
+     it — see git history for add_logo_fade_ending.py.)
+  3. Over the next `fade_in` seconds of that real footage (still playing,
+     never paused), the lockup (+ brand promise + website) fades in.
+  4. Hold full-opacity text over the still-playing footage for
      `hold_visible` seconds.
-  4. Over the final `fade_to_black` seconds of the real footage, the
+  5. Over the final `fade_to_black` seconds of the real footage, the
      PICTURE fades to black and the ORIGINAL AUDIO fades to silence at
      the same time — text opacity is untouched, so it stays fully
      readable throughout. This is where the real footage runs out.
-  5. Hold `black_hold` seconds on solid black with the text still visible
+  6. Hold `black_hold` seconds on solid black with the text still visible
      (there's no frame to freeze here — the picture is already black).
-  6. Fade the gold text out over `final_fade_out` seconds, ending on
+  7. Fade the gold text out over `final_fade_out` seconds, ending on
      solid black.
 
-If the source clip is shorter than fade_in + hold_visible + fade_to_black,
-all three are scaled down proportionally so the sequence still fits
-entirely within real, still-playing footage rather than inventing extra
-time some other way.
+The defaults (pre_fade_delay=0.4, hold_visible=1.6) keep the total
+pre_fade_delay+fade_in+hold_visible+fade_to_black budget at 4.2s — the
+same total this ending has always reserved from the tail of real footage
+— so adding the delay doesn't change any video's total output duration;
+it just spends 0.4s less of that budget on "hold" and 0.4s more on
+"quiet before the logo appears."
+
+If the source clip is shorter than pre_fade_delay + fade_in +
+hold_visible + fade_to_black, all four are scaled down proportionally so
+the sequence still fits entirely within real, still-playing footage
+rather than inventing extra time some other way.
 
 The lockup image (icon + ZAVIQU + divider/heart + "Made with love...")
 should be a pre-extracted, transparent-background PNG matching the
@@ -164,8 +176,9 @@ def add_logo_fade_ending(
     lockup: Path,
     brand_promise: str,
     website: str,
+    pre_fade_delay: float = 0.4,
     fade_in: float = 1.0,
-    hold_visible: float = 2.0,
+    hold_visible: float = 1.6,
     fade_to_black: float = 1.2,
     black_hold: float = 1.0,
     final_fade_out: float = 0.8,
@@ -182,14 +195,16 @@ def add_logo_fade_ending(
     sample_rate = int(a["sample_rate"]) if a else 44100
     src_duration = get_duration(src)
 
-    requested_moving = fade_in + hold_visible + fade_to_black
+    requested_moving = pre_fade_delay + fade_in + hold_visible + fade_to_black
     if requested_moving > src_duration:
         # Not enough real footage for the numbers as given — scale all
-        # three down proportionally rather than inventing extra time
+        # four down proportionally rather than inventing extra time
         # (freezing, padding) that isn't real, still-playing footage.
         scale = src_duration / requested_moving
-        fade_in, hold_visible, fade_to_black = fade_in * scale, hold_visible * scale, fade_to_black * scale
-    moving_span = fade_in + hold_visible + fade_to_black
+        pre_fade_delay, fade_in, hold_visible, fade_to_black = (
+            pre_fade_delay * scale, fade_in * scale, hold_visible * scale, fade_to_black * scale,
+        )
+    moving_span = pre_fade_delay + fade_in + hold_visible + fade_to_black
     overlay_start = max(src_duration - moving_span, 0)
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -198,14 +213,16 @@ def add_logo_fade_ending(
 
         segments = []
 
-        # 1. Untouched real footage before the logo starts fading in.
+        # 1. Untouched real footage well before the ending sequence starts.
         if overlay_start > 0.01:
             seg_before = Path(tmp) / "seg_before.mp4"
             run(["ffmpeg", "-y", "-to", str(overlay_start), "-i", str(src), *H264_EXPORT_ARGS, str(seg_before)])
             segments.append(seg_before)
 
-        # 2. The moving tail: real footage keeps playing while the logo
-        # fades in, holds, then the picture+audio fade to black together.
+        # 2. The moving tail: real footage keeps playing throughout —
+        # pre_fade_delay seconds with no logo at all (the final shot
+        # getting genuine uninterrupted time), then the logo fades in,
+        # holds, then the picture+audio fade to black together.
         seg_tail_raw = Path(tmp) / "seg_tail_raw.mp4"
         run(["ffmpeg", "-y", "-ss", str(overlay_start), "-i", str(src), *H264_EXPORT_ARGS, str(seg_tail_raw)])
         tail_dur = get_duration(seg_tail_raw)
@@ -214,7 +231,7 @@ def add_logo_fade_ending(
         run([
             "ffmpeg", "-y", "-loop", "1", "-i", str(text_group_png),
             "-t", str(tail_dur),
-            "-vf", f"fade=t=in:st=0:d={fade_in}:alpha=1",
+            "-vf", f"fade=t=in:st={pre_fade_delay}:d={fade_in}:alpha=1",
             "-r", str(fps), "-c:v", "qtrle",
             str(overlay_clip),
         ])
@@ -258,8 +275,9 @@ def main() -> None:
     ap.add_argument("--lockup", type=Path, required=True)
     ap.add_argument("--brand-promise", required=True)
     ap.add_argument("--website", required=True)
+    ap.add_argument("--pre-fade-delay", type=float, default=0.4, help="seconds of clean footage before the logo starts fading in")
     ap.add_argument("--fade-in", type=float, default=1.0)
-    ap.add_argument("--hold-visible", type=float, default=2.0)
+    ap.add_argument("--hold-visible", type=float, default=1.6)
     ap.add_argument("--fade-to-black", type=float, default=1.2)
     ap.add_argument("--black-hold", type=float, default=1.0)
     ap.add_argument("--final-fade-out", type=float, default=0.8)
@@ -268,7 +286,7 @@ def main() -> None:
 
     out = add_logo_fade_ending(
         args.input, args.out, args.lockup, args.brand_promise, args.website,
-        args.fade_in, args.hold_visible, args.fade_to_black, args.black_hold,
+        args.pre_fade_delay, args.fade_in, args.hold_visible, args.fade_to_black, args.black_hold,
         args.final_fade_out, args.gold_color,
     )
     print(f"Video with logo-fade ending written: {out}")
