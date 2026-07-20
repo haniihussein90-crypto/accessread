@@ -1,0 +1,221 @@
+# Real production brief — "VIDEO 011 - Birthday Dinner Gift Reveal" client
+# notes, implemented against 6dd9477a-011__Birthday_Dinner_Gift_Reveal.mp4
+# (copied in as source/birthday_dinner_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below (never trusted the client's assumed
+# timestamps).
+#
+# Real hard cuts found (magnitude 44-75, vs. single digits for
+# continuous-shot noise elsewhere): 1.417s, 2.708s, 3.875s, 5.0s, 6.208s,
+# 7.75s, 8.917s, 9.75s, 11.417s, 12.25s — 10 cuts, 11 real segments. Two
+# things don't match the client's assumed 9-segment structure:
+#
+# 1. The client described "birthday dinner opening" (0-1.8) and "gift box
+#    placed forward" (1.8-3.1) as two beats. There is no cut there — diff
+#    stays under 10 for the whole span (checked every single frame, not
+#    just the top candidates) — it's one continuous wide shot: the couple
+#    at the table with the cake and box, him presenting it forward, all in
+#    one unbroken take. Kept as one scene rather than forcing a split, and
+#    applied the shared spirit of both blocks (subtle push-in, warm
+#    candlelight, light sharpen on the box/her expression) to it.
+#
+# 2. The client described one "reading the message card" beat (4.6-5.8).
+#    The real footage has THREE distinct real cuts across that emotional
+#    span — a card close-up, a wider box+card angle, then a card-in-hand
+#    insert shot — all genuine hard cuts (magnitude 75, 47), not one shot.
+#    "Preserve the full emotional pause... do not shorten this moment"
+#    argues for keeping all three intact rather than merging or trimming
+#    any of them; applied the same message-card grading spirit across all
+#    three real segments.
+#
+# Tail: confirmed the client's flagged contamination — a completely
+# different baked-in scene (candles/cake/flowers/box on the table, "ZAVIQU"
+# wordmark, then "The Perfect Birthday Gift" fading in) starts with a hard
+# cut at frame 294/t=12.25s, right after the real final necklace macro
+# ends cleanly at frame 293/t=12.208s. Trimmed at exactly that real cut
+# (12.25s) so nothing of the old end card survives and no real content is
+# lost either.
+#
+# One client ask this pipeline can't literally execute, applied as the
+# closest available approximation and flagged rather than silently
+# skipped: "slightly soften the skin while retaining natural texture" on
+# necklace_worn, simultaneous with sharpening the necklace/diamond in the
+# same shot — no selective/masked region grading exists in this pipeline
+# (same limitation noted on VIDEO 010), so only the whole-frame sharpen
+# for diamond clarity was applied; no separate skin-softening pass.
+# "Brighten skin tones" elsewhere (box_reaction, couple_dinner) has the
+# same approximation as VIDEO 010: no exposure/brightness lever exists,
+# so warmth+contrast stand in for it. The "one small tasteful sparkle" ask
+# relies entirely on the footage's own natural highlight, same position
+# taken throughout this campaign (no synthetic sparkle VFX exists here).
+
+name: birthday_dinner_v1
+
+source_file: birthday_dinner_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 13.7
+  max: 14.4
+hook: "Wide birthday-dinner shot with cake and gift box reads instantly — first ~1.4 seconds are the hook before her reaction begins."
+cover_frame: 7.0   # lands in the necklace-lifted-from-box hero moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: dinner_wide_box          # client: "birthday dinner opening" (0-1.8) + "gift box placed forward" (1.8-3.1) —
+    start: 0.000                     # ONE continuous shot, no real cut between them. True span 0.000-1.417.
+    end: 1.417
+  - id: box_reaction             # client: "woman opening the box" — her close-up reaction. True span 1.417-2.708.
+    start: 1.417
+    end: 2.708
+  - id: card_closeup1            # client: "reading the message card" (1 of 3 real shots) — card close-up. True span 2.708-3.875.
+    start: 2.708
+    end: 3.875
+  - id: card_wide2               # client: "reading the message card" (2 of 3) — wider box+card angle. True span 3.875-5.000.
+    start: 3.875
+    end: 5.000
+  - id: card_inhand              # client: "reading the message card" (3 of 3) — card held in hand. True span 5.000-6.208.
+    start: 5.000
+    end: 6.208
+  - id: necklace_lift            # client: "necklace lifted from the box". True span 6.208-7.75.
+    start: 6.208
+    end: 7.750
+  - id: necklace_worn            # client: "necklace worn close-up". True span 7.75-8.917.
+    start: 7.750
+    end: 8.917
+  - id: couple_dinner            # client: "couple smiling at dinner". True span 8.917-9.75.
+    start: 8.917
+    end: 9.750
+  - id: embrace                  # client: "embrace" — kept in full, strongest emotional beat. True span 9.75-11.417.
+    start: 9.750
+    end: 11.417
+  - id: final_macro              # client: "final necklace macro" — let it breathe, no flashy effect. True span
+    start: 11.417                    # 11.417-15.069, trimmed to 11.417-12.25 (see tail note above — old baked-in
+    end: 12.250                        # birthday end card starts with a hard cut right at 12.25s).
+
+scene_order:
+  - dinner_wide_box
+  - box_reaction
+  - card_closeup1
+  - card_wide2
+  - card_inhand
+  - necklace_lift
+  - necklace_worn
+  - couple_dinner
+  - embrace
+  - final_macro
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two segments the client explicitly asked to have movement
+# added to, and only where the source doesn't already have it baked in
+# (checked frame-diff motion levels first — both are essentially static,
+# mean magnitude under 5, no existing zoom trend).
+motion:
+  - scene: dinner_wide_box
+    direction: in
+    zoom_end: 1.025             # "very subtle slow push-in"
+  - scene: necklace_worn
+    direction: in
+    zoom_end: 1.025             # "very subtle slow push-in"
+
+# Per-scene grading following the client's own descriptions, mapped onto
+# the real segments per the header notes above.
+scene_grade:
+  - scene: dinner_wide_box
+    warmth: 0.04                 # candlelight
+    contrast: 0.03
+    sharpen: 0.1                 # light touch for the box/her expression, per the merged "box placed forward" ask
+  - scene: box_reaction
+    warmth: 0.025
+    contrast: 0.02               # approximates "brighten her face and the inside of the box" — no brightness lever, see header note
+  - scene: card_closeup1
+    warmth: 0.03
+    contrast: 0.02               # kept moderate — "readable without overexposing"
+    sharpen: 0.15
+  - scene: card_wide2
+    warmth: 0.03
+    contrast: 0.02
+    sharpen: 0.15
+  - scene: card_inhand
+    warmth: 0.03
+    contrast: 0.02
+    sharpen: 0.15
+  - scene: necklace_lift
+    warmth: 0.03                 # "richer gold without turning it orange" — restrained
+    sharpen: 0.22
+  - scene: necklace_worn
+    sharpen: 0.2                 # clarity/diamond detail — see header note on the skin-softening limitation
+  - scene: couple_dinner
+    warmth: 0.035
+    contrast: 0.02               # approximates "brighten skin tones" — see header note
+  - scene: embrace
+    warmth: 0.03
+  - scene: final_macro
+    sharpen: 0.2                 # deliberately no extra warmth/contrast — "do not create a flashy jewelry-commercial effect"
+
+on_screen_text: []
+captions: []
+
+# Raw source measured at -22.31 LUFS — brought up to the campaign's -15
+# LUFS standard like every other video. This RAISES the volume, it never
+# lowers it, so it doesn't conflict with "keep the original music and
+# current volume" — same reasoning as VIDEO 010. No opening dip: not
+# requested, and "do not introduce cuts that interrupt the music" argues
+# against adding one.
+music_direction:
+  track: null
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment already has an
+# explicit per-scene grade above; a global layer on top would compound
+# past what was actually asked for. Same reasoning as VIDEO 010.
+global_grade: {}
+
+# SIGNATURE ENDING — same lockup/brand promise/website as every other
+# video, using the pre_fade_delay timing the client explicitly requested
+# again here (standing default since VIDEO 004). Real, still-moving
+# footage (spanning the tail of necklace_worn, couple_dinner, embrace, and
+# final_macro) keeps playing under the logo; picture+audio fade to black
+# together; black hold; final fade out. Replaces the source's own baked-in
+# birthday end card and "The Perfect Birthday Gift" text entirely.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/necklace/box out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
