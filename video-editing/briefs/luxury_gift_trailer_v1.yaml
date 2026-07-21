@@ -1,0 +1,172 @@
+# Real production brief — "VIDEO 022 - Romantic Luxury Gift Trailer"
+# client notes, implemented against
+# 3067051b-022__Romantic_Luxury_Gift_Trailer.mp4 (copied in as
+# source/luxury_gift_trailer_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Minimal-touch style (same as VIDEO 020/021):
+# preserve original story, hard cuts matching the source's own real cuts,
+# no text.
+#
+# Real segments (verified via sequential frame-diff, all in original order):
+# - black_to_box_open (0.0-4.292 natural span, trimmed to 0.3-4.292): the
+#   client's three assumed beats ("black opening" 0-1.0, "closed box under
+#   spotlight" 1.0-2.5, "box opens" 2.5-3.8) are in fact ONE continuous
+#   shot — the spotlight fades in on the closed box, which then opens, no
+#   real cut anywhere in that span (checked every frame, nothing above
+#   magnitude 10 vs. 40-92 for genuine cuts elsewhere). Per "shorten the
+#   empty black opening if it lasts too long," trimmed the first 0.3s
+#   (confirmed via brightness sampling: frames 0-2 are pure black, only
+#   reaching brightness ~10/255 by the 1-second mark) so the spotlight
+#   reveal begins sooner.
+# - pendant_macro (4.292-5.75): matches "first pendant macro."
+# - chain_detail (5.75-6.208): matches "extreme pendant and chain detail" —
+#   real span is shorter than the client's assumed 5.4-6.8 window.
+# - necklace_over_card (6.208-7.208): matches "necklace over personalized
+#   card" — also shorter than assumed, the real cut into the wider
+#   composition happens earlier (7.208s, not 8.5s).
+# - wider_box_to_final (7.208-10.958 natural span, trimmed to 7.208-10.958):
+#   the client's "wider open-box composition" (8.5-10.6) and "final
+#   product angle" (10.6-12.2) turned out to be ONE continuous slow
+#   zoom-out shot, not two — confirmed via frame-diff (no cut above
+#   magnitude 26 in that whole span, and that spike is the zoom
+#   accelerating, not a cut). Trimmed at 10.958s rather than the source's
+#   full natural extent — brightness in this shot is stable through frame
+#   263/t=10.958s then declines sharply every frame after as the shot
+#   dims toward the old ending (see tail note), and the client explicitly
+#   wants the pendant "brightened so it remains visible... let the full
+#   gift presentation breathe," which a dimming-to-black tail would not
+#   satisfy.
+#
+# Tail: confirmed the client's flagged "Every Love Has a Story" line and
+# white ZAVIQU end card. Same dimming-then-fade-in pattern as VIDEO 020:
+# the real footage dims to near-black by frame 288/t=12.0s, then the old
+# branding fades in from that dark point. None of it survives — body ends
+# at 10.958s, well before any dimming or old branding.
+
+name: luxury_gift_trailer_v1
+
+source_file: luxury_gift_trailer_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 12.4
+  max: 13.1
+hook: "Spotlight fades in on the box almost immediately — no prolonged black hold."
+cover_frame: 5.0   # lands in the pendant macro sparkle
+
+timestamp_cuts:
+  - id: black_to_box_open
+    start: 0.300
+    end: 4.292
+  - id: pendant_macro
+    start: 4.292
+    end: 5.750
+  - id: chain_detail
+    start: 5.750
+    end: 6.208
+  - id: necklace_over_card
+    start: 6.208
+    end: 7.208
+  - id: wider_box_to_final
+    start: 7.208
+    end: 10.958
+
+scene_order:
+  - black_to_box_open
+  - pendant_macro
+  - chain_detail
+  - necklace_over_card
+  - wider_box_to_final
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# black_to_box_open is genuinely slow/static overall (mean frame-diff
+# 2.68) — safe for the requested subtle push-in across the whole
+# continuous shot. necklace_over_card gets the requested floating
+# movement (mean frame-diff 5.84, no existing zoom). wider_box_to_final
+# already has its own real zoom-out motion — no motion added there to
+# avoid compounding.
+motion:
+  - scene: black_to_box_open
+    direction: in
+    zoom_end: 1.02               # "very slow push-in"
+  - scene: necklace_over_card
+    direction: in
+    zoom_end: 1.01                # "subtle slow floating movement" — kept minimal
+    drift_x: 0.006
+    drift_y: 0.005
+
+scene_grade:
+  - scene: black_to_box_open
+    contrast: 0.02                  # "slightly increase visibility of the wood edges"
+    warmth: 0.015                    # restrained — "do not brighten the black background excessively"
+  - scene: pendant_macro
+    warmth: 0.02                      # "keep the gold rich but realistic"
+    sharpen: 0.22                      # centre stone/pavé/knot shape
+  - scene: chain_detail
+    sharpen: 0.18                       # "improve texture and clarity"
+  - scene: necklace_over_card
+    warmth: 0.02                         # "preserve the warm cream and blush tones" — light touch
+    sharpen: 0.15                         # "slightly improve card readability" — kept moderate, not digitally sharpened
+  - scene: wider_box_to_final
+    contrast: 0.02                        # "improve contrast slightly"
+    warmth: 0.02                           # approximates "brighten the pendant so it remains visible"
+
+on_screen_text: []
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.3-10.958s. Raw source measured at -14.92 LUFS, already close to this
+# campaign's usual -15 LUFS standard.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# Predominantly a black-background spotlit product film — same
+# false-positive risk the black-bars heuristic has flagged on other
+# genuinely-dark product shots in this campaign.
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own baked-in "Every Love Has a
+# Story" white end card completely, per explicit client instruction. Same
+# lockup/brand promise/website as every other video, using the
+# pre_fade_delay timing requested again here.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the box/necklace/card out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
