@@ -53,6 +53,43 @@ def _resolve_color(color: str) -> str:
     return color
 
 
+# Rough average glyph width as a fraction of font size for ffmpeg's default
+# drawtext font — no fontfile is configured here, so this is a conservative
+# heuristic, not an exact metric. Erring wide (over-wrapping slightly) is
+# the safe failure mode; the alternative (text running off-frame, found on
+# VIDEO 017's suggested title/subtitle lines — both ran off both edges at
+# the mobile-readable size floor) is not.
+_AVG_GLYPH_WIDTH_FRACTION = 0.56
+
+
+def _wrap_text(text: str, size_px: float, max_width_px: float) -> str:
+    """Word-wraps already-drawtext-escaped text and joins lines with an
+    actual newline byte (0x0A) — drawtext's `text` option renders a real
+    embedded newline as a line break, NOT the two-character sequence
+    '\\n' (a first attempt at this used the two-character form, which
+    drawtext just prints as a literal backslash-n instead of wrapping).
+    Must run AFTER _escape_text, since _escape_text doubles backslashes
+    and would otherwise mangle a two-character marker — a real newline
+    byte is untouched by that replace, which is a second reason this form
+    is the correct one here."""
+    max_chars = max(int(max_width_px / (size_px * _AVG_GLYPH_WIDTH_FRACTION)), 1)
+    if len(text) <= max_chars:
+        return text
+    words = text.split()
+    lines: list[str] = []
+    current = ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if len(candidate) <= max_chars or not current:
+            current = candidate
+        else:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return "\n".join(lines)
+
+
 def _build_drawtext(overlay: dict, width: int, height: int) -> str:
     margin_x = int(width * SAFE_MARGIN_FRACTION)
     margin_y = int(height * SAFE_MARGIN_FRACTION)
@@ -63,6 +100,7 @@ def _build_drawtext(overlay: dict, width: int, height: int) -> str:
     size = int(size * height / 1920)
     color = _resolve_color(overlay.get("color", "white"))
     position = overlay.get("position", "bottom")
+    wrapped_text = _wrap_text(_escape_text(overlay["text"]), size, width - 2 * margin_x)
 
     if position == "top":
         x_expr, y_expr = "(w-text_w)/2", str(margin_y)
@@ -80,7 +118,7 @@ def _build_drawtext(overlay: dict, width: int, height: int) -> str:
         raise ValueError(f"Unknown position '{position}'")
 
     parts = [
-        f"text='{_escape_text(overlay['text'])}'",
+        f"text='{wrapped_text}'",
         f"fontsize={size}",
         f"fontcolor={color}",
         f"x={x_expr}",

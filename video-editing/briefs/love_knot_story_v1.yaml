@@ -1,0 +1,228 @@
+# Real production brief — "VIDEO 017 - Love Knot Gift Story Video" client
+# notes, implemented against 62718465-017__Love_Knot_Gift_Story_Video.mp4
+# (copied in as source/love_knot_story_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source, but this is a NEW kind of edit for this
+# campaign: a curated restructure with pacing priority ("prioritize
+# strong pacing over preserving every original second"), on-screen text,
+# and smooth crossfade transitions, rather than a minimal-touch preserve-
+# everything edit. Verified real content via sequential frame-diff first,
+# same discipline as every prior video — the client's desired structure
+# happens to already match this source's natural chronological order
+# (no reordering needed here, just trimming/tightening + text + xfades),
+# confirmed segment-by-segment below.
+#
+# Real segments used (all in original order):
+# - pendant_open (0.0-2.542): the source's own opening pendant macro.
+#   Trimmed to start at 0.4s instead of 0.0s — skips only the darkest,
+#   least-revealed first fraction of a second so the hook reads as
+#   "already sparkling" immediately, achieving "make the opening move
+#   faster" without a speed-ramp tool this pipeline doesn't have.
+# - box_card (2.542-4.167): open box, necklace + card visible, no hand yet.
+# - hand_lifting (4.167-5.667): hand lifts the pendant, places it near the card.
+# - woman_reacting (5.667-7.167): her emotional close-up reaction.
+# - necklace_worn (7.167-10.083): fastening/adjusting — two real camera
+#   angles on the same action, kept as one scene since both cover the
+#   client's single "necklace being worn and adjusted" beat.
+# - pendant_clean (10.083-10.708): clean pendant-on-neck close-up. Real
+#   span is only 0.6s (shorter than the client's suggested 1.3s) — used
+#   as-is rather than stretching; the client's own note ("do not hold it
+#   too long") argues for brevity here anyway.
+# - pendant_macro (10.708-11.542): macro pendant detail.
+# - intimate_moment (11.542-12.5): hands near her shoulder/collarbone,
+#   soft focus — the closest real match to "man helping her put it on or
+#   intimate couple moment."
+# - final_worn (12.5-15.069): elegant worn shot, box visible softly in
+#   background — confirmed clean via frame-by-frame check, no old ending
+#   baked in anywhere in this source's tail.
+#
+# Transitions: short xfade crossfades (0.3s) at every junction instead of
+# hard cuts, per "smooth luxury transitions, clean pacing." Audio is
+# still built from one continuous, unbroken pass of the original source
+# (0.4-15.069s — this source's own real cuts are contiguous and in
+# original order even though the transitions are now crossfades, so the
+# continuous_source mechanism from VIDEO 011 still applies cleanly).
+#
+# Audio level: raw source measured at -12.35 LUFS — LOUDER than this
+# campaign's usual -15 LUFS standard. The client explicitly said "do not
+# lower the music... keep it clearly audible... not quiet" for this
+# batch, so normalizing down to -15 would violate that directly. Used
+# -12.0 LUFS instead (the loudest of all three batch sources is -12.35,
+# so -12.0 raises or holds every video in this batch, never lowers one) —
+# a deliberate, one-batch departure from the campaign's usual -15 LUFS
+# default, not an oversight.
+#
+# Ending: the client's written sequence for this batch says "freeze or
+# gently slow the final beautiful shot" before the branding fades in.
+# This directly conflicts with a standing decision made earlier in this
+# campaign (VIDEO 002-005): the signature ending was deliberately changed
+# FROM a freeze frame TO real, still-moving footage, and declared "the
+# signature ending for every Zaviqu advertisement, regardless of what the
+# last shot is." Kept the established no-freeze mechanism here rather
+# than silently reintroducing a freeze — flagged to the client in the
+# delivery summary rather than guessing which instruction should win.
+
+name: love_knot_story_v1
+
+source_file: love_knot_story_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 13.5
+  max: 14.5
+hook: "Sparkling pendant macro, already mid-reveal — an immediate hook, not a slow build."
+cover_frame: 11.0   # lands in the pendant macro detail
+
+timestamp_cuts:
+  - id: pendant_open
+    start: 0.400
+    end: 2.542
+  - id: box_card
+    start: 2.542
+    end: 4.167
+  - id: hand_lifting
+    start: 4.167
+    end: 5.667
+  - id: woman_reacting
+    start: 5.667
+    end: 7.167
+  - id: necklace_worn
+    start: 7.167
+    end: 10.083
+  - id: pendant_clean
+    start: 10.083
+    end: 10.708
+  - id: pendant_macro
+    start: 10.708
+    end: 11.542
+  - id: intimate_moment
+    start: 11.542
+    end: 12.500
+  - id: final_worn
+    start: 12.500
+    end: 15.069
+
+scene_order:
+  - pendant_open
+  - box_card
+  - hand_lifting
+  - woman_reacting
+  - necklace_worn
+  - pendant_clean
+  - pendant_macro
+  - intimate_moment
+  - final_worn
+
+# Smooth crossfades throughout, per "smooth luxury transitions" —
+# replaces this campaign's usual all-hard-cuts default for this batch.
+transitions:
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+
+motion: []
+
+# Restrained sharpen boost on the pendant/product-focused segments,
+# nothing added on the people-focused segments so skin stays natural —
+# consistent campaign look, no per-beat micro-instructions were given
+# this time so a standard global_grade layer (below) carries the overall
+# warmth/contrast consistency instead.
+scene_grade:
+  - scene: pendant_open
+    sharpen: 0.2
+  - scene: box_card
+    sharpen: 0.15
+  - scene: hand_lifting
+    sharpen: 0.15
+  - scene: pendant_clean
+    sharpen: 0.18
+  - scene: pendant_macro
+    sharpen: 0.22
+  - scene: final_worn
+    sharpen: 0.15
+
+on_screen_text:
+  - text: "The gift that says what words can't."
+    start: 0.5
+    end: 3.3
+    position: bottom
+    size: 68
+    color: gold
+  - text: "Your message. Her necklace. One unforgettable moment."
+    start: 7.4
+    end: 9.4
+    position: bottom
+    size: 68
+    color: gold
+
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.4-15.069s (contiguous, original chronological order) — see header
+# note on why -12.0 LUFS instead of this campaign's usual -15.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -12.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# This source has no dark/black background risk — skip dark_background.
+
+# SIGNATURE ENDING — see header note on the freeze-vs-no-freeze conflict.
+# Kept the established no-freeze mechanism: real, still-moving footage
+# (final_worn) keeps playing under the logo; picture+audio fade to black
+# together; black hold; final fade out. hold_visible=1.6s sits inside the
+# client's requested 1.5-2s hold window.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the necklace/box/hands/face out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
