@@ -1,0 +1,176 @@
+# Real production brief — "VIDEO 020 - Love Knot Gift Story Video" client
+# notes, implemented against 46323905-020__Love_Knot_Gift_Story_Video.mp4
+# (copied in as source/love_knot_doorstep_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. This batch reverts to the campaign's usual
+# minimal-touch style (preserve original story, no reordering, no text,
+# hard cuts matching the source's own real cuts) after the curated-
+# restructure batch (017-019) — confirmed by the batch-wide rules here
+# ("preserve the original story," "do not add unnecessary cuts," no
+# suggested on-screen text this time).
+#
+# Verified every real cut via sequential frame-diff before writing
+# anything below. Two of the client's assumed segments turned out to be
+# one continuous shot each:
+# - "woman opens the door" (2.1-3.5) + "he presents the gift" (3.5-5.2):
+#   no real cut between them (checked every frame in that range, nothing
+#   above magnitude 5 vs. 40+ for genuine cuts) — one continuous shot
+#   from the door opening through the box being presented.
+# - The client's "her emotional reaction" (8.2-10.0) is real, but there's
+#   an extra real cut inside it the client's structure doesn't mention: a
+#   brief (~0.5s) shot of the man holding the box before the embrace
+#   begins. Kept as its own short real segment rather than merged into
+#   either neighbor, since it's genuine footage, not something to delete.
+#
+# Tail: confirmed the client's flagged "existing separate black end
+# card." Unlike some prior contaminated tails, this one is a genuine
+# crossfade dissolve, not a hard cut or a source-side fade-to-black —
+# brightness in the text region rises naturally through frame 324/t=13.5s
+# (real handheld motion/lighting), then declines every frame after as the
+# ZAVIQU card dissolves in. Trimmed at 324/13.5s, the last frame with no
+# dissolve blending at all.
+
+name: love_knot_doorstep_v1
+
+source_file: love_knot_doorstep_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 14.9
+  max: 15.7
+hook: "His nervous wait at the door reads instantly — first ~2.8 seconds are the hook before she opens it."
+cover_frame: 7.7   # lands in the pendant macro close-up
+
+timestamp_cuts:
+  - id: man_waiting            # client: "man waiting at the doorway". True span 0.000-2.792.
+    start: 0.000
+    end: 2.792
+  - id: door_open_presents     # client: "woman opens the door" + "he presents the gift" — ONE continuous
+    start: 2.792                   # shot, no real cut between them. True span 2.792-5.542.
+    end: 5.542
+  - id: open_box_card          # client: "open box and Midnight Luxe card". True span 5.542-7.458.
+    start: 5.542
+    end: 7.458
+  - id: pendant_macro          # client: "pendant macro". True span 7.458-8.042.
+    start: 7.458
+    end: 8.042
+  - id: her_reaction           # client: "her emotional reaction" (1 of 2 real shots). True span 8.042-9.208.
+    start: 8.042
+    end: 9.208
+  - id: man_with_box_brief     # a short real connecting shot the client's structure doesn't separately
+    start: 9.208                   # describe — kept as its own segment rather than deleted. True span 9.208-9.708.
+    end: 9.708
+  - id: embrace                # client: "couple embraces". True span 9.708-11.75.
+    start: 9.708
+    end: 11.750
+  - id: final_box              # client: "final open-box product shot" — true span 11.75-15.069, trimmed to
+    start: 11.750                  # 11.75-13.5 (see tail note above — old baked-in end card dissolves in
+    end: 13.500                      # right after).
+
+scene_order:
+  - man_waiting
+  - door_open_presents
+  - open_box_card
+  - pendant_macro
+  - her_reaction
+  - man_with_box_brief
+  - embrace
+  - final_box
+
+# All genuine hard cuts in the source — no cuts added or removed, no
+# crossfade transitions this time (this batch didn't ask for the "smooth
+# luxury transitions" treatment used on 017-019).
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two segments that are genuinely static in the source and where
+# the client asked for a push-in.
+motion:
+  - scene: man_waiting
+    direction: in
+    zoom_end: 1.02               # "very gentle push-in"
+  - scene: her_reaction
+    direction: in
+    zoom_end: 1.02               # "gentle slow push-in"
+
+scene_grade:
+  - scene: man_waiting
+    warmth: 0.035                  # "warm the indoor light slightly"
+  - scene: door_open_presents
+    contrast: 0.02                  # approximates "brighten both faces"
+    sharpen: 0.12                    # "sharpen the box slightly"
+  - scene: open_box_card
+    warmth: 0.03                     # "enrich the mahogany and gold tones"
+    sharpen: 0.18                     # necklace/chain/box/card border
+  - scene: pendant_macro
+    warmth: 0.02                      # restrained — "do not make the gold orange or overly bright"
+    sharpen: 0.22                      # centre stone/pavé
+  - scene: her_reaction
+    warmth: 0.02
+    contrast: 0.02                     # approximates "brighten her eyes and face"
+  - scene: man_with_box_brief
+    warmth: 0.02
+  - scene: embrace
+    warmth: 0.03                        # "preserve the warm doorway atmosphere"
+  - scene: final_box
+    sharpen: 0.18                        # "sharpen the necklace carefully"
+
+on_screen_text: []
+captions: []
+
+# "Audio — mandatory": one continuous, unbroken pass from the original
+# source over 0.000-13.5s (contiguous, original chronological order).
+# Raw source measured at -16.79 LUFS — brought up to this campaign's
+# usual -15 LUFS standard (no "do not lower" instruction was given for
+# this batch, unlike 017-019).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — replaces the source's own baked-in black end card
+# completely, per explicit client instruction. Same lockup/brand
+# promise/website as every other video, using the pre_fade_delay timing
+# requested again here (standing default since VIDEO 004). No
+# freeze-vs-no-freeze conflict this time — this batch's ending
+# description matches the established mechanism exactly (no freeze/slow
+# mentioned).
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/box/necklace out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
