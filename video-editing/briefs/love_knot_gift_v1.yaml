@@ -1,0 +1,159 @@
+# Real production brief — "VIDEO 018 - Love Knot Necklace Gift Story"
+# client notes, implemented against
+# 187213fa-018__Love_Knot_Necklace_Gift_Story.mp4 (copied in as
+# source/love_knot_gift_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Curated-restructure edit (same style as VIDEO
+# 017): pacing priority, on-screen text, smooth xfade transitions. The
+# client's desired structure matches this source's natural chronological
+# order — no reordering needed, just two deliberate trims (the chain
+# detail cut down to ~0.5s, the final box shot cut down to ~1.3s, per the
+# client's own explicit "shorten significantly" note on the box shot).
+#
+# Real segments (verified via sequential frame-diff, all in original order):
+# - open_box_card (0.0-2.0): open box, necklace + card visible.
+# - pendant_macro (2.0-4.5): pendant close-up with sparkle.
+# - chain_detail (4.5-5.708 natural span, trimmed to 4.5-5.0): chain only,
+#   no pendant visible — client: "keep only very briefly, ~half a second,
+#   because it is less emotionally powerful."
+# - hand_lifting (5.708-8.208): hand reaches into the box and lifts the necklace.
+# - necklace_worn (8.208-10.667): worn on the chest/neck.
+# - final_box (10.667-15.069 natural span, trimmed to 10.667-12.0): the
+#   client flagged this shot as running too long in the original ("lasts
+#   too long from approximately 0:11 to 0:15... shorten significantly...
+#   only the best 1-1.5 seconds") — used the first 1.333s of it, the
+#   freshest framing before the shot's own repetition sets in.
+
+name: love_knot_gift_v1
+
+source_file: love_knot_gift_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 11.2
+  max: 12.0
+hook: "Open box and pendant read immediately — no slow build before the product is on screen."
+cover_frame: 3.0   # lands in the pendant macro sparkle
+
+timestamp_cuts:
+  - id: open_box_card
+    start: 0.000
+    end: 2.000
+  - id: pendant_macro
+    start: 2.000
+    end: 4.500
+  - id: chain_detail
+    start: 4.500
+    end: 5.000
+  - id: hand_lifting
+    start: 5.708
+    end: 8.208
+  - id: necklace_worn
+    start: 8.208
+    end: 10.667
+  - id: final_box
+    start: 10.667
+    end: 12.000
+
+scene_order:
+  - open_box_card
+  - pendant_macro
+  - chain_detail
+  - hand_lifting
+  - necklace_worn
+  - final_box
+
+# Smooth crossfades throughout, per "smooth luxury transitions."
+transitions:
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+
+motion: []
+
+scene_grade:
+  - scene: pendant_macro
+    sharpen: 0.22
+  - scene: hand_lifting
+    sharpen: 0.15
+  - scene: final_box
+    sharpen: 0.18
+
+on_screen_text:
+  - text: "More than a necklace."
+    start: 0.3
+    end: 2.8
+    position: bottom
+    size: 68
+    color: gold
+  - text: "A message made just for her."
+    start: 6.0
+    end: 8.0
+    position: bottom
+    size: 68
+    color: gold
+
+captions: []
+
+# One continuous, unbroken audio pass from the original source. The
+# computed range (0.0-12.0, min/max of the used scenes' original
+# timestamps) naturally truncates to the video's own assembled length —
+# effectively the song's own opening, which is what's kept anyway since
+# both trims (chain_detail, final_box) removed content, not reordered it.
+# -12.0 LUFS, not this campaign's usual -15 — see VIDEO 017 for why (the
+# client's explicit "do not lower the music" for this batch; -12.0 is at
+# or above all three batch sources' raw levels).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -12.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+dark_background: true
+
+# SIGNATURE ENDING — see VIDEO 017 for the freeze-vs-no-freeze note (same
+# conflict, same resolution: kept the established no-freeze mechanism).
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the necklace/box/hands out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
