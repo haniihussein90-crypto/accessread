@@ -1,0 +1,176 @@
+# Real production brief — "VIDEO 015 - Doorstep Surprise Gift" client
+# notes, implemented against aff633d9-015__Doorstep_Surprise_Gift.mp4
+# (copied in as source/doorstep_surprise_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below — every one of the client's 7 assumed
+# boundaries matched a real cut within 0.1s, the cleanest match to an
+# assumed structure in this campaign so far. No segments needed merging
+# or splitting.
+#
+# Tail: the client called this "the current separate black end card" —
+# and unlike most of this campaign's contaminated tails (text fading in
+# ON TOP of still-moving footage), this one really is separate: the real
+# box footage itself fades to black on its own (brightness in the
+# text-band region declines steadily from frame 318/t=13.25s), and only
+# once the picture is fully black does a static "ZAVIQU / Made with Love.
+# Made to Last." card appear and hold. Confirmed via a fixed-region
+# brightness sample across frames 305-340 — stable through frame
+# 317/t=13.208s, declining every frame after. Trimmed at 317/13.208s (the
+# last stable frame) so our own signature ending owns the entire
+# fade-to-black cleanly, same principle as VIDEO 010's natural-fade tail,
+# rather than stacking our fade on top of the source's own.
+
+name: doorstep_surprise_v1
+
+source_file: doorstep_surprise_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 14.6
+  max: 15.4
+hook: "Man waiting at the door in golden sunset light reads instantly as intimate — first ~2 seconds are the hook before the door opens."
+cover_frame: 7.2   # lands in the necklace/card close-up hero moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: man_waiting             # client: "man waiting at the door". True span 0.000-2.042.
+    start: 0.000
+    end: 2.042
+  - id: door_opens_sees_him     # client: "door opens and she sees him". True span 2.042-3.875.
+    start: 2.042
+    end: 3.875
+  - id: presents_gift_box       # client: "he presents the gift box". True span 3.875-5.417.
+    start: 3.875
+    end: 5.417
+  - id: box_opening             # client: "box opening". True span 5.417-6.708.
+    start: 5.417
+    end: 6.708
+  - id: necklace_card_closeup   # client: "necklace and Midnight Luxe card close-up". True span 6.708-7.875.
+    start: 6.708
+    end: 7.875
+  - id: her_reaction            # client: "her emotional reaction". True span 7.875-10.708.
+    start: 7.875
+    end: 10.708
+  - id: couple_embrace          # client: "couple embraces". True span 10.708-12.625.
+    start: 10.708
+    end: 12.625
+  - id: final_box_shot          # client: "final gift-box shot" — true span 12.625-15.069, trimmed to
+    start: 12.625                   # 12.625-13.208 (see tail note above — the real footage's own fade to
+    end: 13.208                       # black begins right after).
+
+scene_order:
+  - man_waiting
+  - door_opens_sees_him
+  - presents_gift_box
+  - box_opening
+  - necklace_card_closeup
+  - her_reaction
+  - couple_embrace
+  - final_box_shot
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Both segments are genuinely static in the source (mean frame-diff ~2,
+# well below this source's moving shots) — safe to add the requested
+# push-ins without compounding.
+motion:
+  - scene: man_waiting
+    direction: in
+    zoom_end: 1.02               # "subtle slow push-in"
+  - scene: her_reaction
+    direction: in
+    zoom_end: 1.02               # "gentle slow push-in"
+
+# Per-scene grading following the client's own descriptions for each real
+# segment.
+scene_grade:
+  - scene: man_waiting
+    warmth: 0.035                  # "warm the sunset light slightly"
+  - scene: door_opens_sees_him
+    warmth: 0.02                   # "doorway light warm and cinematic"
+    contrast: 0.02                  # approximates "brighten both faces" — no brightness lever, see prior videos' note
+  - scene: presents_gift_box
+    sharpen: 0.15                   # "sharpen the box subtly"
+  - scene: box_opening
+    warmth: 0.03                    # "enrich the mahogany colour without making it red" — restrained
+    sharpen: 0.18                    # pendant/card
+  - scene: necklace_card_closeup
+    sharpen: 0.18                    # "improve gold and stone clarity carefully"
+  - scene: her_reaction
+    warmth: 0.02
+    contrast: 0.02                   # approximates "brighten her eyes and skin"
+  - scene: couple_embrace
+    warmth: 0.03                     # "preserve the warmth of the doorway lighting"
+  - scene: final_box_shot
+    sharpen: 0.18                     # box/necklace/card
+
+on_screen_text: []
+captions: []
+
+# "Audio continuity — mandatory": one continuous, unbroken pass from the
+# original source over the same 0.000-13.208 span the real cuts cover
+# (contiguous, original chronological order), so there are zero
+# concatenation points in the delivered music. Raw source measured at
+# -21.22 LUFS — quieter than the campaign's -15 LUFS standard, so
+# normalizing raises it to match the rest of the library.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment already has an
+# explicit per-scene grade above; a global layer on top would compound
+# past what was actually asked for. Same reasoning as VIDEO 010-014.
+global_grade: {}
+
+# final_box_shot is a dark-background product close-up (mahogany box
+# against a dark backdrop) — same false-positive risk the black-bars
+# heuristic has flagged on other genuinely-dark product shots in this
+# campaign. Flagged for manual QC review instead of guessing.
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own separate black end card
+# completely, per explicit client instruction. Same lockup/brand
+# promise/website as every other video, using the pre_fade_delay timing
+# requested again here (standing default since VIDEO 004). Real,
+# still-moving footage (the tail of her_reaction, couple_embrace, and
+# final_box_shot) keeps playing under the logo; picture+audio fade to
+# black together; black hold; final fade out.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/box/necklace out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
