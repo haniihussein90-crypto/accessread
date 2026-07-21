@@ -1,0 +1,152 @@
+# Real production brief — "VIDEO 023 - Luxury Knot Pendant Viral Story"
+# client notes, implemented against
+# 5d33ce93-Luxury_knot_pendant_viral_story.mp4 (copied in as
+# source/luxury_knot_viral_raw.mp4). Folder 3 batch — "heavier correction"
+# than Folder 2, per the client's explicit framing.
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below.
+#
+# Real segments (all in original order):
+# - pendant_macro1 (0.0-2.417): first pendant macro, matches the client's
+#   opening hook request.
+# - pendant_macro2 (2.417-3.708): a genuinely distinct second angle, not a
+#   near-duplicate — kept, per "keep only one additional macro angle."
+# - hand_holding (3.708-5.125): hand holding the necklace, chain visible.
+# - wardrobe_held (5.125-7.75 natural span, trimmed to 5.125-6.5): client
+#   flagged this as possibly repetitive ("shorten this if it feels
+#   repetitive... keep only the cleanest moment") — kept the first 1.375s
+#   rather than the full 2.625s.
+# - woman_wearing (7.75-11.167): the strongest wearing shot; body ends
+#   here (see tail note below).
+#
+# Tail: the client's "tiny existing bottom text" turned out to read "Love
+# Knot Helo Pendent Necklece" (misspelled — Helo/Pendent/Necklece) once
+# read at full resolution, squarely matching the batch-wide rule "remove
+# all incorrect, generic, or pre-existing branding... do not preserve
+# invented product claims." Checked precisely: the text is present from
+# the very first frame of the "final pendant beauty shot" (frame
+# 268/t=11.167s — a fixed-region brightness sample jumps from 152 to 255
+# max exactly at the cut, meaning the whole shot is captioned, not just
+# part of it). Same situation as VIDEO 016 and VIDEO 021's fully-
+# contaminated final shots — this pipeline can't erase text baked into
+# source pixels, so the shot is dropped entirely rather than delivered
+# with the misspelled caption still visible. The signature ending is
+# built on woman_wearing's own tail instead.
+
+name: luxury_knot_viral_v1
+
+source_file: luxury_knot_viral_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 11.3
+  max: 12.0
+hook: "Strongest pendant macro, already sparkling — an immediate hook."
+cover_frame: 1.0   # lands in the opening pendant macro
+
+timestamp_cuts:
+  - id: pendant_macro1
+    start: 0.000
+    end: 2.417
+  - id: pendant_macro2
+    start: 2.417
+    end: 3.708
+  - id: hand_holding
+    start: 3.708
+    end: 5.125
+  - id: wardrobe_held
+    start: 5.125
+    end: 6.500
+  - id: woman_wearing
+    start: 7.750
+    end: 11.167
+
+scene_order:
+  - pendant_macro1
+  - pendant_macro2
+  - hand_holding
+  - wardrobe_held
+  - woman_wearing
+
+# "Use a smooth, slow transition" was requested specifically between the
+# two pendant macro angles — the only place a crossfade was asked for.
+# Everything else stays a hard cut, matching this campaign's usual
+# treatment of the source's own real cuts.
+transitions:
+  - type: xfade
+    style: fade
+    duration: 0.4
+  - type: cut
+  - type: cut
+  - type: cut
+
+motion: []
+
+scene_grade:
+  - scene: pendant_macro1
+    sharpen: 0.2                    # centre stone/knot clarity — restrained, "avoid... making the stone look artificial"
+  - scene: pendant_macro2
+    sharpen: 0.18
+  - scene: hand_holding
+    sharpen: 0.15                    # chain clarity
+  - scene: wardrobe_held
+    warmth: 0.02
+  - scene: woman_wearing
+    warmth: 0.02
+    contrast: 0.02                    # approximates "brighten her face and neckline"
+
+on_screen_text: []
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.0-11.167s. Raw source measured very hot at -10.01 LUFS — brought down
+# to this campaign's usual -15 LUFS standard (no "do not lower"
+# instruction in this batch).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# Pendant macro segments are on a rich black background — same
+# false-positive risk the black-bars heuristic has flagged on other
+# genuinely-dark product shots in this campaign.
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own baked-in misspelled
+# caption completely, per explicit client instruction. Same lockup/brand
+# promise/website as every other video, using the pre_fade_delay timing
+# requested again here.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the necklace/hands out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
