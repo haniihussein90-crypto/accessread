@@ -110,6 +110,59 @@ def normalize_original_audio(src: Path, out: Path, target_i: float = -15.0,
     return out
 
 
+def replace_with_continuous_source_audio(
+    assembled: Path,
+    original_source: Path,
+    out: Path,
+    range_start: float,
+    range_end: float,
+    target_i: float = -15.0,
+    target_tp: float = -1.0,
+    target_lra: float = 15.0,
+) -> Path:
+    """Replace an already-assembled multi-scene clip's audio (chopped up
+    because each scene was independently trimmed/graded/encoded before
+    concatenation, leaving an audible seam at every cut) with ONE
+    continuous, unbroken audio pull from the ORIGINAL source over the same
+    real timeline the assembled scenes cover — then normalizes that single
+    pass, so there are zero concatenation points in the delivered audio at
+    all.
+
+    Only valid when the assembled clip's scenes are contiguous and in
+    original chronological order (no reordering, no skipped spans) — i.e.
+    `range_start`/`range_end` in the original source really do correspond
+    1:1 to the assembled clip's own timeline. The caller is responsible
+    for that precondition; this function doesn't verify it.
+
+    Built for VIDEO 011 (birthday_dinner_v1): the client kept every real
+    visual cut (so reverting to one untouched scene, the fix used for
+    VIDEO 009, wasn't an option) but wanted the music to flow as if it had
+    never been cut at all — which is achievable here because, unlike a
+    genuinely reordered edit, these particular cuts never skip or reorder
+    any time in the source.
+    """
+    check_tools()
+    ensure_parent(out)
+    assembled_duration = get_duration(assembled)
+
+    continuous_raw = out.parent / f"{out.stem}_continuous_raw.mp4"
+    run([
+        "ffmpeg", "-y", "-ss", str(range_start), "-to", str(range_end),
+        "-i", str(original_source),
+        *H264_EXPORT_ARGS, str(continuous_raw),
+    ])
+    continuous_normalized = out.parent / f"{out.stem}_continuous_normalized.mp4"
+    normalize_original_audio(continuous_raw, continuous_normalized, target_i, target_tp, target_lra)
+
+    run([
+        "ffmpeg", "-y", "-i", str(assembled), "-i", str(continuous_normalized),
+        "-map", "0:v", "-map", "1:a",
+        "-t", str(assembled_duration),
+        *H264_EXPORT_ARGS, str(out),
+    ])
+    return out
+
+
 def mix_audio(
     src: Path,
     out: Path,
@@ -120,12 +173,19 @@ def mix_audio(
     target_lufs: float | None = None,
     target_tp: float = -1.0,
     target_lra: float = 15.0,
+    continuous_source: Path | None = None,
+    continuous_range: tuple[float, float] | None = None,
 ) -> Path:
     check_tools()
     ensure_parent(out)
     duration = get_duration(src)
 
     if music is None:
+        if continuous_source is not None and continuous_range is not None:
+            return replace_with_continuous_source_audio(
+                src, continuous_source, out, continuous_range[0], continuous_range[1],
+                target_lufs if target_lufs is not None else -15.0, target_tp, target_lra,
+            )
         if target_lufs is not None:
             return normalize_original_audio(src, out, target_lufs, target_tp, target_lra)
         # Just adjust (or mute) the original track by a flat multiplier.

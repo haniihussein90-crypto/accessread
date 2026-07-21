@@ -1,6 +1,6 @@
 # Edit report — birthday_dinner_v1
 
-Generated: 2026-07-20T11:50:08.685326Z
+Generated: 2026-07-21T04:56:21.509447Z
 Source: `birthday_dinner_raw.mp4`
 Brief hook: Wide birthday-dinner shot with cake and gift box reads instantly — first ~1.4 seconds are the hook before her reaction begins.
 
@@ -30,7 +30,7 @@ Brief hook: Wide birthday-dinner shot with cake and gift box reads instantly —
 - Applied per-scene grade (sharpen=0.0, vignette=False) to scene 'embrace'
 - Applied per-scene grade (sharpen=0.2, vignette=False) to scene 'final_macro'
 - Assembled 10 scene(s) in order ['dinner_wide_box', 'box_reaction', 'card_closeup1', 'card_wide2', 'card_inhand', 'necklace_lift', 'necklace_worn', 'couple_dinner', 'embrace', 'final_macro'] with transitions plan [{'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}, {'type': 'cut'}]
-- Mixed audio (music=no, loudness-normalized to -15.0 LUFS)
+- Mixed audio (music=no, replaced with one continuous pass from the original source over 0.0-12.25s, loudness-normalized to -15.0 LUFS)
 - Resized to 9:16 (blur_pad) for instagram_facebook
 - Appended logo-fade ending over final frame for 9:16
 - Exported final: /home/user/accessread/video-editing/final/instagram-facebook/birthday_dinner_v1_9x16.mp4

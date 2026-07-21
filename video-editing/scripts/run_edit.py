@@ -129,6 +129,19 @@ def run_edit(brief_path: Path) -> dict:
             music_track = Path(music_dir_spec["track"])  # allow absolute/brand-assets path
     mixed = work_dir / "mixed.mp4"
     target_lufs = music_dir_spec.get("target_lufs")
+    continuous_source = None
+    continuous_range = None
+    if music_dir_spec.get("continuous_source"):
+        # Pull one unbroken audio track from the ORIGINAL source instead of
+        # using the scene-by-scene chopped-and-concatenated audio — only
+        # valid when scene_order's timestamp_cuts are contiguous and in
+        # original chronological order (real cuts kept, but nothing
+        # reordered or skipped), so the original source's own audio over
+        # that same span is exactly what the assembled visual timeline
+        # would have sounded like uncut.
+        used_cuts = [c for c in brief["timestamp_cuts"] if c["id"] in brief["scene_order"]]
+        continuous_source = source
+        continuous_range = (min(c["start"] for c in used_cuts), max(c["end"] for c in used_cuts))
     mix_audio(
         assembled, mixed,
         music=music_track,
@@ -138,8 +151,14 @@ def run_edit(brief_path: Path) -> dict:
         target_lufs=target_lufs,
         target_tp=music_dir_spec.get("target_tp", -1.0),
         target_lra=music_dir_spec.get("target_lra", 15.0),
+        continuous_source=continuous_source,
+        continuous_range=continuous_range,
     )
-    if target_lufs is not None:
+    if continuous_source is not None:
+        log.append(f"Mixed audio (music=no, replaced with one continuous pass from the "
+                   f"original source over {continuous_range[0]}-{continuous_range[1]}s, "
+                   f"loudness-normalized to {target_lufs if target_lufs is not None else -15.0} LUFS)")
+    elif target_lufs is not None:
         log.append(f"Mixed audio (music={'yes' if music_track else 'no'}, "
                    f"loudness-normalized to {target_lufs} LUFS)")
     else:
