@@ -1,0 +1,185 @@
+# Real production brief — "VIDEO 024 - Viral Story Ad for the Knot
+# Pendant" client notes, implemented against
+# f7063025-Viral_story_ad_for_the_knot_pendant.mp4 (copied in as
+# source/viral_story_ad_raw.mp4). Folder 3 batch — "heavier correction."
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below.
+#
+# The client's biggest flag for this video was the "extreme diamond
+# shot... a giant gemstone image that no longer resembles the actual
+# pendant." Investigated closely: the client's assumed "dark pendant
+# opening" (0-1.8) and "clean pendant macro" (1.8-3.2) are actually ONE
+# continuous shot — a single, ever-tightening zoom-in that starts on the
+# whole pendant and ends, by frame 70-78/t≈2.9-3.25s, filling the entire
+# frame with just the centre stone, with the gold knot setting no longer
+# visible at all. That over-zoomed tail IS the "extreme diamond shot" —
+# it's not a separate inserted image, it's the same continuous take
+# zoomed too far. Per "remove this shot... replace it with another clean
+# pendant detail from the video if possible," trimmed the shot to stop at
+# frame 62/t=2.583s — the last frame where the knot setting and stone are
+# both still clearly recognizable as the actual pendant — and cut
+# directly from there to the box-lifting footage, skipping the
+# unrecognizable over-zoomed frames entirely rather than replacing them
+# with anything new.
+#
+# Two of the client's other assumed single beats also turned out to be
+# two real camera angles each (both content matches the client's own
+# "select the two strongest... angles only" framing, so no further
+# trimming needed beyond what's already just two shots):
+# - "necklace worn close-ups" (5.6-8.2): two real angles, exactly two —
+#   nothing repetitive to remove.
+# - "woman wearing the necklace outdoors" (8.2-10.7): also two real
+#   camera angles on the same beat.
+#
+# Tail: checked the client's flagged "existing plain pendant ending" —
+# confirmed clean at full resolution (no baked-in text or logo anywhere
+# in the last 3+ seconds). "Plain" here just describes the source's own
+# unbranded conclusion, not a defect to trim around — used the full real
+# footage through the natural end, with the signature ending replacing
+# whatever this source would have cut to next (nothing did, it just
+# stops).
+
+name: viral_story_ad_v1
+
+source_file: viral_story_ad_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 15.9
+  max: 16.5
+hook: "Pendant macro opens already sparkling, brightening into full view — an immediate hook."
+cover_frame: 1.5   # lands in the pendant opening macro
+
+timestamp_cuts:
+  - id: pendant_opening_macro
+    start: 0.000
+    end: 2.583
+  - id: box_open
+    start: 3.250
+    end: 4.083
+  - id: chain_lift
+    start: 4.083
+    end: 5.833
+  - id: necklace_worn_1
+    start: 5.833
+    end: 7.375
+  - id: necklace_worn_2
+    start: 7.375
+    end: 8.417
+  - id: wearing_outdoors_1
+    start: 8.417
+    end: 9.958
+  - id: wearing_outdoors_2
+    start: 9.958
+    end: 11.333
+  - id: hand_touching_pendant
+    start: 11.333
+    end: 15.069
+
+scene_order:
+  - pendant_opening_macro
+  - box_open
+  - chain_lift
+  - necklace_worn_1
+  - necklace_worn_2
+  - wearing_outdoors_1
+  - wearing_outdoors_2
+  - hand_touching_pendant
+
+# All hard cuts, matching the source's own real cuts (the cut from
+# pendant_opening_macro into box_open is a NEW cut this edit introduces,
+# skipping the over-zoomed frames — everything else matches a real cut
+# already in the source).
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two "wearing outdoors" angles get the requested push-in — both
+# are close to static in the source (mean frame-diff ~3.7, well below
+# this source's moving shots).
+motion:
+  - scene: wearing_outdoors_1
+    direction: in
+    zoom_end: 1.02               # "add a gentle push-in"
+  - scene: wearing_outdoors_2
+    direction: in
+    zoom_end: 1.02
+
+scene_grade:
+  - scene: pendant_opening_macro
+    warmth: 0.03                   # "brighten it slightly so the knot shape is immediately visible"
+    sharpen: 0.15
+  - scene: box_open
+    sharpen: 0.15                   # "improve the box and necklace clarity"
+    warmth: 0.02                     # "preserve the warm sunset atmosphere"
+  - scene: chain_lift
+    sharpen: 0.15
+    warmth: 0.02
+  - scene: necklace_worn_1
+    sharpen: 0.15                     # "preserve realistic skin and jewellery proportions" — kept light
+  - scene: necklace_worn_2
+    sharpen: 0.15
+  - scene: wearing_outdoors_1
+    warmth: 0.02
+    contrast: 0.02                     # approximates "slightly brighten her face"
+  - scene: wearing_outdoors_2
+    warmth: 0.02
+    contrast: 0.02
+  - scene: hand_touching_pendant
+    sharpen: 0.18                       # "sharpen the centre stone gently"
+
+on_screen_text: []
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.0-15.069s. Raw source measured at -12.20 LUFS — brought down to this
+# campaign's usual -15 LUFS standard (no "do not lower" instruction in
+# this batch).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+dark_background: true
+
+# SIGNATURE ENDING — same lockup/brand promise/website as every other
+# video, using the pre_fade_delay timing requested again here.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the necklace/hands/face out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
