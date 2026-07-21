@@ -1,0 +1,181 @@
+# Real production brief — "VIDEO 021 - Sentimental Gift Becomes the Story"
+# client notes, implemented against
+# bbe30d9c-021__Sentimental_Gift_Becomes_the_Story.mp4 (copied in as
+# source/sentimental_gift_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Minimal-touch style (same as VIDEO 020): preserve
+# original story, hard cuts matching the source's own real cuts, no text.
+#
+# Real segments (verified via sequential frame-diff, all in original order):
+# - man_offers (0.0-2.042): matches client's "man offers the gift box."
+# - box_opens_reveal (2.042-4.667): box opens, necklace revealed, her
+#   initial reaction — matches the client's two described beats ("woman
+#   accepts and opens" + "necklace reveal and reaction") which are in
+#   fact one continuous shot, no real cut between them.
+# - wearing_reaction (4.667-5.583): a real cut the client's structure
+#   doesn't separately describe — the necklace is already on, a joyful
+#   reaction shot, filmed as its own take (not strictly chronological
+#   with the fastening close-up that comes right after — this is how the
+#   source itself was shot/cut, preserved as-is per "preserve the
+#   original story").
+# - chain_fastening (5.583-6.167): matches "chain being fastened."
+# - necklace_worn_1 (6.167-7.208) + necklace_worn_2 (7.208-9.042): the
+#   client's "pendant worn close-up" (6.6-8.3) + "clean necklace beauty
+#   shot" (8.3-9.9) turned out to be TWO real camera angles on the worn
+#   necklace (magnitude 58.1 at the cut, confirmed via frame-by-frame
+#   check), not one continuous shot.
+# - beauty_to_embrace (9.042-11.625): the client's own note — "preserve
+#   the soft transition into the embrace... do not add another cut inside
+#   the embrace" — matches what's actually there: no real cut between the
+#   end of the beauty-shot framing and the embrace itself.
+#
+# Tail: the client's flagged "Final open-box shot... Remove the current
+# text: 'A Gift She'll Wear Close to Her Heart'... Keep the underlying
+# box, card, and necklace footage clean" could NOT be honored as written.
+# Checked frame-by-frame: the real cut into this shot happens at frame
+# 279/t=11.625s, and the text is already visibly fading in by frame
+# 281/t=11.71s — only 2 frames (0.083s) of this shot are genuinely text-free,
+# nowhere near enough to "let the product shot breathe." This pipeline
+# can't remove text that's baked into the source pixels (no inpainting
+# capability), only add or trim around it — same limitation hit on VIDEO
+# 016's "final pendant composition." Dropped this shot entirely rather
+# than deliver it with the unwanted text still on screen; the signature
+# ending is instead built on the tail of beauty_to_embrace (the embrace
+# itself), which is real, warm, still-moving footage.
+
+name: sentimental_gift_v1
+
+source_file: sentimental_gift_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 13.0
+  max: 13.8
+hook: "Man offering the gift box in golden-hour light reads instantly — first ~2 seconds are the hook."
+cover_frame: 7.5   # lands in the necklace-worn close-up
+
+timestamp_cuts:
+  - id: man_offers
+    start: 0.000
+    end: 2.042
+  - id: box_opens_reveal
+    start: 2.042
+    end: 4.667
+  - id: wearing_reaction
+    start: 4.667
+    end: 5.583
+  - id: chain_fastening
+    start: 5.583
+    end: 6.167
+  - id: necklace_worn_1
+    start: 6.167
+    end: 7.208
+  - id: necklace_worn_2
+    start: 7.208
+    end: 9.042
+  - id: beauty_to_embrace
+    start: 9.042
+    end: 11.625
+
+scene_order:
+  - man_offers
+  - box_opens_reveal
+  - wearing_reaction
+  - chain_fastening
+  - necklace_worn_1
+  - necklace_worn_2
+  - beauty_to_embrace
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# man_offers is genuinely static (mean frame-diff 3.78) — safe for the
+# requested subtle push-in. necklace_worn_2 gets the requested "gentle
+# floating movement" for the beauty-shot beat — applied there rather than
+# to beauty_to_embrace, since the latter also covers the embrace itself
+# and adding motion across that whole span would compound with the hug's
+# own natural movement.
+motion:
+  - scene: man_offers
+    direction: in
+    zoom_end: 1.02               # "very subtle push-in"
+  - scene: necklace_worn_2
+    direction: in
+    zoom_end: 1.01                # "very gentle floating movement" — kept minimal
+    drift_x: 0.006
+    drift_y: 0.005
+
+scene_grade:
+  - scene: man_offers
+    warmth: 0.03                   # preserve golden-hour lighting, light touch
+  - scene: box_opens_reveal
+    sharpen: 0.15                   # box + necklace/interior
+    contrast: 0.02                   # approximates "brighten her face and eyes"
+  - scene: wearing_reaction
+    warmth: 0.02
+  - scene: chain_fastening
+    sharpen: 0.12                    # "improve clarity carefully... do not over-sharpen skin or fingernails" — kept light
+  - scene: necklace_worn_1
+    sharpen: 0.18                     # centre stone/knot detail
+  - scene: necklace_worn_2
+    sharpen: 0.18
+  - scene: beauty_to_embrace
+    warmth: 0.03                       # "keep the golden backlight"
+
+on_screen_text: []
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.000-11.625s. Raw source measured at -16.60 LUFS — brought up to this
+# campaign's usual -15 LUFS standard (no "do not lower" instruction in
+# this batch).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — replaces the source's own baked-in white branding
+# treatment completely, per explicit client instruction. Same
+# lockup/brand promise/website as every other video, using the
+# pre_fade_delay timing requested again here. Real, still-moving footage
+# (the embrace itself, since final_box was dropped — see tail note above)
+# keeps playing under the logo.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/box/necklace out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
