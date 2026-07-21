@@ -1,0 +1,184 @@
+# Real production brief — "VIDEO 013 - Midnight Luxe Product Showcase"
+# client notes, implemented against
+# beb5abd7-013__Midnight_Luxe_Product_Showcase.mp4 (copied in as
+# source/midnight_luxe_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source, but structurally different from the narrative
+# videos: this is one continuous product-photography move (box -> closer
+# -> macro -> floating pendant -> zoom out) with only 4 real hard cuts,
+# not a multi-shot story. Verified via sequential frame-diff (magnitude
+# 35-70 for the 4 real cuts vs. single digits for this source's own
+# continuous camera movement, which reads as elevated but not cut-level
+# right up through the wide zoom-out, where a genuine slow zoom pushes the
+# baseline higher without ever spiking to cut level).
+#
+# Two of the client's assumed 7 pre-ending segments turned out to be
+# single continuous shots in the real footage, not two shots each:
+# - "necklace/message-card close-up" (4.5-6.0) + "angled pendant
+#   close-up" (6.0-7.6): no real cut between them (checked every frame in
+#   that range, max diff 8.3 vs. 35-70 for genuine cuts) — one continuous
+#   floating/rotating shot, true span 5.125-8.000. Applied the shared
+#   spirit of both instructions (gold depth, card-text clarity, knot/stone
+#   sharpen) to the one real segment.
+# - "wider product composition" (7.6-9.1) + "full box return" (9.1-10.4):
+#   also one continuous shot — the zoom-out itself, true span
+#   8.000-9.917 (see tail note below for why it's cut short of the
+#   client's assumed 10.4s).
+#
+# Tail: this is the client's flagged "existing promotional text and
+# zoom-out" segment. Confirmed via frame-by-frame brightness/text check:
+# the zoom-out shot is clean through frame 238/t=9.917s; by frame
+# 240/t=10.000s a faint "ZAVIQU" wordmark is already ghosting in at the
+# bottom, fully legible by ~10.3s, with "A Gift They'll Treasure Forever"
+# fading in on top of that starting around 12.5s. The wordmark and the
+# zoom-out are the same baked-in pixels — there's no way to keep "the
+# slow zoom-out" past 9.917s without also keeping the text that's fused
+# into those same frames, so per the client's explicit "remove the
+# existing text... remove the existing wordmark... keep the underlying
+# product footage clean," the body is trimmed at the last completely
+# clean frame (9.917s) rather than the client's assumed 10.4s. This makes
+# the final output noticeably shorter than the rest of the campaign
+# (~11.7s vs. the usual ~14-17s) — flagged explicitly to the client rather
+# than silently delivered as if it matched the assumed timing.
+
+name: midnight_luxe_v1
+
+source_file: midnight_luxe_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 11.3
+  max: 12.1
+hook: "Open box establishing shot reads instantly as premium — first ~2 seconds are the hook before the closer product details begin."
+cover_frame: 4.0   # lands in the pendant macro's light-flare hero moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: box_establishing        # client: "open box establishing shot". True span 0.000-2.083.
+    start: 0.000
+    end: 2.083
+  - id: closer_box_view         # client: "closer box and necklace view". True span 2.083-3.208.
+    start: 2.083
+    end: 3.208
+  - id: pendant_macro_flare     # client: "pendant macro with light flare". True span 3.208-5.125.
+    start: 3.208
+    end: 5.125
+  - id: necklace_card_angled    # client: "necklace/message-card close-up" (4.5-6.0) + "angled pendant close-up"
+    start: 5.125                    # (6.0-7.6) — ONE continuous shot, no real cut between them. True span
+    end: 8.000                        # 5.125-8.000.
+  - id: wide_zoom_out           # client: "wider product composition" (7.6-9.1) + "full box return" (9.1-10.4) —
+    start: 8.000                    # ONE continuous zoom-out shot. True span 8.000-9.917, trimmed short of the
+    end: 9.917                        # client's assumed 10.4s — see tail note above (old promotional text starts
+                                         # fading in at frame 240/t=10.000, confirmed via frame-by-frame check).
+
+scene_order:
+  - box_establishing
+  - closer_box_view
+  - pendant_macro_flare
+  - necklace_card_angled
+  - wide_zoom_out
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two segments that are genuinely close to static in the source
+# and where the client asked for movement — wide_zoom_out already has a
+# real, substantial existing zoom (mean frame-diff more than double the
+# other segments), so "continue the slow zoom-out naturally" means leave
+# it alone, not add another zoom on top of it.
+motion:
+  - scene: box_establishing
+    direction: in
+    zoom_end: 1.025              # "very slow push-in"
+  - scene: necklace_card_angled
+    direction: in
+    zoom_end: 1.01                # "very gentle floating movement" — kept minimal since this shot already
+    drift_x: 0.008                  # has some existing motion (mean diff 5.7, not fully static)
+    drift_y: 0.006
+
+# Per-scene grading following the client's own descriptions, mapped onto
+# the real segments per the header notes above.
+scene_grade:
+  - scene: box_establishing
+    warmth: 0.035                 # "enrich the mahogany wood and warm gold tones"
+    contrast: 0.02
+  - scene: closer_box_view
+    sharpen: 0.18                  # pendant/chain/card details
+    contrast: 0.01                 # kept light — "rich and clean without crushing the shadows"
+  - scene: pendant_macro_flare
+    sharpen: 0.15                  # center stone/pavé, moderate — "control the highlights so it still looks realistic"
+    contrast: 0.01
+  - scene: necklace_card_angled
+    warmth: 0.025                  # "deepen the gold colour without turning it orange" — restrained
+    sharpen: 0.16                   # covers both "improve text clarity" and "sharpen the knot shape/center stone"
+  - scene: wide_zoom_out
+    contrast: 0.02                  # "improve contrast slightly... preserve the luxury black-and-gold appearance"
+    warmth: 0.02                     # approximates "brighten the necklace so it doesn't disappear" — no brightness lever, see prior videos' note
+
+on_screen_text: []
+captions: []
+
+# "Audio continuity — mandatory": one continuous, unbroken pass from the
+# original source over the same 0.000-9.917 span the real cuts cover
+# (contiguous, original chronological order), so there are zero
+# concatenation points in the delivered music — same mechanism used on
+# VIDEO 012. Raw source measured at -17.33 LUFS — quieter than the
+# campaign's -15 LUFS standard, so normalizing raises it to match the
+# rest of the library.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment already has an
+# explicit per-scene grade above; a global layer on top would compound
+# past what was actually asked for. Same reasoning as VIDEO 010-012.
+global_grade: {}
+
+# Predominantly a black-card / dark-background product shot (mahogany box
+# interior, black ZAVIQU card) — same false-positive risk the black-bars
+# heuristic has flagged on other genuinely-dark product shots in this
+# campaign. Flagged for manual QC review instead of guessing.
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own baked-in promotional end
+# screen ("A Gift They'll Treasure Forever" + large ZAVIQU wordmark)
+# completely, per explicit client instruction. Same lockup/brand
+# promise/website as every other video, using the pre_fade_delay timing
+# requested again here (standing default since VIDEO 004). Real,
+# still-moving footage (the wide zoom-out's own natural motion) keeps
+# playing under the logo; picture+audio fade to black together; black
+# hold; final fade out.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the box/necklace/card out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
