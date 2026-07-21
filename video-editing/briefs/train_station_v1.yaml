@@ -1,0 +1,235 @@
+# Real production brief — "VIDEO 012 - Train Station Reunion Gift" client
+# notes, implemented against
+# 0d114542-012__Train_Station_Reunion_Gift.mp4 (copied in as
+# source/train_station_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below (never trusted the client's assumed
+# timestamps).
+#
+# Real hard cuts found (magnitude 50-87, vs. moderate values from fast
+# natural motion elsewhere — see below): 1.167s, 2.042s, 2.583s, 3.542s,
+# 4.458s, 6.208s, 7.208s, 8.625s, 9.667s, 11.375s, 12.75s — 11 cuts, 12
+# real segments, one more than the client's assumed 11-segment structure.
+# The extra one: the client described one "woman recognizes him" beat
+# (3.2-4.2). The real footage has TWO real cuts across that emotional
+# span — her reacting face (front view) then a separate shot of her
+# running toward him (back view, hair flying) — both genuine hard cuts
+# (magnitude 40.9 and 63.4), not one continuous shot. Kept both, applying
+# the same "warm/realistic, don't shorten" spirit to each.
+#
+# Motion note: the client asked for a "subtle slow push-in" on that same
+# "recognizes" beat, but both real shots there already have substantial
+# existing motion (her head/hair moving as she reacts, then her running —
+# mean frame-diff 13-16, several times higher than this source's static
+# shots) — adding a zoom on top would compound into something busier than
+# "subtle," so no motion was added there, same reasoning applied
+# throughout this campaign whenever a requested push-in would double up
+# on real existing camera/subject motion. Motion WAS added on
+# platform_wide and walking_away, the two segments that are genuinely
+# static in the source and where the client asked for a push-in/float.
+#
+# Tail: checked for the old-ending contamination pattern this campaign
+# has repeatedly found (baked-in taglines/end cards) — none exists here.
+# Brightness stays flat (99-116) all the way to the source's last frame
+# (frame 360/t=15.069s, no fade, no text, no logo). So the final
+# necklace-close-up scene runs the full remaining natural length rather
+# than being trimmed for contamination, which is why this body (15.069s)
+# and therefore the final output are longer than the rest of the
+# campaign's videos — there's simply nothing to cut, and "continue the
+# final necklace shot briefly before the branding appears" argues for
+# using all of the real clean footage available, not trimming it short
+# artificially.
+#
+# Audio: client's "Audio continuity — mandatory" section is exactly the
+# problem already solved on VIDEO 011 — used continuous_source: true from
+# the start this time (scene_order's cuts are contiguous, original
+# chronological order, 0.000-15.069, nothing skipped or reordered), so
+# the delivered music has zero concatenation points from the first
+# render, no chopped-audio rebuild needed afterward.
+
+name: train_station_v1
+
+source_file: train_station_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 16.5
+  max: 17.3
+hook: "Wide sunset-platform shot reads instantly as cinematic and romantic — first ~1.2 seconds are the hook before her wait begins."
+cover_frame: 10.5   # lands in the necklace-being-placed hero moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: platform_wide          # client: "train station opening" — wide empty platform/tracks. True span 0.000-1.167.
+    start: 0.000
+    end: 1.167
+  - id: woman_waiting          # client: "woman waiting". True span 1.167-2.042.
+    start: 1.167
+    end: 2.042
+  - id: man_appears            # client: "man appears". True span 2.042-2.583.
+    start: 2.042
+    end: 2.583
+  - id: woman_recognizes       # client: "woman recognizes him" (1 of 2 real shots) — her reacting face. True span 2.583-3.542.
+    start: 2.583
+    end: 3.542
+  - id: woman_running          # client: "woman recognizes him" (2 of 2) — running toward him, back view. True span 3.542-4.458.
+    start: 3.542
+    end: 4.458
+  - id: embrace                # client: "reunion embrace" — kept in full, let it breathe. True span 4.458-6.208.
+    start: 4.458
+    end: 6.208
+  - id: close_moment           # client: "close emotional moment". True span 6.208-7.208.
+    start: 6.208
+    end: 7.208
+  - id: gift_box_reveal        # client: "gift box reveal". True span 7.208-8.625.
+    start: 7.208
+    end: 8.625
+  - id: her_reaction           # client: "her reaction". True span 8.625-9.667.
+    start: 8.625
+    end: 9.667
+  - id: necklace_placed        # client: "necklace being placed". True span 9.667-11.375.
+    start: 9.667
+    end: 11.375
+  - id: walking_away           # client: "walking away together". True span 11.375-12.75.
+    start: 11.375
+    end: 12.750
+  - id: necklace_closeup       # client: "necklace close-up" — extended to the source's natural end (see tail
+    start: 12.750                # note above — confirmed clean, no old ending to trim around). True span 12.75-15.069.
+    end: 15.069
+
+scene_order:
+  - platform_wide
+  - woman_waiting
+  - man_appears
+  - woman_recognizes
+  - woman_running
+  - embrace
+  - close_moment
+  - gift_box_reveal
+  - her_reaction
+  - necklace_placed
+  - walking_away
+  - necklace_closeup
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two segments that are genuinely static in the source and where
+# the client asked for movement — see the header note on why
+# woman_recognizes/woman_running don't get motion added on top of their
+# own already-substantial existing motion.
+motion:
+  - scene: platform_wide
+    direction: in
+    zoom_end: 1.025             # "very slow push-in"
+  - scene: walking_away
+    direction: in
+    zoom_end: 1.025             # "very subtle slow push-in or floating movement"
+
+# Per-scene grading following the client's own descriptions for each real
+# segment (see header note on the two "recognizes" shots sharing the same
+# treatment).
+scene_grade:
+  - scene: platform_wide
+    warmth: 0.04                 # sunset tones
+    contrast: 0.02
+  - scene: woman_waiting
+    warmth: 0.03
+    contrast: 0.02               # approximates "brighten her face" — no brightness lever, see prior videos' note
+  - scene: man_appears
+    sharpen: 0.12                # "slightly sharpen his face and clothing" — kept light so the soft background isn't over-sharpened too
+  - scene: woman_recognizes
+    warmth: 0.03                 # "keep skin tones warm and realistic"
+  - scene: woman_running
+    warmth: 0.03
+  - scene: embrace
+    warmth: 0.035                # "enhance the golden backlight slightly"
+  - scene: close_moment
+    warmth: 0.03
+    contrast: 0.02               # approximates "brighten their faces"
+  - scene: gift_box_reveal
+    warmth: 0.035                # "enrich the mahogany tones"
+    contrast: 0.015               # kept light — "do not overexpose the gold details"
+    sharpen: 0.2                  # box/logo/card/necklace
+  - scene: her_reaction
+    warmth: 0.03
+    contrast: 0.02               # approximates "brighten her eyes and skin"
+  - scene: necklace_placed
+    warmth: 0.03                 # "enhance the gold without turning it orange" — restrained
+    sharpen: 0.22                 # chain/pendant
+  - scene: walking_away
+    contrast: 0.035               # "deepen the sunset contrast"
+  - scene: necklace_closeup
+    sharpen: 0.2                  # pendant/center stone — deliberately no extra warmth, "do not add repeated sparkles"
+
+on_screen_text: []
+captions: []
+
+# "Audio continuity — mandatory": one continuous, unbroken pass from the
+# original source over the same 0.000-15.069 span the real cuts cover
+# (contiguous, original chronological order — see header note), so there
+# are zero concatenation points in the delivered music. Raw source
+# measured at -11.92 LUFS — LOUDER than the campaign's -15 LUFS standard
+# this time, so normalizing brings it down to match the rest of the
+# library rather than up; no explicit "keep current volume" instruction
+# was given for this video the way it was for 010/011, so the standing
+# cross-campaign consistency requirement applies as usual.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment already has an
+# explicit per-scene grade above; a global layer on top would compound
+# past what was actually asked for. Same reasoning as VIDEO 010/011.
+global_grade: {}
+
+# SIGNATURE ENDING — same lockup/brand promise/website as every other
+# video, using the pre_fade_delay timing the client requested again here
+# (standing default since VIDEO 004). Real, still-moving footage (the
+# tail of necklace_placed, walking_away, and necklace_closeup) keeps
+# playing under the logo; picture+audio fade to black together; black
+# hold; final fade out. No existing end card to remove here (tail
+# confirmed clean), so this is simply the standard ending attached to the
+# source's own natural conclusion.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/box/necklace out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
