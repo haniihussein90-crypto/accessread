@@ -1,0 +1,213 @@
+# Real production brief — "VIDEO 025 - Love Knot Necklace Creator Review"
+# client notes, implemented against
+# 7d3e4a8b-Love_knot_necklace_creator_review_2.mp4
+# (copied in as source/creator_review_raw.mp4). Folder 3 batch — "heavier
+# correction" / "major edits," and explicitly the most delicate of the
+# three per the client's own framing ("the strongest story... but it
+# contains incorrect branding and promotional text").
+#
+# Source is 15.069s (361 frames), 960x960 (1:1), 24fps, with audio — same
+# template as every previous source. Verified every real cut via
+# sequential frame-diff before writing anything below. Cut list: 34, 56,
+# 94, 125, 170, 233, 246(moderate — treated as continuous, see below),
+# 265, 310.
+#
+# BRANDING INVESTIGATION — important correction to the client's own
+# framing. The client believed the box/card showed an incorrect ZAVIQU
+# spelling. Checked at full resolution, zoomed 4x: the wordmark on both
+# the box lid (~frame 45) and the card inside the box (~frame 70, and
+# again clean at frame 145) is spelled correctly — "ZAVIQU" with the
+# correct diamond-cluster icon and heart-divider, matching the campaign's
+# real brand lockup. That is NOT the defect. The real defect, found by
+# checking the brief's separately-flagged "box presentation" section
+# (client's 11.5-12.8s) at full resolution: a large WHITE "ZAVIQU"
+# wordmark is overlaid directly on top of the correct small GOLD "ZAVIQU"
+# wordmark on the card, producing a doubled "ZAVIQU ZAVIQU" appearance in
+# the wrong (non-brand) color. Confirmed present at the very first frame
+# of that shot (266/t=11.083s) and still present at frame 270 — the whole
+# shot is contaminated, not just part of it. So: a duplicated/wrong-color
+# overlay, not a misspelling — the client's instinct that something was
+# wrong there was correct, just not literally a spelling error.
+#
+# Real segments actually usable (all in original order):
+# - woman_receives (0.0-1.417): matches "woman receives the gift."
+# - box_opening (1.417-2.333): hand opens the box lid alone (no face) —
+#   matches "box opening." Box lid logo checked at full res, correctly
+#   spelled — no highlighting/reframing needed beyond the batch's normal
+#   restrained sharpening.
+# - [DROPPED 2.333-5.208 / frames 56-125]: the client's "open box and
+#   card" (3.2-4.8s) and "her reaction and pendant close-up" (4.8-6.6s)
+#   beats. Checked frame-by-frame at full resolution: the promotional
+#   caption "The most thoughtful gift I've ever received" — the exact
+#   text the client asked removed — fades in starting frame ~60 (0.17s
+#   into the box/card shot) and stays on screen, fading out only at frame
+#   ~123, i.e. it spans almost the ENTIRE box/card reveal shot (56-94)
+#   AND almost the entire following reaction shot (94-125), leaving only
+#   ~4 clean frames at the very start and ~2 at the very end — nowhere
+#   near enough to use. This pipeline has no text-removal/inpainting
+#   capability (same limitation hit repeatedly this campaign — 016, 021,
+#   023), so both contaminated shots are dropped entirely rather than
+#   delivered with the unwanted caption visible.
+# - necklace_card_detail (5.208-7.083): a clean close-up of the necklace
+#   held against the SAME card (correct gold wordmark, no caption
+#   overlay) — used in place of the dropped reveal/reaction beat, per
+#   "replace it with another clean detail from the video if possible"
+#   (same principle used for VIDEO 024's diamond shot) and per "keep the
+#   underlying box, card, and necklace footage clean."
+# - wearing_mirror (7.083-8.542, trimmed from a natural 7.083-9.708 span):
+#   mirror fastening/hair-adjusting motion. Confirmed via frame-diff this
+#   is one continuous shot (no internal hard cut), but the gesture itself
+#   visibly repeats for its full 2.6s natural length with no single
+#   distinct "moment" standing out — matches the client's "remove
+#   repetitive adjustment footage" flag. Kept the first 1.46s (the
+#   initial reach-up/fastening motion) and trimmed the repeated remainder.
+# - reaction_wearing (9.708-11.042): her genuine smile, hand resting on
+#   her chest, necklace clearly worn and in focus — clean, no branding
+#   anywhere in frame. The frame-diff spike at 246 inside this span is
+#   moderate, not a hard-cut magnitude, and the framing/lighting is
+#   continuous through it, so treated as one shot rather than two.
+#
+# Tail — this is where the video runs out of usable footage. Checked
+# both remaining real shots at full resolution:
+# - box_presentation (11.042-12.917 / frames 265-310): the doubled
+#   white-on-gold "ZAVIQU ZAVIQU" overlay described above. Contaminated
+#   from its very first frame, no clean portion — dropped entirely, same
+#   as every other "contaminated from frame one" shot this campaign.
+# - final necklace close-up (12.917-15.069 / frames 310-361): looked
+#   clean in the low-res overview, but at full resolution the old
+#   baked-in end line "Made with Love. Made to Last." (a plain italic
+#   serif, not the campaign's real ZAVIQU typography — matches the
+#   client's "remove it if it is not using the official ZAVIQU
+#   typography") starts fading in at frame 311 — literally one frame
+#   after the cut. Only frame 310 itself (0.04s) is genuinely clean.
+#   Nowhere near usable.
+# So unlike every prior video in this campaign, there is NO usable clean
+# footage anywhere in this source's back third (frames 265-361, 2.2s).
+# Body ends at 11.042s (the reaction_wearing tail) and the signature
+# ending is built there instead — same "end on the last clean segment"
+# precedent as 016/021/023, just triggered earlier in the timeline than
+# usual because the contamination here runs all the way to the source's
+# true end with no clean shot left after it.
+#
+# Note on overall length: because ~2.9s (the reveal/reaction beat) and
+# ~2.2s (the entire back third) both had to be dropped for contamination
+# — on top of the mirror-fastening trim — this edit is considerably
+# shorter than 023/024. That's a direct, necessary consequence of how
+# much of this particular source was unusable, not a shortcut.
+
+name: creator_review_v1
+
+source_file: creator_review_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 8.5
+  max: 9.1
+hook: "She's already holding the box when it opens — reads instantly as a real gift moment."
+cover_frame: 6.0   # lands in the necklace_card_detail close-up
+
+timestamp_cuts:
+  - id: woman_receives
+    start: 0.000
+    end: 1.417
+  - id: box_opening
+    start: 1.417
+    end: 2.333
+  - id: necklace_card_detail
+    start: 5.208
+    end: 7.083
+  - id: wearing_mirror
+    start: 7.083
+    end: 8.542
+  - id: reaction_wearing
+    start: 9.708
+    end: 11.042
+
+scene_order:
+  - woman_receives
+  - box_opening
+  - necklace_card_detail
+  - wearing_mirror
+  - reaction_wearing
+
+# All hard cuts, matching the source's own real cuts (the cuts into/out
+# of necklace_card_detail are NEW cuts this edit introduces, skipping the
+# contaminated reveal/reaction footage — everything else matches a real
+# cut already in the source).
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+scene_grade:
+  - scene: woman_receives
+    warmth: 0.03                   # "gentle push-in" requested — see motion below; warmth is light touch
+  - scene: box_opening
+    sharpen: 0.12                   # restrained — do not make the box logo more prominent/readable
+  - scene: necklace_card_detail
+    sharpen: 0.18                    # necklace/chain clarity
+    warmth: 0.02
+  - scene: wearing_mirror
+    sharpen: 0.12                     # "do not over-sharpen skin" — kept light
+  - scene: reaction_wearing
+    warmth: 0.02
+    contrast: 0.02                     # approximates "brighten her face"
+
+# "Gentle push-in" was requested specifically for the opening gift-receive
+# beat.
+motion:
+  - scene: woman_receives
+    direction: in
+    zoom_end: 1.02
+
+on_screen_text: []
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.0-11.042s. Raw source measured close to standard at -14.10 LUFS —
+# brought to this campaign's usual -15 LUFS target (no "do not lower"
+# instruction in this batch).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+# SIGNATURE ENDING — replaces the source's own contaminated back third
+# (doubled/wrong-color branding overlay, then the old non-brand-typography
+# "Made with Love. Made to Last." line) completely, per explicit client
+# instruction to remove both. Same lockup/brand promise/website as every
+# other video, using the pre_fade_delay timing requested again here. Real,
+# still-moving reaction_wearing footage keeps playing under the logo.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the necklace/hands/face out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
