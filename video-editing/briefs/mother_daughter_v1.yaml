@@ -1,0 +1,184 @@
+# Real production brief — "VIDEO 014 - Mother-Daughter Thank You Gift"
+# client notes, implemented against
+# 7e8134db-014__MotherDaughter_Thank_You_Gift.mp4 (copied in as
+# source/mother_daughter_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below (never trusted the client's assumed
+# timestamps) — this source's real cuts land within ~0.1s of nearly every
+# boundary the client assumed, the closest match to an assumed structure
+# in this campaign so far. Two exceptions:
+#
+# 1. The client described "reads the message card" (3.9-5.1) and
+#    "mother's reaction" (5.1-6.0) as two beats. No real cut exists there
+#    (checked every frame, max diff 12.3 vs. 40+ for genuine cuts) — one
+#    continuous shot of her face through the read and the smile. Applied
+#    both instructions' shared spirit (brighten face, gentle push-in) to
+#    the one real segment.
+# 2. The client described one "open box and necklace" beat (6.0-7.0). The
+#    real footage has two real cuts there — box opening, then a separate
+#    shot of the necklace being lifted out and held up (magnitude 65.2
+#    and 54.7) — kept both, same grading spirit across both.
+#
+# Tail: confirmed the client's flagged contamination. Real necklace
+# close-up content ends cleanly at frame 281/t=11.708s; frame 282/t=11.75s
+# cuts to a completely different wide shot (a room/table composition) that
+# is itself the start of the old "For the One Who Gave You Everything"
+# end sequence — the tagline text is already visibly fading in on that
+# wide shot by frame 288/t=12.0s. Trimmed at 11.708s so none of the old
+# sequence survives, consistent with how every prior contaminated-tail
+# video in this campaign was handled.
+#
+# Motion note: skipped the client's requested push-in on daughter_approaches
+# — she's walking toward camera, which already reads as a push-in via her
+# own real motion (mean frame-diff 12.6, several times this source's
+# static shots) — adding a digital zoom on top would double up, same
+# reasoning applied throughout this campaign. Added the requested gentle
+# push-in on card_and_reaction instead, where the shot really is close to
+# static.
+
+name: mother_daughter_v1
+
+source_file: mother_daughter_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 13.1
+  max: 13.9
+hook: "Daughter approaching with the gift box reads instantly as warm and anticipatory — first ~2.4 seconds are the hook before the exchange begins."
+cover_frame: 9.0   # lands in the necklace-worn hero moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: daughter_approaches      # client: "daughter approaches with the gift". True span 0.000-2.417.
+    start: 0.000
+    end: 2.417
+  - id: mother_receives          # client: "mother receives the box". True span 2.417-3.875.
+    start: 2.417
+    end: 3.875
+  - id: card_and_reaction        # client: "reads message card" (3.9-5.1) + "mother's reaction" (5.1-6.0) — ONE
+    start: 3.875                     # continuous shot, no real cut between them. True span 3.875-5.083.
+    end: 5.083
+  - id: open_box_necklace        # client: "open box and necklace" (1 of 2 real shots) — box opening. True span 5.083-5.958.
+    start: 5.083
+    end: 5.958
+  - id: necklace_lifted          # client: "open box and necklace" (2 of 2) — necklace lifted and held up. True span 5.958-7.000.
+    start: 5.958
+    end: 7.000
+  - id: necklace_placed          # client: "necklace being placed around her neck". True span 7.000-8.667.
+    start: 7.000
+    end: 8.667
+  - id: wearing_and_embrace      # client: "mother wearing the necklace" (8.7-10.7) + "mother and daughter embrace"
+    start: 8.667                     # (10.7-11.8) — ONE continuous shot, no real cut between them. True span
+    end: 10.667                        # 8.667-10.667.
+  - id: necklace_closeup_final   # client: "final necklace close-up" — true span 10.667-15.069, trimmed to
+    start: 10.667                    # 10.667-11.708 (see tail note above — old baked-in ending starts right
+    end: 11.708                        # after with a hard cut).
+
+scene_order:
+  - daughter_approaches
+  - mother_receives
+  - card_and_reaction
+  - open_box_necklace
+  - necklace_lifted
+  - necklace_placed
+  - wearing_and_embrace
+  - necklace_closeup_final
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only card_and_reaction gets added motion — see header note on why
+# daughter_approaches doesn't (already has substantial real motion from
+# her walking toward camera).
+motion:
+  - scene: card_and_reaction
+    direction: in
+    zoom_end: 1.02              # "very gentle push-in"
+
+# Per-scene grading following the client's own descriptions, mapped onto
+# the real segments per the header notes above.
+scene_grade:
+  - scene: daughter_approaches
+    warmth: 0.035                 # "warm the natural interior light slightly"
+  - scene: mother_receives
+    sharpen: 0.12                  # "slightly sharpen the box without making it look artificial" — kept light
+  - scene: card_and_reaction
+    warmth: 0.025
+    contrast: 0.02                 # approximates "brighten her face and improve card clarity" — no brightness lever, see prior videos' note
+  - scene: open_box_necklace
+    warmth: 0.03                   # "enrich the mahogany and gold tones slightly"
+    sharpen: 0.18                   # necklace/card/chain/box
+  - scene: necklace_lifted
+    warmth: 0.03
+    sharpen: 0.18
+  - scene: necklace_placed
+    sharpen: 0.18                  # "improve clarity on the chain and pendant"
+  - scene: wearing_and_embrace
+    warmth: 0.03                   # approximates "brighten the necklace and her face" + embrace warmth
+    contrast: 0.015
+  - scene: necklace_closeup_final
+    sharpen: 0.2                   # knot design/centre stone — no extra warmth, "do not add another sparkle if one was already used"
+
+on_screen_text: []
+captions: []
+
+# "Audio continuity — mandatory": one continuous, unbroken pass from the
+# original source over the same 0.000-11.708 span the real cuts cover
+# (contiguous, original chronological order), so there are zero
+# concatenation points in the delivered music. Raw source measured at
+# -14.09 LUFS, close to the campaign's -15 LUFS standard already.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment already has an
+# explicit per-scene grade above; a global layer on top would compound
+# past what was actually asked for. Same reasoning as VIDEO 010-013.
+global_grade: {}
+
+# SIGNATURE ENDING — replaces the source's own baked-in "For the One Who
+# Gave You Everything" ending completely, per explicit client
+# instruction. Same lockup/brand promise/website as every other video,
+# using the pre_fade_delay timing requested again here (standing default
+# since VIDEO 004). Real, still-moving footage (the tail of necklace_placed,
+# wearing_and_embrace, and necklace_closeup_final) keeps playing under
+# the logo; picture+audio fade to black together; black hold; final fade
+# out.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops faces/necklace/box out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
