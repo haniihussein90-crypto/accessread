@@ -1,0 +1,183 @@
+# Real production brief — "VIDEO 019 - Romantic Luxury Necklace Trailer"
+# client notes, implemented against
+# 86385663-019__Romantic_Luxury_Necklace_Trailer.mp4 (copied in as
+# source/luxury_trailer_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Curated-restructure edit (same style as VIDEO
+# 017/018), but this one is meant to be "the faster, cinematic luxury
+# advertisement" — tighter selection of shots than 017/018, per the
+# client's own explicit "tighten... do not feel repetitive" note.
+#
+# Real segments (verified via sequential frame-diff, all in original order):
+# - box_opening (0.0-3.0 natural span, trimmed to 0.5-3.0): closed box +
+#   lid opening, ONE continuous shot. Client: "do not spend a full second
+#   showing only the closed box" — trimmed the static closed-box lead-in
+#   down to 0.5s so the opening motion starts almost immediately.
+# - The "sparkle close-ups around 0:03-0:06" turned out to be FOUR real
+#   cuts, not one continuous sequence: pendant_macro1 (3.0-4.208),
+#   chain_detail (4.208-5.333, chain only, no pendant — same "less
+#   emotionally powerful" content as VIDEO 018's chain shot), pendant_tilted
+#   (5.333-6.375, a dramatic diagonal composition), pendant_macro2
+#   (6.375-7.375). Per "tighten them so they do not feel repetitive,"
+#   dropped chain_detail (the one shot that isn't actually a pendant
+#   angle) and kept the three genuinely distinct pendant macro shots —
+#   their combined 3.25s lands almost exactly on the client's own
+#   suggested "0:03-0:06" window.
+# - hand_lifting (7.375-8.792): hand lifts the necklace, begins fastening.
+# - necklace_worn (8.792-11.458 natural span continues further, trimmed
+#   to 8.792-11.458): worn on the chest. Real footage dims noticeably
+#   starting ~11.5s (this is the lead-in to the old baked-in ending, see
+#   below) — trimmed right before that dimming begins so the necklace
+#   stays clearly bright and visible the whole time it's kept, matching
+#   "make this section warm and romantic, with the pendant always clearly
+#   visible" (a dimming-to-black shot would not read as "clearly visible").
+#
+# Tail: confirmed the client's explicit flag. The source dims to near-black
+# by frame 292/t=12.208s, then an old "ZAVIQU" wordmark + diamond icon
+# fades in starting ~frame 296/t=12.333s, with "Made to be treasured"
+# appearing shortly after — exactly the "old/incomplete Zaviqu lockup...
+# tagline 'Made to be treasured'" the client said not to use. None of it
+# survives: body is trimmed to 11.458s, well before any of this appears.
+#
+# This edit is intentionally the shortest/punchiest of the three-video
+# batch — assembled body plus the standard ending tail lands around 10s,
+# under the batch's general "12-15 seconds" guidance but consistent with
+# the client's explicit priority for THIS video ("prioritize strong
+# pacing over preserving every original second," "the faster, cinematic
+# luxury advertisement") and the tightened shot selection above.
+
+name: luxury_trailer_v1
+
+source_file: luxury_trailer_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 9.8
+  max: 10.6
+hook: "Box already mid-open within the first beat — no static closed-box hold."
+cover_frame: 3.5   # lands in the first pendant macro sparkle
+
+timestamp_cuts:
+  - id: box_opening
+    start: 0.500
+    end: 3.000
+  - id: pendant_macro1
+    start: 3.000
+    end: 4.208
+  - id: pendant_tilted
+    start: 5.333
+    end: 6.375
+  - id: pendant_macro2
+    start: 6.375
+    end: 7.375
+  - id: hand_lifting
+    start: 7.375
+    end: 8.792
+  - id: necklace_worn
+    start: 8.792
+    end: 11.458
+
+scene_order:
+  - box_opening
+  - pendant_macro1
+  - pendant_tilted
+  - pendant_macro2
+  - hand_lifting
+  - necklace_worn
+
+# Smooth crossfades throughout, per "smooth luxury transitions."
+transitions:
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+  - type: xfade
+    style: fade
+    duration: 0.3
+
+motion: []
+
+scene_grade:
+  - scene: pendant_macro1
+    sharpen: 0.22
+  - scene: pendant_tilted
+    sharpen: 0.22
+  - scene: pendant_macro2
+    sharpen: 0.2
+  - scene: hand_lifting
+    sharpen: 0.15
+  - scene: necklace_worn
+    warmth: 0.02
+
+on_screen_text:
+  - text: "Some gifts are remembered."
+    start: 0.3
+    end: 2.8
+    position: bottom
+    size: 68
+    color: gold
+  - text: "This one becomes part of her story."
+    start: 8.0
+    end: 10.0
+    position: bottom
+    size: 68
+    color: gold
+
+captions: []
+
+# One continuous, unbroken audio pass from the original source over
+# 0.5-11.458s. -12.0 LUFS, not this campaign's usual -15 — see VIDEO 017
+# for why (batch-wide "do not lower the music"; raw source here measures
+# -15.04, the quietest of the three, so -12.0 raises it like the others).
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -12.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+global_grade:
+  warmth: 0.03
+  contrast: 0.02
+
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own baked-in old-lockup ending
+# ("Made to be treasured") completely, per explicit client instruction.
+# See VIDEO 017 for the freeze-vs-no-freeze note (same conflict, same
+# resolution: kept the established no-freeze mechanism).
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the necklace/box/hands out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true

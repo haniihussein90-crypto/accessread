@@ -1,0 +1,74 @@
+{
+  "file": "/home/user/accessread/video-editing/final/instagram-facebook/luxury_trailer_v1_4x5.mp4",
+  "automated_checks": [
+    {
+      "check": "codecs_and_faststart",
+      "video_codec": "h264",
+      "pix_fmt": "yuv420p",
+      "audio_codec": "aac",
+      "faststart": true,
+      "pass": true
+    },
+    {
+      "check": "resolution",
+      "expected_aspect": "4:5",
+      "expected_size": [
+        1080,
+        1350
+      ],
+      "actual_size": [
+        1080,
+        1350
+      ],
+      "pass": true
+    },
+    {
+      "check": "duration",
+      "duration_sec": 10.44,
+      "expected_range": [
+        9.8,
+        10.6
+      ],
+      "pass": true
+    },
+    {
+      "check": "black_bars",
+      "flagged_frame_indices": [],
+      "pass": true,
+      "note": "Skipped pixel-based flagging \u2014 this edit is shot on a black/dark background (brief: dark_background). Manually confirm there's no unintended letterboxing/pillarboxing beyond what's expected."
+    },
+    {
+      "check": "opening_strength",
+      "sharpness_laplacian_var": 138.5,
+      "contrast_stddev": 38.7,
+      "heuristic_pass": true,
+      "note": "HEURISTIC ONLY \u2014 a static/blank/low-contrast opening frame will fail this; 'strong hook' is a creative judgment call for the director either way."
+    },
+    {
+      "check": "ending_not_abrupt",
+      "tail_rms": 0.0,
+      "overall_rms": 6443.2,
+      "tail_to_overall_ratio": 0.0,
+      "pass": true,
+      "note": "If audio hasn't faded out by the last frames, ratio stays high \u2014 consider a fade-out or CTA card (add_cta_ending.py)."
+    },
+    {
+      "check": "brand_name_spelling",
+      "issues": [],
+      "pass": true
+    },
+    {
+      "check": "text_readability_and_margins",
+      "issues": [],
+      "pass": true
+    }
+  ],
+  "overall_automated_pass": true,
+  "manual_review_required": [
+    "Necklace / message card / gift box clearly visible and well-framed",
+    "General spelling/grammar of any text baked into the source footage itself (not our overlays)",
+    "Overall emotional tone matches 'premium, warm, intimate, cinematic' brand style",
+    "First 1-2 seconds are actually a strong scroll-stopping hook (heuristic above is a proxy, not a verdict)",
+    "No unintended letterboxing/pillarboxing beyond the expected dark edges (automated black-bars check was skipped for this reason)"
+  ]
+}
