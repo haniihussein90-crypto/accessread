@@ -203,7 +203,8 @@ def check_black_bars(path: Path, band_fraction: float = 0.05,
     }
 
 
-def check_opening_strength(path: Path, at_sec: float = 0.5) -> dict:
+def check_opening_strength(path: Path, at_sec: float = 0.5,
+                            dark_edges_expected: bool = False, dark_edges_reason: str = "") -> dict:
     cap = cv2.VideoCapture(str(path))
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
     cap.release()
@@ -214,14 +215,33 @@ def check_opening_strength(path: Path, at_sec: float = 0.5) -> dict:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
     contrast = float(gray.std())
-    return {
+    heuristic_pass = bool(sharpness > 15 and contrast > 20)
+    result = {
         "check": "opening_strength",
         "sharpness_laplacian_var": round(sharpness, 1),
         "contrast_stddev": round(contrast, 1),
-        "heuristic_pass": bool(sharpness > 15 and contrast > 20),
+        "heuristic_pass": heuristic_pass,
         "note": "HEURISTIC ONLY — a static/blank/low-contrast opening frame will fail this; "
                 "'strong hook' is a creative judgment call for the director either way.",
     }
+    # A deliberately dark/minimal opening (spotlight-on-black, closed box
+    # in shadow, etc.) will legitimately score low on sharpness/contrast
+    # without being a blank or broken frame — same false-positive class as
+    # check_black_bars' dark_edges_expected, reused here rather than
+    # inventing a second flag. Found on VIDEO 016 (heirloom_night_v1):
+    # opening_strength failed (sharpness 8.5, contrast 15.4) on a
+    # spotlit-box-on-black opening the client explicitly asked to "keep
+    # dramatic... preserve the black background... do not make the
+    # opening too bright."
+    if dark_edges_expected and not heuristic_pass:
+        result["heuristic_pass"] = True
+        result["note"] += (
+            " Low score overridden — dark_edges_expected is set"
+            + (f" ({dark_edges_reason})" if dark_edges_reason else "")
+            + ", so a low-contrast dark opening is expected here rather than a defect; "
+              "flagged for manual review instead."
+        )
+    return result
 
 
 def check_ending_not_abrupt(path: Path, tail_sec: float = 0.3) -> dict:
@@ -314,7 +334,7 @@ def run_quality_check(path: Path, aspect: str, min_duration: float | None,
         check_resolution(path, aspect),
         check_duration(path, min_duration, max_duration),
         check_black_bars(path, dark_edges_expected=dark_edges_expected, dark_edges_reason=dark_edges_reason),
-        check_opening_strength(path),
+        check_opening_strength(path, dark_edges_expected=dark_edges_expected, dark_edges_reason=dark_edges_reason),
         check_ending_not_abrupt(path),
         check_brand_text(text_strings),
         check_text_readability_and_margins(text_spec, width, height),

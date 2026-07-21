@@ -1,0 +1,187 @@
+# Real production brief — "VIDEO 016 - Heirloom Night Necklace Film"
+# client notes, implemented against
+# 3ddc4c46-016__Romantic_Heirloom_Necklace_Trailer.mp4 (copied in as
+# source/heirloom_night_raw.mp4).
+#
+# Source is 15.069s, 960x960 (1:1), 24fps, with audio — same template as
+# every previous source. Verified every real cut via sequential frame-diff
+# before writing anything below.
+#
+# Two of the client's assumed segments turned out different from the real
+# footage:
+# 1. "box begins opening" (2.5-4.4) and "open box, card, and necklace
+#    revealed" (4.4-6.3) are ONE continuous shot in the real footage — the
+#    lid rises and the reveal happens in the same unbroken take, cutting
+#    directly to the pendant macro at 4.375s (no cut anywhere near the
+#    client's assumed 4.4/6.3 split).
+# 2. The pendant macro sequence (105-154 in frame terms) showed a cluster
+#    of very high frame-diff spikes that initially looked like several
+#    rapid cuts — verified frame-by-frame at 2-frame resolution and
+#    confirmed it's ONE continuous macro shot with a natural sparkle/
+#    shimmer highlight moving across the stone (the diamond catching
+#    light differently frame to frame), not real cuts. This IS the "one
+#    small controlled sparkle" the brief asks for — it already exists in
+#    the footage, so nothing was added on top of it.
+#
+# Tail: the client's flagged "Loved Today. Treasured Forever." slogan and
+# built-in branding starts appearing immediately at the start of what
+# would have been the "final pendant composition" shot — a small ZAVIQU
+# mark is already ghosting in at frame 312/t=13.0s (the very same frame
+# where this shot begins, confirmed via a fixed-region brightness sample:
+# the watermark region jumps from ~205 to ~250 max brightness exactly at
+# frame 312), and "Loved Today. Treasured Forever." itself fades in
+# shortly after. There is no clean version of this shot to keep — every
+# frame of it has the branding baked in from the first frame — so unlike
+# every other contaminated-tail video in this campaign, the fix here is
+# to drop that whole shot rather than trim partway through it. The body
+# ends at the last frame of "return to open box" (12.958s) instead.
+
+name: heirloom_night_v1
+
+source_file: heirloom_night_raw.mp4
+
+platform: instagram_facebook
+final_duration:
+  min: 14.3
+  max: 15.1
+hook: "Closed mahogany box under a dramatic spotlight reads instantly as premium — first ~2.5 seconds are the hook before it opens."
+cover_frame: 5.5   # lands in the pendant macro's natural sparkle moment
+
+# --- Scenes, true source-footage boundaries (verified by sequential frame-diff) ---
+timestamp_cuts:
+  - id: closed_box_spotlight     # client: "closed mahogany box under spotlight". True span 0.000-2.458.
+    start: 0.000
+    end: 2.458
+  - id: box_opening_revealed     # client: "box begins opening" + "open box, card, necklace revealed" — ONE
+    start: 2.458                     # continuous shot, no real cut between them. True span 2.458-4.375.
+    end: 4.375
+  - id: pendant_macro_sparkle    # client: "first pendant macro" — ONE continuous shot with a natural sparkle
+    start: 4.375                     # highlight (see header note). True span 4.375-6.417.
+    end: 6.417
+  - id: pendant_worn_closeup     # client: "pendant worn close-up". True span 6.417-7.25.
+    start: 6.417
+    end: 7.250
+  - id: woman_city_view          # client: "woman by the city view". True span 7.25-8.5.
+    start: 7.250
+    end: 8.500
+  - id: closer_portrait          # client: "closer portrait and reaction". True span 8.5-11.417.
+    start: 8.500
+    end: 11.417
+  - id: return_to_box            # client: "return to the open gift box" — true span 11.417-13.0, trimmed to
+    start: 11.417                    # 11.417-12.958 (see tail note above — the client's "final pendant
+    end: 12.958                        # composition" shot is contaminated from its very first frame, so it's
+                                          # dropped entirely rather than trimmed partway through).
+
+scene_order:
+  - closed_box_spotlight
+  - box_opening_revealed
+  - pendant_macro_sparkle
+  - pendant_worn_closeup
+  - woman_city_view
+  - closer_portrait
+  - return_to_box
+
+# All genuine hard cuts in the source — no cuts added or removed.
+transitions:
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+  - type: cut
+
+# Only the two segments that are genuinely close to static in the source
+# and where the client asked for a push-in.
+motion:
+  - scene: closed_box_spotlight
+    direction: in
+    zoom_end: 1.02               # "very slow push-in"
+  - scene: pendant_worn_closeup
+    direction: in
+    zoom_end: 1.02               # "very subtle slow push-in"
+
+# Per-scene grading following the client's own descriptions for each real
+# segment.
+scene_grade:
+  - scene: closed_box_spotlight
+    contrast: 0.02                  # "increase visibility of the box edges slightly" — no warmth added,
+                                        # "do not make the opening too bright"
+  - scene: box_opening_revealed
+    warmth: 0.025                    # "enhance the mahogany reflections"
+    sharpen: 0.1
+  - scene: pendant_macro_sparkle
+    warmth: 0.025                     # "keep the gold rich but not orange" — restrained
+    sharpen: 0.18                      # knot shape/pavé/centre stone
+  - scene: pendant_worn_closeup
+    warmth: 0.02
+    contrast: 0.02                     # approximates "brighten the skin and necklace" — no brightness lever, see prior videos' note
+  - scene: woman_city_view
+    contrast: 0.025                     # approximates "improve separation between dark clothing and background" —
+                                            # no warmth added, preserving the blue-hour atmosphere as shot
+  - scene: closer_portrait
+    warmth: 0.03
+    contrast: 0.02                       # approximates "brighten her face"
+  - scene: return_to_box
+    warmth: 0.025                         # "enrich the mahogany tones subtly"
+    sharpen: 0.18                          # necklace/card
+
+on_screen_text: []
+captions: []
+
+# "Audio continuity — mandatory": one continuous, unbroken pass from the
+# original source over the same 0.000-12.958 span the real cuts cover
+# (contiguous, original chronological order), so there are zero
+# concatenation points in the delivered music. Raw source measured at
+# -13.34 LUFS — slightly louder than the campaign's -15 LUFS standard, so
+# normalizing brings it down slightly to match the rest of the library.
+music_direction:
+  track: null
+  continuous_source: true
+  target_lufs: -15.0
+  target_tp: -1.0
+  target_lra: 15.0
+  duck: false
+
+audio_swell: []
+
+# No separate global_grade layer — every real segment already has an
+# explicit per-scene grade above; a global layer on top would compound
+# past what was actually asked for. Same reasoning as VIDEO 010-015.
+global_grade: {}
+
+# The whole opening (closed box under spotlight) and several other beats
+# are shot on a black background — same false-positive risk the
+# black-bars heuristic has flagged on other genuinely-dark product shots
+# in this campaign. Flagged for manual QC review instead of guessing.
+dark_background: true
+
+# SIGNATURE ENDING — replaces the source's own baked-in "Loved Today.
+# Treasured Forever." branding completely, per explicit client
+# instruction. Same lockup/brand promise/website as every other video,
+# using the pre_fade_delay timing requested again here (standing default
+# since VIDEO 004). Real, still-moving footage (the tail of
+# closer_portrait and return_to_box) keeps playing under the logo;
+# picture+audio fade to black together; black hold; final fade out.
+logo_fade_ending:
+  lockup: brand-assets/logo/zaviqu-lockup-reference.png
+  brand_promise: "The Gift That Says What Words Can't."
+  website: "zaviqu.com"
+  pre_fade_delay: 0.4
+  fade_in: 1.0
+  hold_visible: 1.6
+  fade_to_black: 1.2
+  black_hold: 1.0
+  final_fade_out: 0.8
+  gold_color: "#D4AF37"
+
+export_versions:
+  - platform: instagram_facebook
+    aspect: "9:16"
+    resize_mode: blur_pad   # source is 1:1 — blur_pad keeps the full frame, never crops the box/necklace/face out
+    with_text: true
+    no_text_copy: true
+  - platform: instagram_facebook
+    aspect: "4:5"
+    resize_mode: blur_pad
+    with_text: true
+    no_text_copy: true
